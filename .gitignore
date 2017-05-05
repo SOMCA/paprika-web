@@ -4,7 +4,7 @@
 .mtj.tmp/
 
 # Package Files #
-
+*.jar
 *.war
 *.ear
 
@@ -17,11 +17,23 @@ hs_err_pid*
 paprika-web/target/
 Paprika-analyze/target/
 
-
 Other files:
 android-platforms/
 .metadata/
 .recommenders/
+
+
+
+.DS_STORE
+paprika-web/.DS_STORE
+paprika-analyze/.DS_STORE
+
+
+paprika-web/.classpath
+paprika-analyze/.classpath
+paprika-web/.project
+paprika-analyze/.project
+
 
 velocity.log
 velocity.log.1
