@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.entities;
+package paprikaana.entities;
 /**
  * Created by Geoffrey Hecht on 08/07/14.
  */

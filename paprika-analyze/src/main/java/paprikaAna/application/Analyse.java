@@ -1,47 +1,49 @@
-package paprikaAna.application;
+package paprikaana.application;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
 
 import org.neo4j.cypher.CypherException;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
-import paprikaAna.analyzer.Analyzer;
-import paprikaAna.analyzer.SootAnalyzer;
-import paprikaAna.entities.PaprikaApp;
-import paprikaAna.utils.neo4j.QueryEngineBolt;
-import paprikaAna.utils.neo4j.query.ARGB8888Query;
-import paprikaAna.utils.neo4j.query.BLOBQuery;
-import paprikaAna.utils.neo4j.query.CCQuery;
-import paprikaAna.utils.neo4j.query.HashMapUsageQuery;
-import paprikaAna.utils.neo4j.query.HeavyAsyncTaskStepsQuery;
-import paprikaAna.utils.neo4j.query.HeavyBroadcastReceiverQuery;
-import paprikaAna.utils.neo4j.query.HeavyServiceStartQuery;
-import paprikaAna.utils.neo4j.query.IGSQuery;
-import paprikaAna.utils.neo4j.query.InitOnDrawQuery;
-import paprikaAna.utils.neo4j.query.InvalidateWithoutRectQuery;
-import paprikaAna.utils.neo4j.query.LICQuery;
-import paprikaAna.utils.neo4j.query.LMQuery;
-import paprikaAna.utils.neo4j.query.MIMQuery;
-import paprikaAna.utils.neo4j.query.NLMRQuery;
-import paprikaAna.utils.neo4j.query.OverdrawQuery;
-import paprikaAna.utils.neo4j.query.QuartileCalculator;
-import paprikaAna.utils.neo4j.query.SAKQuery;
-import paprikaAna.utils.neo4j.query.TrackingHardwareIdQuery;
-import paprikaAna.utils.neo4j.query.UnsuitedLRUCacheSizeQuery;
-import paprikaAna.utils.neo4j.query.UnsupportedHardwareAccelerationQuery;
+import paprikaana.entities.PaprikaApp;
+import paprikaana.utils.neo4j.QueryEngineBolt;
+import paprikaana.utils.neo4j.query.ARGB8888Query;
+import paprikaana.utils.neo4j.query.BLOBQuery;
+import paprikaana.utils.neo4j.query.CCQuery;
+import paprikaana.utils.neo4j.query.HashMapUsageQuery;
+import paprikaana.utils.neo4j.query.HeavyAsyncTaskStepsQuery;
+import paprikaana.utils.neo4j.query.HeavyBroadcastReceiverQuery;
+import paprikaana.utils.neo4j.query.HeavyServiceStartQuery;
+import paprikaana.utils.neo4j.query.IGSQuery;
+import paprikaana.utils.neo4j.query.InitOnDrawQuery;
+import paprikaana.utils.neo4j.query.InvalidateWithoutRectQuery;
+import paprikaana.utils.neo4j.query.LICQuery;
+import paprikaana.utils.neo4j.query.LMQuery;
+import paprikaana.utils.neo4j.query.MIMQuery;
+import paprikaana.utils.neo4j.query.NLMRQuery;
+import paprikaana.utils.neo4j.query.OverdrawQuery;
+import paprikaana.utils.neo4j.query.QuartileCalculator;
+import paprikaana.utils.neo4j.query.SAKQuery;
+import paprikaana.utils.neo4j.query.TrackingHardwareIdQuery;
+import paprikaana.utils.neo4j.query.UnsuitedLRUCacheSizeQuery;
+import paprikaana.utils.neo4j.query.UnsupportedHardwareAccelerationQuery;
+import paprikaana.analyzer.Analyzer;
+import paprikaana.analyzer.SootAnalyzer;
 
 public class Analyse {
 
-	public PaprikaApp runAnalysis(String[] args) throws Exception {
-		System.out.println("===============");
+	public PaprikaApp runAnalysis(String[] args) {
+		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Start runAnalysis");
 		ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
 		Subparsers subparsers = parser.addSubparsers().dest("sub_command");
 
@@ -70,10 +72,25 @@ public class Analyse {
 		analyseParser.addArgument("-omp", "--onlyMainPackage").type(Boolean.class).setDefault(false)
 				.help("Analyze only the main package of the application");
 
-		Namespace res = parser.parseArgs(args);
-		System.out.println("Collecting metrics");
+		Namespace res=null;
+		try {
+		 res = parser.parseArgs(args);
+		} catch (ArgumentParserException e) {
+			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runAnalysis: ArgumentParserException",e);
+			throw new AnalyseException();
+		}
+		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Collecting metrics");
+
 		if (res.get("unsafe") == null) {
-			checkArgs(res);
+			try {
+				checkArgs(res);
+			} catch (NoSuchAlgorithmException e) {
+				PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runAnalysis: NoSuchAlgorithmException",e);
+				throw new AnalyseException();
+			} catch (IOException e) {
+				PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runAnalysis: IOException",e);
+				throw new AnalyseException();
+			}
 		}
 		Analyzer analyzer = new SootAnalyzer(res.getString("apk"), res.getString("androidJars"), res.getString("name"),
 				res.getString("key"), res.getString("package"), res.getString("date"), res.getInt("size"),
@@ -84,6 +101,7 @@ public class Analyse {
 
 		analyzer.runAnalysis();
 
+		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"End runAnalysis");
 		return analyzer.getPaprikaApp();
 
 	}
@@ -91,11 +109,13 @@ public class Analyse {
 	public void checkArgs(Namespace arg) throws NoSuchAlgorithmException, IOException {
 		String sha256 = computeSha256(arg.getString("apk"));
 		if (!sha256.equals(arg.getString("key"))) {
-			throw new RuntimeException("The given key is different from sha256 of the apk");
+			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"The given key is different from sha256 of the apk");
+			throw new AnalyseException("The given key is different from sha256 of the apk");
 		}
 		if (!arg.getString("date").matches(
 				"^([0-9]{4})-([0-1][0-9])-([0-3][0-9])\\s([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9]).([0-9]*)$")) {
-			throw new RuntimeException("Date should be formatted : yyyy-mm-dd hh:mm:ss.S");
+			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"Date should be formatted : yyyy-mm-dd hh:mm:ss.S");
+			throw new AnalyseException("Date should be formatted : yyyy-mm-dd hh:mm:ss.S");
 		}
 	}
 
@@ -120,8 +140,8 @@ public class Analyse {
 		return sb.toString();
 	}
 
-	public  void runQueryMode(String[] args) throws Exception {
-		System.out.println("===============");
+	public  void runQueryMode(String[] args)  {
+		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Start runQueryMode");
 		ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
 		Subparsers subparsers = parser.addSubparsers().dest("sub_command");
 
@@ -136,77 +156,95 @@ public class Analyse {
 		try {
 			Namespace res = parser.parseArgs(args);
 			this.queryMode(res);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		} catch (ArgumentParserException e) {
+			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runQueryMode: ArgumentParserException",e);
+			throw new AnalyseException();
+		} catch (CypherException e){
+			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runQueryMode: CypherException",e);
+			throw new AnalyseException();
+		}catch (IOException e){
+			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runQueryMode: IOException",e);
+			throw new AnalyseException();
 		}
-
+		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"End runQueryMode");
 	}
 
-	public void queryMode(Namespace arg) throws CypherException, IOException {
-		System.out.println("Executing Queries");
+	private void launchStats(QueryEngineBolt queryEngine) throws IOException{
+		QuartileCalculator quartileCalculator = new QuartileCalculator(queryEngine);
+		quartileCalculator.calculateClassComplexityQuartile();
+		quartileCalculator.calculateLackofCohesionInMethodsQuartile();
+		quartileCalculator.calculateNumberOfAttributesQuartile();
+		quartileCalculator.calculateNumberOfImplementedInterfacesQuartile();
+		quartileCalculator.calculateNumberOfMethodsQuartile();
+		quartileCalculator.calculateNumberofInstructionsQuartile();
+		quartileCalculator.calculateCyclomaticComplexityQuartile();
+		quartileCalculator.calculateNumberOfMethodsForInterfacesQuartile();
+	}
+	private void launchALLINFO(QueryEngineBolt queryEngine)throws IOException{
+		queryEngine.getAllLCOM();
+		queryEngine.getAllCyclomaticComplexity();
+		queryEngine.getAllClassComplexity();
+		queryEngine.getAllNumberOfMethods();
+		queryEngine.countVariables();
+		queryEngine.countInnerClasses();
+		queryEngine.countAsyncClasses();
+		queryEngine.countViews();
+	}
+	private void launchALLAP(QueryEngineBolt queryEngine,	Boolean details)throws IOException {
+		ARGB8888Query.createARGB8888Query(queryEngine).execute(details);
+		CCQuery.createCCQuery(queryEngine).executeFuzzy(details);
+		LMQuery.createLMQuery(queryEngine).executeFuzzy(details);
+		SAKQuery.createSAKQuery(queryEngine).executeFuzzy(details);
+		BLOBQuery.createBLOBQuery(queryEngine).executeFuzzy(details);
+		MIMQuery.createMIMQuery(queryEngine).execute(details);
+		IGSQuery.createIGSQuery(queryEngine).execute(details);
+		LICQuery.createLICQuery(queryEngine).execute(details);
+		NLMRQuery.createNLMRQuery(queryEngine).execute(details);
+		OverdrawQuery.createOverdrawQuery(queryEngine).execute(details);
+		HeavyServiceStartQuery.createHeavyServiceStartQuery(queryEngine).executeFuzzy(details);
+		HeavyBroadcastReceiverQuery.createHeavyBroadcastReceiverQuery(queryEngine).executeFuzzy(details);
+		HeavyAsyncTaskStepsQuery.createHeavyAsyncTaskStepsQuery(queryEngine).executeFuzzy(details);
+		UnsuitedLRUCacheSizeQuery.createUnsuitedLRUCacheSizeQuery(queryEngine).execute(details);
+		InitOnDrawQuery.createInitOnDrawQuery(queryEngine).execute(details);
+		UnsupportedHardwareAccelerationQuery.createUnsupportedHardwareAccelerationQuery(queryEngine)
+				.execute(details);
+		HashMapUsageQuery.createHashMapUsageQuery(queryEngine).execute(details);
+		InvalidateWithoutRectQuery.createInvalidateWithoutRectQuery(queryEngine).execute(details);
+		TrackingHardwareIdQuery.createTrackingHardwareIdQuery(queryEngine).execute(details);
+	}
+	
+	private void launchFORCENOFUZZY(QueryEngineBolt queryEngine,Boolean details)throws IOException {
+		CCQuery.createCCQuery(queryEngine).execute(details);
+		LMQuery.createLMQuery(queryEngine).execute(details);
+		SAKQuery.createSAKQuery(queryEngine).execute(details);
+		BLOBQuery.createBLOBQuery(queryEngine).execute(details);
+		HeavyServiceStartQuery.createHeavyServiceStartQuery(queryEngine).execute(details);
+		HeavyBroadcastReceiverQuery.createHeavyBroadcastReceiverQuery(queryEngine).execute(details);
+		HeavyAsyncTaskStepsQuery.createHeavyAsyncTaskStepsQuery(queryEngine).execute(details);
+	}
+	
+	public void queryMode(Namespace arg) throws IOException {
+		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Executing Queries");
 		QueryEngineBolt queryEngine = new QueryEngineBolt(arg.getString("key"));
 		String request = arg.get("request");
 		Boolean details = arg.get("details");
-
-		System.out.println("Resulting query data key is " + arg.getString("key"));
 		switch (request) {
 		case "STATS":
-			QuartileCalculator quartileCalculator = new QuartileCalculator(queryEngine);
-			quartileCalculator.calculateClassComplexityQuartile();
-			quartileCalculator.calculateLackofCohesionInMethodsQuartile();
-			quartileCalculator.calculateNumberOfAttributesQuartile();
-			quartileCalculator.calculateNumberOfImplementedInterfacesQuartile();
-			quartileCalculator.calculateNumberOfMethodsQuartile();
-			quartileCalculator.calculateNumberofInstructionsQuartile();
-			quartileCalculator.calculateCyclomaticComplexityQuartile();
-			quartileCalculator.calculateNumberOfMethodsForInterfacesQuartile();
+			launchStats(queryEngine);
 			break;
 		case "ALLINFO":
-			queryEngine.getAllLCOM();
-			queryEngine.getAllCyclomaticComplexity();
-			queryEngine.getAllClassComplexity();
-			queryEngine.getAllNumberOfMethods();
-			queryEngine.countVariables();
-			queryEngine.countInnerClasses();
-			queryEngine.countAsyncClasses();
-			queryEngine.countViews();
+			launchALLINFO(queryEngine);
 			break;
 		case "ALLAP":
-			ARGB8888Query.createARGB8888Query(queryEngine).execute(details);
-			CCQuery.createCCQuery(queryEngine).executeFuzzy(details);
-			LMQuery.createLMQuery(queryEngine).executeFuzzy(details);
-			SAKQuery.createSAKQuery(queryEngine).executeFuzzy(details);
-			BLOBQuery.createBLOBQuery(queryEngine).executeFuzzy(details);
-			MIMQuery.createMIMQuery(queryEngine).execute(details);
-			IGSQuery.createIGSQuery(queryEngine).execute(details);
-			LICQuery.createLICQuery(queryEngine).execute(details);
-			NLMRQuery.createNLMRQuery(queryEngine).execute(details);
-			OverdrawQuery.createOverdrawQuery(queryEngine).execute(details);
-			HeavyServiceStartQuery.createHeavyServiceStartQuery(queryEngine).executeFuzzy(details);
-			HeavyBroadcastReceiverQuery.createHeavyBroadcastReceiverQuery(queryEngine).executeFuzzy(details);
-			HeavyAsyncTaskStepsQuery.createHeavyAsyncTaskStepsQuery(queryEngine).executeFuzzy(details);
-			UnsuitedLRUCacheSizeQuery.createUnsuitedLRUCacheSizeQuery(queryEngine).execute(details);
-			InitOnDrawQuery.createInitOnDrawQuery(queryEngine).execute(details);
-			UnsupportedHardwareAccelerationQuery.createUnsupportedHardwareAccelerationQuery(queryEngine)
-					.execute(details);
-			HashMapUsageQuery.createHashMapUsageQuery(queryEngine).execute(details);
-			InvalidateWithoutRectQuery.createInvalidateWithoutRectQuery(queryEngine).execute(details);
-			TrackingHardwareIdQuery.createTrackingHardwareIdQuery(queryEngine).execute(details);
+			launchALLAP(queryEngine,details);
 			break;
 		case "FORCENOFUZZY":
-			CCQuery.createCCQuery(queryEngine).execute(details);
-			LMQuery.createLMQuery(queryEngine).execute(details);
-			SAKQuery.createSAKQuery(queryEngine).execute(details);
-			BLOBQuery.createBLOBQuery(queryEngine).execute(details);
-			HeavyServiceStartQuery.createHeavyServiceStartQuery(queryEngine).execute(details);
-			HeavyBroadcastReceiverQuery.createHeavyBroadcastReceiverQuery(queryEngine).execute(details);
-			HeavyAsyncTaskStepsQuery.createHeavyAsyncTaskStepsQuery(queryEngine).execute(details);
+			launchFORCENOFUZZY(queryEngine,details);
 			break;
 		default:
-			System.out.println("Executing custom request");
+			PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Executing custom request");
 			queryEngine.executeRequest(request);
 		}
-		System.out.println("Done");
+		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Done");
 	}
 }

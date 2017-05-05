@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.utils.neo4j.query;
+package paprikaana.utils.neo4j.query;
 
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
-import paprikaAna.utils.neo4j.QueryEngineBolt;
+import paprikaana.utils.neo4j.QueryEngineBolt;
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */

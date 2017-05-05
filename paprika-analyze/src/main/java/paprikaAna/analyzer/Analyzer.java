@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.analyzer;
+package paprikaana.analyzer;
 
-import paprikaAna.entities.PaprikaApp;
+import paprikaana.entities.PaprikaApp;
 
 /**
  * Created by Geoffrey Hecht on 20/05/14.

@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.metrics;
+package paprikaana.metrics;
 
-import paprikaAna.entities.PaprikaApp;
+import paprikaana.entities.PaprikaApp;
 
 /**
  * Created by antonin on 16-04-29.

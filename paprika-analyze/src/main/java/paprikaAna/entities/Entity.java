@@ -16,10 +16,10 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.entities;
+package paprikaana.entities;
 
-import paprikaAna.metrics.Metric;
-import paprikaAna.metrics.UnaryMetric;
+import paprikaana.metrics.Metric;
+import paprikaana.metrics.UnaryMetric;
 
 import java.util.ArrayList;
 import java.util.List;

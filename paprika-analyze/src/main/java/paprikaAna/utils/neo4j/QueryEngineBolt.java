@@ -17,7 +17,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.utils.neo4j;
+package paprikaana.utils.neo4j;
 
 import org.neo4j.cypher.CypherException;
 import org.neo4j.driver.v1.Record;
@@ -30,7 +30,7 @@ import org.neo4j.driver.v1.types.Node;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.Graph;
 import app.utils.neo4j.LowNode;
-import paprikaAna.application.PaprikaAnalyzeMain;
+import paprikaana.application.PaprikaAnalyzeMain;
 
 import java.io.IOException;
 import java.util.*;

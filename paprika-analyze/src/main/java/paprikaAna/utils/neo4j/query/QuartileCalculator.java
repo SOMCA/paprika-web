@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.utils.neo4j.query;
+package paprikaana.utils.neo4j.query;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
-import paprikaAna.application.PaprikaAnalyzeMain;
-import paprikaAna.utils.neo4j.QueryEngineBolt;
+import paprikaana.application.PaprikaAnalyzeMain;
+import paprikaana.utils.neo4j.QueryEngineBolt;
 
 /**
  * Created by Geoffrey Hecht on 14/08/15.

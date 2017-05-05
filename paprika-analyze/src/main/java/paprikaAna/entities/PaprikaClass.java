@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.entities;
+package paprikaana.entities;
 import java.util.HashSet;
 import java.util.Set;
 

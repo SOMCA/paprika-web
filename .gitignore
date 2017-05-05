@@ -18,7 +18,8 @@ paprika-web/application/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 paprika-web/target/
-Paprika-analyze/target/
+paprika-analyze/target/
+Paprika-analyze/lib/
 
 Other files:
 android-platforms/

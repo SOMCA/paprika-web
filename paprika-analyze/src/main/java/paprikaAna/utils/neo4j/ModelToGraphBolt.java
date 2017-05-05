@@ -17,12 +17,11 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.utils.neo4j;
+package paprikaana.utils.neo4j;
 
-import paprikaAna.entities.*;
-import paprikaAna.metrics.Metric;
-import paprikaAna.neo4j.RelationTypes;
-import paprikaAna.application.PaprikaAnalyzeMain;
+import paprikaana.entities.*;
+import paprikaana.metrics.Metric;
+import paprikaana.application.PaprikaAnalyzeMain;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

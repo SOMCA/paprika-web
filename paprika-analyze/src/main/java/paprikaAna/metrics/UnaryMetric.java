@@ -16,8 +16,8 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.metrics;
-import paprikaAna.entities.Entity;
+package paprikaana.metrics;
+import paprikaana.entities.Entity;
 
 /**
  * Created by Geoffrey Hecht on 20/05/14.

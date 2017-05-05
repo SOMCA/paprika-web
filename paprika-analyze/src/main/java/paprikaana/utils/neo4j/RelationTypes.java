@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package paprikaAna.neo4j;
+package paprikaana.utils.neo4j;
 
 import org.neo4j.graphdb.RelationshipType;
 

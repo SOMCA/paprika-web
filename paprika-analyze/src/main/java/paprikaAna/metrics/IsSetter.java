@@ -15,13 +15,13 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package paprikaAna.metrics;
+package paprikaana.metrics;
 
 /**
  * Created by Geoffrey Hecht on 06/08/14.
  */
 
-import paprikaAna.entities.PaprikaMethod;
+import paprikaana.entities.PaprikaMethod;
 
 public class IsSetter extends UnaryMetric<Boolean> {
 
