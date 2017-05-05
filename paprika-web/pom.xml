@@ -105,6 +105,12 @@
 			<artifactId>lombok</artifactId>
 			<version>1.16.6</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.sonar/sonar-maven-plugin -->
+		<dependency>
+			<groupId>org.codehaus.sonar</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>5.1</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/net.dongliu/apk-parser -->
 		<dependency>
 			<groupId>net.dongliu</groupId>

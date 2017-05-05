@@ -266,7 +266,7 @@ public class Application extends Entity {
 			for (i = 0; i < allkeyArray.length; i++) {
 				value = data.get(allkeyArray[i]);
 				if (value == null)
-					value = new Long(0);
+					value = Long.valueOf(0);
 				array.append("," + value.toString() + "");
 
 			}
