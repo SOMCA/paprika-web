@@ -24,10 +24,9 @@ android-platforms/
 
 
 
-.DS_STORE
-paprika-web/.DS_STORE
-paprika-analyze/.DS_STORE
-
+.DS_Store
+paprika-web/.DS_Store
+paprika-analyze/.DS_Store
 
 paprika-web/.classpath
 paprika-analyze/.classpath
