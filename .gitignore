@@ -7,6 +7,9 @@
 *.jar
 *.war
 *.ear
+*.DS_Store
+*.classpath
+*.project
 
 
 # Application #
@@ -22,16 +25,6 @@ android-platforms/
 .metadata/
 .recommenders/
 
-
-
-.DS_Store
-paprika-web/.DS_Store
-paprika-analyze/.DS_Store
-
-paprika-web/.classpath
-paprika-analyze/.classpath
-paprika-web/.project
-paprika-analyze/.project
 paprika-analyze/.settings
 paprika-web/.settings
 
