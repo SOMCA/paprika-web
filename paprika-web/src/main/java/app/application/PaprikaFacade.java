@@ -1,7 +1,6 @@
 package app.application;
 
-import java.io.IOException;
-
+import java.net.InetAddress;
 import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -11,6 +10,12 @@ import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.types.Node;
 
+import com.spotify.docker.client.DefaultDockerClient;
+import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.messages.ContainerConfig;
+import com.spotify.docker.client.messages.ContainerCreation;
+import com.spotify.docker.client.messages.RegistryAuth;
+
 import app.functions.ApplicationFunctions;
 import app.functions.UserFunctions;
 import app.functions.VersionFunctions;
@@ -18,7 +23,6 @@ import app.model.*;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.Graph;
 import app.utils.neo4j.LowNode;
-
 
 public final class PaprikaFacade {
 
@@ -28,10 +32,11 @@ public final class PaprikaFacade {
 
 	/** Holder */
 	private static class SingletonHolder {
-	
+
 		/** Instance unique non préinitialisée */
 		private static final PaprikaFacade instance = new PaprikaFacade();
-		private SingletonHolder(){
+
+		private SingletonHolder() {
 		}
 	}
 
@@ -69,7 +74,7 @@ public final class PaprikaFacade {
 
 	public Version version(Application application, String version) {
 		VersionFunctions verFct = new VersionFunctions();
-		
+
 		return new Version(version, verFct.receiveIDOfVersion(application.getID(), version));
 	}
 
@@ -89,11 +94,11 @@ public final class PaprikaFacade {
 		return;
 	}
 
-	public void needReloadApp(Application application){
-		if(application!=null)application.needReload();
+	public void needReloadApp(Application application) {
+		if (application != null)
+			application.needReload();
 	}
-	
-	
+
 	/**
 	 * Ajoute une version dans l'application d'id "idproject"
 	 * 
@@ -199,18 +204,50 @@ public final class PaprikaFacade {
 		return true;
 	}
 
-	public void callAnalyzeThread(LowNode nodeVer,String fname,Application application,User user,long size){
-		 try {
-			 String command="java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
-						+ " " + Long.toString(user.getID()) + " " + user.getHashedPassword() + " "
-						+ application.getName() + " " + Long.toString(application.getID()) + " "
-						+ Long.toString(nodeVer.getID());
-			 System.out.println(command);
-			Runtime.getRuntime().exec(command);
-		} catch (IOException e) {
-			e.printStackTrace();
+	private int numb = 0;
+
+	public void callAnalyzeThread(LowNode nodeVer, String fname, Application application, User user, long size) {
+		try {
+			System.out.println("callAnalyzeThread:");
+			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
+					+ " " + Long.toString(user.getID()) + " " + user.getHashedPassword() + " " + application.getName()
+					+ " " + Long.toString(application.getID()) + " " + Long.toString(nodeVer.getID());
+			System.out.println(command);
+			// Runtime.getRuntime().exec(command);
+			 DockerClient docker = DefaultDockerClient.fromEnv().build();
+/*
+			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
+			docker.pull("dock/paprika-web:latest", registryAuth);
+			System.out.println("registryAuth success");
+			// You can also set the RegistryAuth for the DockerClient instead of
+			// passing everytime you call pull()
+			 docker = DefaultDockerClient.fromEnv().registryAuth(registryAuth).build();
+*/
+			System.out.println("docker success");
+			ContainerConfig containerConfig = ContainerConfig.builder().image("paprika-analyze").cmd(command).build();
+			System.out.println("containerConfig success");
+			ContainerCreation creation = docker.createContainer(containerConfig);
+			System.out.println("creation success");
+			 String id = creation.id();
+			numb++;
+			System.out.println(id);
+			docker.startContainer(id);
+			System.out.println("container start success");
+			docker.close();
+			System.out.println("docker close  success");
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+
 		}
 	}
-	
+	private static String getHostName() {
+		try {
+			return InetAddress.getByName("web-paprika").getHostAddress();
+		} catch (final Exception e) {
+			throw new Error(e);
+		}
+	}
 
 }

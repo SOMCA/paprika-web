@@ -2,6 +2,7 @@ package paprikaana.application;
 
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,9 +18,23 @@ import net.dongliu.apk.parser.ApkFile;
 
 public class PaprikaAnalyzeMain {
 
-	public static final Driver driver = GraphDatabase.driver("bolt://localhost:7687",
-			AuthTokens.basic("neo4j", "neo4j"));
+	public static Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
+			AuthTokens.basic("neo4j", "paprika"));
 
+	/**
+	 * Prend le nom du container neo4j-praprika et renvoie son adresse.
+	 * 
+	 * @return
+	 */
+	private static String getHostName() {
+		try {
+			String str=InetAddress.getByName("neo4j-paprika").getHostAddress();
+			System.out.println(str);
+			return str;
+		} catch (final Exception e) {
+			return "localhost";
+		}
+	}
 	public static final Logger LOGGER = Logger.getLogger(PaprikaAnalyzeMain.class.getName());
 
 	private PaprikaAnalyzeMain(){

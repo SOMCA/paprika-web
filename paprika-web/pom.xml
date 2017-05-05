@@ -117,6 +117,12 @@
 			<artifactId>apk-parser</artifactId>
 			<version>2.2.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.spotify/docker-client -->
+		<dependency>
+			<groupId>com.spotify</groupId>
+			<artifactId>docker-client</artifactId>
+			<version>8.4.0</version>
+		</dependency>
 
 	</dependencies>
 

@@ -13,7 +13,18 @@ services:
     ports:
       - "4567:4567"
     image: paprika-web:latest
+    container_name: web-paprika
     command: java -jar Paprika-web.jar
+    volumes:
+       - .:/dock
+       - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - neoj
+    depends_on:
+      - neoj
+  analyse:
+    command: java -jar Paprika-analyze.jar com.lucasdnd.bitclock16_1.apk 579735 g@p 22 $$2a$$10$$RcTU9mPzb11Hy29NznPO/.N/bjEE6G4coWne4A75kPu.TmJJTAZzC Example_2 25 27
+    image: paprika-analyze:latest
     volumes:
        - .:/dock
     links:

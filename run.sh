@@ -1,11 +1,13 @@
 
 docker-compose build neoj
-docker-compose --verbose up -d neoj
+docker-compose up -d neoj
 
-docker build -t paprika-web .
+docker build --file Dockerfile-web -t paprika-web .
+docker build --file Dockerfile-analyze -t paprika-analyze .
 docker-compose build web
-docker-compose --verbose up web
+docker-compose up web
 
+#--verbose
 
 #docker system prune   delete all not-used things
 #if problem you can use --verbose :  exemple: docker-compose --verbose up neo4j

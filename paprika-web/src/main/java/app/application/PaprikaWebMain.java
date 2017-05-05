@@ -21,7 +21,7 @@ import java.net.InetAddress;
 public class PaprikaWebMain {
 
 	// "bolt://localhost:7687" quand on n'utilise pas docker.
-	public static final Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
+	public static  Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 			AuthTokens.basic("neo4j", "paprika"));
 
 	/**
@@ -33,7 +33,7 @@ public class PaprikaWebMain {
 		try {
 			return InetAddress.getByName("neo4j-paprika").getHostAddress();
 		} catch (final Exception e) {
-			throw new Error(e);
+			return "localhost";
 		}
 	}
 
@@ -57,6 +57,8 @@ public class PaprikaWebMain {
 		Spark.staticFileLocation("/public");
 
 		// La page d'index.
+		get("", IndexController.serveIndexPage);
+		get("/", IndexController.serveIndexPage);
 		get(PathIn.Web.INDEX, IndexController.serveIndexPage);
 		// La page de login, quand tu veux te connecter.
 		get(PathIn.Web.LOGIN, LoginController.serveLoginPage);
