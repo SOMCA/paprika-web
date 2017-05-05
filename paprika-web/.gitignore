@@ -8,20 +8,9 @@
 *.war
 *.ear
 
-
 # Application #
-paprika-web/application/
+application/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-paprika-web/target/
-Paprika-analyze/target/
-
-
-Other files:
-android-platforms/
-.metadata/
-.recommenders/
-
-velocity.log
-velocity.log.1
+target/

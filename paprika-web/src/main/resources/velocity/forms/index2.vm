@@ -1,0 +1,32 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+
+<html>
+
+
+    <body>
+    Cette page est temporaire, puisque on n'est pas sensée obtenir cela.
+      <ul>
+     #foreach($user in $users)
+            <li>$!users</li>
+        #end
+    </ul>
+
+<h1>$msg.get("INDEX_HEADING")</h1>
+      <ul>
+     #foreach($rend in $rendu)
+            <li>$!rend</li>
+        #end
+    </ul>
+
+          <ul>
+          #if($graph)
+                <li>$graph</li>
+                #end
+        </ul>
+    </body>
+    <form method="get" action="/index/">
+    <button type="submit">Previous</button>
+    </form>
+</html>
+#end

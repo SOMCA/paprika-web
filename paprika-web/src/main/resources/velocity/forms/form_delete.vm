@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>$msg.get("INDEX_TITLE")</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- MetisMenu CSS -->
+  <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <div class="login-panel panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">$msg.get("FORM_INSTRUCTIONS")</h3>
+          </div>
+          <div class="panel-body" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+
+              <ul class="nav" id="side-menu">
+                #if($user.bigDataExist())
+                #foreach($title in $user.getDataTitles())
+                <p style="text-align: center;   clear: both;">
+                  <span style="float: left;">
+
+                    <li>
+
+                      <a href="#" style="width: 75%">$title
+                        <span class="fa arrow">
+                        </span>
+                      </a>
+
+
+
+
+                      <ul class="nav nav-second-level">
+
+                        #foreach($titleVer in $user.getVersionTitles($title))
+                        <p style="text-align: center;   clear: both;">
+                          <span style="float: left;">
+                            <li>
+                              <a  style="width: 75%" href="#">$titleVer</a>
+
+                            </li>
+                          </span>
+                          <span style="float: center;">
+                            <li>
+                              <form  method="post" action="/form_delete/">
+                                <button data-confirm="Are you sure to delete this item?" class="delete"  type="submit" id="deletemenu$title$velocityCount" name="deletemenu" value="$title"><i class="fa fa-trash"></i></button>
+                              </form>
+                            </li>
+                          </span>
+                        </p>
+                        #end
+
+                      </ul>
+
+
+                    </li>
+
+                  </span>
+
+                  <span style="float: right;">
+                    <li>
+                      <form method="post" action="/form_delete/">
+                        <button data-confirm="Are you sure to delete this item?" class="delete" type="submit" id="deletemenu$velocityCount" name="deletemenu" value="$title"><i class="fa fa-trash"></i></button>
+                      </form>
+                    </li>
+                  </span>
+
+                </p>
+                #end
+                #end
+
+                <script>
+                var deleteLinks = document.querySelectorAll('.delete');
+
+                for (var i = 0; i < deleteLinks.length; i++) {
+                  deleteLinks[i].addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    var choice = confirm(this.getAttribute('data-confirm'));
+
+                    if (choice) {
+                      window.location.href = this.getAttribute('href');
+                    }
+                  });
+                }
+                </script>
+              </ul>
+
+            </div>
+          </div>
+          <div class="panel-heading">
+            <h6 class="panel-title">  <a href="/index/" >$msg.get("FORM_BUTTON_INDEX")</a></h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+  <!-- Metis Menu Plugin JavaScript -->
+  <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>$msg.get("INDEX_TITLE")</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- MetisMenu CSS -->
+  <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <div class="login-panel panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">$msg.get("FORM_INSTRUCTIONS")</h3>
+          </div>
+          <div class="panel-body">
+            <form action="/index/" id="loginForm" role="form"  enctype="multipart/form-data" method="post">
+              <fieldset>
+                <div class="form-group">
+                  <!--
+                    <label for="name">$msg.get("FORM_NAME")</label>
+                  <input class="form-control" placeholder="$msg.get("FORM_NAME")" type="text" name="name" id="name" value="name" required>
+                </div><div class="form-group">
+                    <label for="androidVersion">$msg.get("FORM_ANDROID_VERSION")</label>
+                  <SELECT class="form-control" placeholder="$msg.get("FORM_ANDROID_VERSION")" type="text" name="androidVersion" id="androidVersion">
+                    #set($end = 17)
+                    #foreach($i in [3..$end])
+                    <OPTION value="android_$i">Android $i</OPTION>
+                    #end
+                  </SELECT>
+                </div><div class="form-group">
+                      <label for="key">$msg.get("FORM_KEY")</label>
+                  <input class="form-control" placeholder="$msg.get("FORM_KEY")" type="text" name="key" id="key" value="key" required>
+                </div><div class="form-group">
+
+                      <label for="pack">$msg.get("FORM_PACKAGE")</label>
+                  <input class="form-control" placeholder="$msg.get("FORM_PACKAGE")" type="text" name="pack" id="pack" value="package" required>
+                </div><div class="form-group">
+                  <label for="mainPackageOnly">$msg.get("FORM_MAIN_PACKAGE_ONLY")</label>
+                  <SELECT class="form-control" placeholder="$msg.get("FORM_MAIN_PACKAGE_ONLY")" type="text" name="mainPackageOnly" id="mainPackageOnly">
+                    <OPTION value="False">No</OPTION>
+                    <OPTION value="True">Yes</OPTION>
+                  </SELECT>
+              </div><div class="form-group">
+              -->
+                <label for="appAndroid">$msg.get("FORM_APPLICATION")</label>
+                <input  class="form-control" placeholder="$msg.get("FORM_APPLICATION")" type="file" name="appAndroid" id="appAndroid" required>
+              </div>
+              #if($currentUser)
+              <input  class="btn btn-lg btn-success btn-block" type="submit" value="Transfert">
+              #else
+              <input  class="btn btn-lg btn-success btn-block" type="submit" value="Transfert" disabled>
+              $msg.get("FORM_AUTHEN")
+              #end
+
+            </fieldset>
+          </form>
+        </div>
+        <div class="panel-heading">
+          <h6 class="panel-title">  <a href="/index/" >$msg.get("FORM_BUTTON_INDEX")</a></h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery -->
+<script src="../vendor/jquery/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Metis Menu Plugin JavaScript -->
+<script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="../dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

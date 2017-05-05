@@ -1,0 +1,22 @@
+version: '3'
+services:
+  neoj:
+    image: neo4j:latest
+    container_name: neo4j-paprika
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - $HOME/neo4j/data:/data
+      - $HOME/neo4j/logs:/logs
+  web:
+    ports:
+      - "4567:4567"
+    image: paprika-web:latest
+    command: java -jar Paprika-web.jar
+    volumes:
+       - .:/dock
+    links:
+      - neoj
+    depends_on:
+      - neoj
