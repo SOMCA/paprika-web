@@ -32,7 +32,8 @@ paprika-web/.classpath
 paprika-analyze/.classpath
 paprika-web/.project
 paprika-analyze/.project
-
+paprika-analyze/.settings
+paprika-web/.settings
 
 velocity.log
 velocity.log.1
