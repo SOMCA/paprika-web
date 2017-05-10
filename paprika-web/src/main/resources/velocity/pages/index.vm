@@ -6,10 +6,11 @@
     #parse("/velocity/pages/layout.vm")
     <div id="page-wrapper">
       <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-12"    style="overflow: auto">
           #if($application)
-          <h1 class="page-header" style="display:inline-block">Dashboard:  $application.getName()</h1>
-            <div class="col-lg-3 col-md-6" style="display:inline-block">
+          <h1 class="page-header" style="display:block;float: left">Dashboard:  $application.getName()</h1>
+<div class="page-header" style="margin-left: auto">
+            <div class="col-lg-3 col-md-6" >
               <div class="panel panel-red">
                 <div class="panel-footer">
                   <a href="#" id="a_text" onclick="uploadclick()">
@@ -29,6 +30,7 @@
                 </div>
               </div>
             </div>
+          </div>
 
           #else
           <h1 class="page-header">Dashboard </h1>
@@ -40,10 +42,11 @@
 
       <div class="row">
         #if($application)
-        #if($application.isApplicationHaveAnalysedVersion())
+        #if(!$application.isApplicationHaveAnalysedVersion())
         $msg.get("INDEX_NOT_LOGIN")
         $msg.get("INDEX_NOT_LOGIN2")
         $msg.get("INDEX_NOT_LOGIN3")
+        
         #end
         #else
         $msg.get("INDEX_NOT_LOGIN")
@@ -133,23 +136,7 @@
           #end
 
         </div>
-        <!-- /.col-lg-8 -->
-        <div class="col-lg-4">
-          <!-- /.panel -->
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Donut Chart Example
-            </div>
-            <div class="panel-body">
-              <div id="morris-donut-chart"></div>
-              <a href="#" class="btn btn-default btn-block">View Details</a>
-            </div>
-            <!-- /.panel-body -->
-          </div>
-
         </div>
-        <!-- /.col-lg-4 -->
-      </div>
       <!-- /.row -->
     </div>
     #end
