@@ -45,9 +45,9 @@ public abstract class FuzzyQuery extends Query {
         //We look if the file is in a directory otherwise we look inside the jar
         FIS fis;
         if(fcf.exists() && !fcf.isDirectory()){
-            fis = FIS.load(fclFile, false);
+            fis = FIS.load("fcl"+fclFile, false);
         }else{
-            fis = FIS.load(getClass().getResourceAsStream(fclFile),false);
+            fis = FIS.load(getClass().getResourceAsStream("fcl"+fclFile),false);
         }
         return fis.getFunctionBlock(null);
     }
