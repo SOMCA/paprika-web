@@ -14,6 +14,7 @@ import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
+import com.spotify.docker.client.messages.HostConfig;
 import com.spotify.docker.client.messages.RegistryAuth;
 
 import app.functions.ApplicationFunctions;
@@ -209,28 +210,67 @@ public final class PaprikaFacade {
 	public void callAnalyzeThread(LowNode nodeVer, String fname, Application application, User user, long size) {
 		try {
 			System.out.println("callAnalyzeThread:");
-			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
-					+ " " + Long.toString(user.getID()) + " " + user.getHashedPassword() + " " + application.getName()
-					+ " " + Long.toString(application.getID()) + " " + Long.toString(nodeVer.getID());
+			String command = "Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
+					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
+					+ Long.toString(nodeVer.getID());
 			System.out.println(command);
 			// Runtime.getRuntime().exec(command);
-			 DockerClient docker = DefaultDockerClient.fromEnv().build();
-/*
+
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
-			docker.pull("dock/paprika-web:latest", registryAuth);
+			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
+			/*List<Container> listCont = docker.listContainers(ListContainersParam.allContainers());
+
+			for(Container cont : listCont){
+				System.out.println(cont.id());
+				if("0.0.0.0:4567->4567/tcp".equals(cont.portsAsString())){
+					System.out.println("toString: "+cont.toString());
+				System.out.println("Settings: "+cont.networkSettings());
+				}
+			}*/
+			// work
+			//System.out.println(docker.inspectImage("paprika-web:latest").toString());
+			
+			//docker.pull("paprika-web:latest");
 			System.out.println("registryAuth success");
 			// You can also set the RegistryAuth for the DockerClient instead of
 			// passing everytime you call pull()
-			 docker = DefaultDockerClient.fromEnv().registryAuth(registryAuth).build();
-*/
+
 			System.out.println("docker success");
-			ContainerConfig containerConfig = ContainerConfig.builder().image("paprika-analyze").cmd(command).build();
+			
+			
+			
+		
+			final HostConfig hostConfig = HostConfig.builder()
+					.networkMode("paprikaweb_default")
+					.binds("dataapp:/dock")
+					.links("neo4j-paprika","web-paprika")
+					.volumesFrom("paprika-web","web-paprika")
+					.build();
+
+			
+			
+			
+			
+			ContainerConfig containerConfig = ContainerConfig.builder()
+					.hostConfig(hostConfig)
+					.image("paprika-analyze:latest")
+					.cmd("java","-jar","Paprika-analyze.jar",
+							fname,Long.toString(size), user.getName()
+					, application.getName(),Long.toString(application.getID()),
+					Long.toString(nodeVer.getID()))
+					.addVolumes("/dock","/var/run/docker.sock")
+					.workingDir("/dock").build();
 			System.out.println("containerConfig success");
 			ContainerCreation creation = docker.createContainer(containerConfig);
+			
 			System.out.println("creation success");
-			 String id = creation.id();
+			String id = creation.id();
 			numb++;
-			System.out.println(id);
+			if(numb>10000) numb=0;
+			// ContainerInfo info = docker.inspectContainer(id);
+	 
+	//		System.out.println("Info Container:"+info.toString());
+			System.out.println("Id:"+id);
 			docker.startContainer(id);
 			System.out.println("container start success");
 			docker.close();
@@ -242,9 +282,12 @@ public final class PaprikaFacade {
 
 		}
 	}
+
 	private static String getHostName() {
 		try {
-			return InetAddress.getByName("web-paprika").getHostAddress();
+			String str = InetAddress.getByName("web-paprika").getHostAddress();
+			System.out.println(str);
+			return str;
 		} catch (final Exception e) {
 			throw new Error(e);
 		}

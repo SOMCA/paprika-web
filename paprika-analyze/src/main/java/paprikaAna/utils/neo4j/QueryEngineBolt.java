@@ -27,9 +27,6 @@ import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.types.Node;
 
-import app.utils.PaprikaKeyWords;
-import app.utils.neo4j.Graph;
-import app.utils.neo4j.LowNode;
 import paprikaana.application.PaprikaAnalyzeMain;
 
 import java.io.IOException;

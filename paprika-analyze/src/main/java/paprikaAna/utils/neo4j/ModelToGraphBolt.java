@@ -32,10 +32,6 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
-import app.utils.PaprikaKeyWords;
-import app.utils.neo4j.Graph;
-import app.utils.neo4j.LowNode;
-
 
 
 /**

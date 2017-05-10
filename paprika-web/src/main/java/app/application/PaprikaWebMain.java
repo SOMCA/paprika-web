@@ -31,7 +31,9 @@ public class PaprikaWebMain {
 	 */
 	private static String getHostName() {
 		try {
-			return InetAddress.getByName("neo4j-paprika").getHostAddress();
+			String str= InetAddress.getByName("neo4j-paprika").getHostAddress();
+			System.out.println(str);
+			return str;
 		} catch (final Exception e) {
 			return "localhost";
 		}

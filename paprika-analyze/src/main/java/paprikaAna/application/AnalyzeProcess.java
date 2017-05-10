@@ -6,26 +6,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
-import app.application.PaprikaFacade;
-import app.functions.VersionFunctions;
-import app.model.Application;
-import app.model.User;
-import app.utils.PaprikaKeyWords;
-import app.utils.neo4j.LowNode;
+
 import net.dongliu.apk.parser.ApkFile;
 import paprikaana.entities.PaprikaApp;
+import paprikaana.functions.VersionFunctions;
+import paprikaana.utils.neo4j.LowNode;
 import paprikaana.utils.neo4j.ModelToGraphBolt;
+import paprikaana.utils.neo4j.PaprikaKeyWords;
+import paprikaana.model.*;
 
 public class AnalyzeProcess {
 
 	private ApkFile apkfile;
 	private String fName;
 	private Application application;
-	private User user;
+	private String user;
 	private long size;
 	private LowNode nodeVer;
 
-	public AnalyzeProcess(ApkFile apkfile, String fName, Application application, User user, long size,
+	public AnalyzeProcess(ApkFile apkfile, String fName, Application application, String user, long size,
 			LowNode nodeVer) {
 		this.apkfile = apkfile;
 		this.fName = fName;
@@ -46,7 +45,7 @@ public class AnalyzeProcess {
 		String appname = this.application.getName();
 		facade.setParameterOnNode(nodeVer, "analyseInLoading", "0");
 		String realname = fName.substring(0, fName.lastIndexOf('.'));
-		String pathstr = "application/" + this.user.getName() + "/" + appname + "/" + fName;
+		String pathstr = "application/" + this.user + "/" + appname + "/" + fName;
 		String xml;
 
 		try {
@@ -70,7 +69,7 @@ public class AnalyzeProcess {
 					String strversioncode = xml.substring(indexVc, xml.indexOf('"', indexVc));
 					indexP += attributepackage.length() + 1;
 					String strpackage = xml.substring(indexP, xml.indexOf('"', indexP));
-					String databasekey = this.user.getName() + "/" + appname + "/" + strversionname;
+					String databasekey = this.user+ "/" + appname + "/" + strversionname;
 					String[] args = { "analyse", "-a", "android-platforms/", "-n", realname, "-p", strpackage, "-k",
 							databasekey, "-dev", "unknowDevelopper", "-cat", "unknowCategory", "-nd", "1000", "-d",
 							"1990-01-01", "-r", "250", "-s", Long.toString(size), "-u", "unsafe", "-omp", "True", "-vn",
@@ -126,5 +125,8 @@ public class AnalyzeProcess {
 
 		return true;
 	}
+	
+	
+	
 
 }

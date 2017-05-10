@@ -5,7 +5,7 @@
 
 	<groupId>paprikaana</groupId>
 	<artifactId>Paprika-analyze</artifactId>
-	<version>0.1</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 	<build>
 		<finalName>Paprika-analyze</finalName>
@@ -124,12 +124,6 @@
 			<groupId>org.codehaus.sonar</groupId>
 			<artifactId>sonar-maven-plugin</artifactId>
 			<version>5.1</version>
-		</dependency>
-		<dependency>
-			<groupId>app</groupId>
-			<artifactId>Paprika-web</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>

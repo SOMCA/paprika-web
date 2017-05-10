@@ -9,12 +9,11 @@ import java.util.logging.Logger;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import paprikaana.model.*;
 
-import app.application.PaprikaFacade;
-import app.model.*;
-import app.utils.PaprikaKeyWords;
-import app.utils.neo4j.LowNode;
 import net.dongliu.apk.parser.ApkFile;
+import paprikaana.utils.neo4j.LowNode;
+import paprikaana.utils.neo4j.PaprikaKeyWords;
 
 public class PaprikaAnalyzeMain {
 
@@ -31,7 +30,7 @@ public class PaprikaAnalyzeMain {
 			String str=InetAddress.getByName("neo4j-paprika").getHostAddress();
 			System.out.println(str);
 			return str;
-		} catch (final Exception e) {
+		} catch (Exception e) {
 			return "localhost";
 		}
 	}
@@ -43,18 +42,19 @@ public class PaprikaAnalyzeMain {
 
 	public static void main(String[] args) {
 		int leng=args.length;
-		if(leng!=8) {
+		for(int i=0;i<leng;i++)System.out.println(args[i]);
+		if(leng!=6) {
 			return;
 		}
-		
+		System.out.println("Launch Analyse");
 		String fName = args[0];
 		long size = Long.parseLong(args[1]);
 
-		User user = new User(args[2],Long.parseLong(args[3]),args[4]);
-		Application application = new Application(args[5], Long.parseLong(args[6]));
+		String user = args[2];
+		Application application = new Application(args[3], Long.parseLong(args[4]));
 		LowNode nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
-		nodeVer.setId(Long.parseLong(args[7]));
-		String pathstr = "application/" + user.getName() + "/" + application.getName() + "/" + fName;
+		nodeVer.setId(Long.parseLong(args[5]));
+		String pathstr = "application/" + user + "/" + application.getName() + "/" + fName;
 
 		ApkFile apkfile = null;
 		try {

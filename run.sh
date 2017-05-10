@@ -1,7 +1,7 @@
 
 docker-compose build neoj
 docker-compose up -d neoj
-
+#docker create -v /dock --name datafile training/postgres /bin/true
 docker build --file Dockerfile-web -t paprika-web .
 docker build --file Dockerfile-analyze -t paprika-analyze .
 docker-compose build web

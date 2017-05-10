@@ -67,7 +67,7 @@ public class IndexController {
 		}
 		// Formulaire quand on upload un fichier ET analyse.
 		else if (menu == null && project == null) {
-			String location = "../application";
+			String location = "/application";
 			long maxFileSize = 100000000;
 			long maxRequestSize = 100000000;
 			int fileSizeThreshold = 1024;

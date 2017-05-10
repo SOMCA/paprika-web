@@ -76,10 +76,13 @@ public class Analyse {
 		try {
 		 res = parser.parseArgs(args);
 		} catch (ArgumentParserException e) {
+			System.out.println("runAnalysis: ArgumentParserException");
 			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runAnalysis: ArgumentParserException",e);
 			throw new AnalyseException();
 		}
 		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Collecting metrics");
+		System.out.println("Collecting metrics");
+
 
 		if (res.get("unsafe") == null) {
 			try {
@@ -100,6 +103,7 @@ public class Analyse {
 		analyzer.init();
 
 		analyzer.runAnalysis();
+		System.out.println("End collecting metrics");
 
 		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"End runAnalysis");
 		return analyzer.getPaprikaApp();

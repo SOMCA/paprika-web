@@ -5,7 +5,7 @@
 
 	<groupId>app</groupId>
 	<artifactId>Paprika-web</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 	<build>
 		<finalName>Paprika-web</finalName>
