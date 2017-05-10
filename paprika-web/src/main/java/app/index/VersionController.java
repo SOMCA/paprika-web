@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.*;
 
 import app.application.PaprikaFacade;
+import app.application.PaprikaWebMain;
 import app.login.LoginController;
 import app.model.Application;
 import app.model.User;
@@ -101,7 +102,7 @@ public class VersionController {
 			if (flag) {
 
 
-				 facade.callAnalyzeThread(nodeVer, fname, application, user, file.length());
+				 facade.callAnalyzeThread(nodeVer, fname, application, user, file.length(),PaprikaWebMain.dockerVersion);
 				model.put(PaprikaKeyWords.ANALYSEINLOAD, "0");
 
 			}

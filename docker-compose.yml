@@ -22,3 +22,14 @@ services:
       - neoj
     depends_on:
       - neoj
+  analyse:
+    image: paprika-analyze:latest
+    command: java -jar Paprika-analyze.jar com.lucasdnd.bitclock16_1.apk 579735 g@p Example_1 23 51
+    links:
+      - neoj
+    depends_on:
+      - neoj
+    volumes_from:
+      - web
+    ports:
+      - "4568:4568"

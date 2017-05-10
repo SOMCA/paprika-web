@@ -15,6 +15,7 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
 
 import app.application.PaprikaFacade;
+import app.application.PaprikaWebMain;
 import app.model.Application;
 import app.model.User;
 import app.utils.PaprikaKeyWords;
@@ -67,7 +68,9 @@ public class IndexController {
 		}
 		// Formulaire quand on upload un fichier ET analyse.
 		else if (menu == null && project == null) {
-			String location = "/application";
+			
+			String location = "../application";
+			if(PaprikaWebMain.dockerVersion) location="/application";
 			long maxFileSize = 100000000;
 			long maxRequestSize = 100000000;
 			int fileSizeThreshold = 1024;

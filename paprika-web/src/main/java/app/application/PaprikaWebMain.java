@@ -38,6 +38,7 @@ public class PaprikaWebMain {
 			return "localhost";
 		}
 	}
+	public static final boolean dockerVersion=true;
 
 	private PaprikaWebMain() {
 

@@ -25,7 +25,7 @@
       </a>
       <ul class="dropdown-menu dropdown-messages">
         <li>
-          <li><a href="/form/" ><i class="fa fa-upload fa-fw"></i>$msg.get("INDEX_UL_UPLOAD")</a></li>
+          <li><a href="/velocity/pages/info.html" ><i class="fa fa-info fa-fw"></i>$msg.get("INDEX_UL_INFO")</a></li>
         </li>
       </ul>
       <!-- /.dropdown-messages -->
@@ -52,6 +52,7 @@
     </ul>
     <!-- /.dropdown-user -->
   </li>
+
   <!-- /.dropdown -->
 </ul>
 <!-- /.navbar-top-links -->

@@ -205,51 +205,27 @@ public final class PaprikaFacade {
 		return true;
 	}
 
-	private int numb = 0;
 
-	public void callAnalyzeThread(LowNode nodeVer, String fname, Application application, User user, long size) {
+	public void callAnalyzeThread(LowNode nodeVer, String fname, Application application, User user, long size,boolean dockerContainer) {
 		try {
 			System.out.println("callAnalyzeThread:");
-			String command = "Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
+			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
 					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
 					+ Long.toString(nodeVer.getID());
 			System.out.println(command);
-			// Runtime.getRuntime().exec(command);
-
+			
+			if(!dockerContainer){
+			Runtime.getRuntime().exec(command);
+			System.out.println("Processus created");
+			}
+			else{
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
-			/*List<Container> listCont = docker.listContainers(ListContainersParam.allContainers());
-
-			for(Container cont : listCont){
-				System.out.println(cont.id());
-				if("0.0.0.0:4567->4567/tcp".equals(cont.portsAsString())){
-					System.out.println("toString: "+cont.toString());
-				System.out.println("Settings: "+cont.networkSettings());
-				}
-			}*/
-			// work
-			//System.out.println(docker.inspectImage("paprika-web:latest").toString());
-			
-			//docker.pull("paprika-web:latest");
-			System.out.println("registryAuth success");
-			// You can also set the RegistryAuth for the DockerClient instead of
-			// passing everytime you call pull()
-
-			System.out.println("docker success");
-			
-			
-			
-		
 			final HostConfig hostConfig = HostConfig.builder()
 					.networkMode("paprikaweb_default")
 					.links("neo4j-paprika","web-paprika")
 					.volumesFrom("web-paprika")
 					.build();
-
-			
-			
-			
-			
 			ContainerConfig containerConfig = ContainerConfig.builder()
 					.hostConfig(hostConfig)
 					.image("paprika-analyze:latest")
@@ -260,21 +236,13 @@ public final class PaprikaFacade {
 					Long.toString(nodeVer.getID()))
 					.workingDir("/dock")
 					.build();
-			System.out.println("containerConfig success");
 			ContainerCreation creation = docker.createContainer(containerConfig);
 			
-			System.out.println("creation success");
 			String id = creation.id();
-			numb++;
-			if(numb>10000) numb=0;
-			// ContainerInfo info = docker.inspectContainer(id);
-	 
-	//		System.out.println("Info Container:"+info.toString());
-			System.out.println("Id:"+id);
 			docker.startContainer(id);
-			System.out.println("container start success");
 			docker.close();
-			System.out.println("docker close  success");
+			System.out.println("container create and start success");
+			}
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

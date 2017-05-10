@@ -5,6 +5,7 @@ docker-compose up -d neoj
 docker build --file Dockerfile-web -t paprika-web .
 docker build --file Dockerfile-analyze -t paprika-analyze .
 docker-compose build web
+#docker-compose build analyse
 docker-compose up web
 
 #--verbose
