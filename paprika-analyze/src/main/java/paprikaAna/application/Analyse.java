@@ -100,7 +100,10 @@ public class Analyse {
 				res.getString("developer"), res.getString("category"), res.getString("price"), res.getDouble("rating"),
 				res.getString("nbDownload"), res.getString("versionCode"), res.getString("versionName"),
 				res.getString("sdkVersion"), res.getString("targetSdkVersion"), res.getBoolean("onlyMainPackage"));
+		System.out.println("start init");
+
 		analyzer.init();
+		System.out.println("End init, begin analyze");
 
 		analyzer.runAnalysis();
 		System.out.println("End collecting metrics");

@@ -41,7 +41,7 @@ public abstract class FuzzyQuery extends Query {
     
     
     protected FunctionBlock fuzzyFunctionBlock(){
-        File fcf = new File(fclFile);
+        File fcf = new File("fcl"+fclFile);
         //We look if the file is in a directory otherwise we look inside the jar
         FIS fis;
         if(fcf.exists() && !fcf.isDirectory()){

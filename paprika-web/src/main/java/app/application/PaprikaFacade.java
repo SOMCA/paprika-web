@@ -242,9 +242,8 @@ public final class PaprikaFacade {
 		
 			final HostConfig hostConfig = HostConfig.builder()
 					.networkMode("paprikaweb_default")
-					.binds("dataapp:/dock")
 					.links("neo4j-paprika","web-paprika")
-					.volumesFrom("paprika-web","web-paprika")
+					.volumesFrom("web-paprika")
 					.build();
 
 			
@@ -254,12 +253,13 @@ public final class PaprikaFacade {
 			ContainerConfig containerConfig = ContainerConfig.builder()
 					.hostConfig(hostConfig)
 					.image("paprika-analyze:latest")
+			//fortest		.cmd("sh", "-c", "while :; do sleep 1; done")
 					.cmd("java","-jar","Paprika-analyze.jar",
 							fname,Long.toString(size), user.getName()
 					, application.getName(),Long.toString(application.getID()),
 					Long.toString(nodeVer.getID()))
-					.addVolumes("/dock","/var/run/docker.sock")
-					.workingDir("/dock").build();
+					.workingDir("/dock")
+					.build();
 			System.out.println("containerConfig success");
 			ContainerCreation creation = docker.createContainer(containerConfig);
 			

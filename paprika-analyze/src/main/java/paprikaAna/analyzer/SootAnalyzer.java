@@ -91,8 +91,9 @@ public class SootAnalyzer extends Analyzer {
 				// Nothing, this is normal
 			}
 		}));
-
+System.out.println("G.reset();");
 		G.reset();
+		System.out.println("options");
 		Options.v().set_verbose(false);
 		// Path to android-sdk-platforms
 		Options.v().set_android_jars(androidJAR);
@@ -106,7 +107,7 @@ public class SootAnalyzer extends Analyzer {
 		Options.v().set_output_format(Options.output_format_grimple);
 		// Get directly the home directory and work on it
 		Options.v().set_output_dir(System.getProperty("user.home") + File.separator + "/These/decompiler/out");
-
+		System.out.println("phaseoptions");
 		PhaseOptions.v().setPhaseOption("gop", "enabled:true");
 		System.setOut(originalStream);
 
@@ -118,8 +119,11 @@ public class SootAnalyzer extends Analyzer {
 		excludeList.add("soot.");
 		excludeList.add("javax.servlet.");
 		Options.v().set_exclude(excludeList);
+		System.out.println("scene load");
 
 		Scene.v().loadNecessaryClasses();
+		System.out.println("end init method");
+		System.out.flush();
 	}
 
 	@Override
@@ -135,8 +139,13 @@ public class SootAnalyzer extends Analyzer {
 			}
 
 		}));
+		System.out.println("runPacks");
+
 		PackManager.v().runPacks();
+		System.out.println("computemetrics");
 		computeMetrics();
+		System.out.println("callGraphMetrics");
+
 		collectCallGraphMetrics();
 
 	}

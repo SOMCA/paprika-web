@@ -9,6 +9,7 @@
 	<packaging>jar</packaging>
 	<build>
 		<finalName>Paprika-analyze</finalName>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
   neoj:
     image: neo4j:latest
@@ -18,10 +18,7 @@ services:
     volumes:
        - .:/dock
        - /var/run/docker.sock:/var/run/docker.sock
-       - dataapp:/dock
     links:
       - neoj
     depends_on:
       - neoj
-volumes:
-  dataapp:
