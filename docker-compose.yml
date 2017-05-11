@@ -14,7 +14,7 @@ services:
       - "4567:4567"
     image: paprika-web:latest
     container_name: web-paprika
-    command: java -jar Paprika-web.jar
+    command: java -jar Paprika-web.jar -d
     volumes:
        - .:/dock
        - /var/run/docker.sock:/var/run/docker.sock

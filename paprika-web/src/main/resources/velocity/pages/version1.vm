@@ -17,65 +17,13 @@
       </div>
       <!-- /.row -->
 
-
+      #if($version)
+      #set($numberCodeSmells=$version.getNumberCodeSmells())
       <div class="row">
-        #if($version)
-        #set($flagothers=false)
-        #set($numberCodeSmells=$version.getNumberCodeSmells())
-        #if($analyse)
-        #if($analyseInLoading)
-        <div class="col-lg-8">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              $msg.get("VERSION_SPAN_AV_WAIT_LOADING", $analyseInLoading)
-              <div class="pull-right"><i class="fa fa-spinner fa-spin"></i></div>
 
-            </div>
-            <div class="panel-body">
-              $msg.get("VERSION_SPAN_AV_WAIT")
-            </div>
-          </div>
-        </div>
-        #else
-        #if($numberCodeSmells>0)
-        #set($flagothers=true)
-        #set($point=": ")
-        <div class="col-lg-8">
-          #foreach($codesmell in $version.getAllCodeSmells())
-          #if($codesmell.getNumberOfSmells() != 0)
-          #set($namec=$codesmell.getName())
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <i class="fa fa-bar-table-o fa-fw"></i>$namec$point$codesmell.getLongName()
-            </div>
-            <div class="panel-footer">
-              <a href="#" onclick="return textswitch('1$namec');">Description</a>
-            </div>
-            <div class="panel-body" style="display:none" id="1$namec">
-              <div style="margin-left: 25px;">
-                $codesmell.getDescription()
-              </div>
-            </div>
-            <div class="panel-footer">
-              <a href="#" onclick="return textswitch('2$namec');">Data</a>
-            </div>
-            <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="2$namec">
-              <div style="overflow:scroll;overflow:auto;width: 100%;height:100%;">
-                <table class="table" style="width: 90%;height:90%;">
-                  $codesmell.getLineList()
-                </table>
-              </div>
-            </div>
-          </div>
-          #end
-          #end
-        </div>
-        #end
-        #end
-        #end
-        <div class="col-lg-4">
-          #if($application)
+        #if($application)
 
+        <div class="col-lg-3 col-md-6">
           <div class="panel panel-red">
             <div class="panel-heading">
               <div class="row">
@@ -127,9 +75,64 @@
             </script>
             #end
           </div>
-          #end
+        </div>
+        #end
+      </div>
 
-          #if($flagothers)
+      #if($analyse)
+      #if($analyseInLoading)
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              $msg.get("VERSION_SPAN_AV_WAIT_LOADING", $analyseInLoading)
+              <div class="pull-right"><i class="fa fa-spinner fa-spin"></i></div>
+
+            </div>
+            <div class="panel-body">
+              $msg.get("VERSION_SPAN_AV_WAIT")
+            </div>
+          </div>
+        </div>
+      </div>
+      #else
+      #if($numberCodeSmells==0)
+      <div class="row"></div>
+      #else
+      <!-- /.row -->
+      <div class="row">
+        #set($point=": ")
+        <div class="col-lg-8">
+          #foreach($codesmell in $version.getAllCodeSmells())
+          #if($codesmell.getNumberOfSmells() != 0)
+          #set($namec=$codesmell.getName())
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <i class="fa fa-bar-table-o fa-fw"></i>$namec$point$codesmell.getLongName()
+            </div>
+            <div class="panel-footer">
+              <a href="#" onclick="return textswitch('1$namec');">Description</a>
+            </div>
+            <div class="panel-body" style="display:none" id="1$namec">
+              <div style="margin-left: 25px;">
+                $codesmell.getDescription()
+              </div>
+            </div>
+            <div class="panel-footer">
+              <a href="#" onclick="return textswitch('2$namec');">Data</a>
+            </div>
+            <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="2$namec">
+              <div style="overflow:scroll;overflow:auto;width: 100%;height:100%;">
+                <table class="table" style="width: 90%;height:90%;">
+                  $codesmell.getLineList()
+                </table>
+              </div>
+            </div>
+          </div>
+          #end
+          #end
+        </div>
+        <div class="col-lg-4">
           <div class="panel panel-default">
             <div class="panel-heading">
               <i class="fa fa-bar-chart-o fa-fw"></i> Donut Code Smells
@@ -140,58 +143,55 @@
               <a href="https://github.com/GeoffreyHecht/paprika/wiki/Paprika-model-and-metrics" class="btn btn-default btn-block">Informations variables Paprika</a>
             </div>
           </div>
-
-          #end
-
-
-
         </div>
-
-        #end
       </div>
-      <!-- /.row -->
-    </div>
-    <!-- /#page-wrapper -->
-
+      #end
+          #end
+          #end
+    #end
+    <!-- /.row -->
   </div>
-  <!-- /#wrapper -->
-  #parse("/velocity/pages/script.vm")
+  <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+#parse("/velocity/pages/script.vm")
 
 
 
-  <script>
-  #if($analyse)
-  $(function() {
-    Morris.Donut({
-      element: 'donutVersion',
-      data: [
+<script>
+#if($analyse)
+$(function() {
+  Morris.Donut({
+    element: 'donutVersion',
+    data: [
 
-        #foreach($codesmell in $version.getAllCodeSmells())
-        #set ($numb=$codesmell.getNumberOfSmells())
-        #if($numb ne 0)
-        {
-          label:"$codesmell.getName()",
-          value: $numb
-        },
-        #end
-        #end
-      ],
-      resize: true
-    });
+      #foreach($codesmell in $version.getAllCodeSmells())
+      #set ($numb=$codesmell.getNumberOfSmells())
+      #if($numb ne 0)
+      {
+        label:"$codesmell.getName()",
+        value: $numb
+      },
+      #end
+      #end
+    ],
+    resize: true
   });
-  #end
-  function textswitch(divid) {
+});
+#end
+function textswitch(divid) {
 
-    if(document.getElementById(divid).style.display=="none"){
-      document.getElementById(divid).style.display = "inline";
+  if(document.getElementById(divid).style.display=="none"){
+    document.getElementById(divid).style.display = "inline";
 
-    }
-    else{
-      document.getElementById(divid).style.display = "none";
-    }
-    return false;
   }
-  </script>
+  else{
+    document.getElementById(divid).style.display = "none";
+  }
+  return false;
+}
+</script>
 </body>
 
 </html>

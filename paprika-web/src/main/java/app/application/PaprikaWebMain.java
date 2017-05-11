@@ -4,8 +4,11 @@ import static spark.Spark.*;
 import static spark.debug.DebugScreen.*;
 
 import org.neo4j.driver.v1.AuthTokens;
+import org.neo4j.driver.v1.Config;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
 import app.form.FormController;
 import app.functions.DescriptionFunctions;
@@ -21,7 +24,7 @@ import java.net.InetAddress;
 public class PaprikaWebMain {
 
 	// "bolt://localhost:7687" quand on n'utilise pas docker.
-	public static  Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
+	private static  Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 			AuthTokens.basic("neo4j", "paprika"));
 
 	/**
@@ -38,15 +41,36 @@ public class PaprikaWebMain {
 			return "localhost";
 		}
 	}
-	public static final boolean dockerVersion=true;
+	public static boolean dockerVersion;
 
 	private PaprikaWebMain() {
 
 	}
+	
+	public static Session getSession(){
+		Session session=null;
+
+		try{
+		 session =driver.session();
+		}
+		catch(ServiceUnavailableException e){
+			driver.close();
+			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
+					AuthTokens.basic("neo4j", "paprika"));
+			 session =driver.session();
+		}
+		return session;
+	}
 
 	public static void main(String[] args) {
-
+		dockerVersion=false;
+		if(args.length!=0)
+			if("-d".equals(args[0])){
+				dockerVersion=true;
+			}
+		
 		new DescriptionFunctions().addAllClassicDescription();
+		
 
 		// Open the port 4567 for create a localhost server.
 		port(4567);

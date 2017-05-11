@@ -51,7 +51,7 @@ public final class PaprikaFacade {
 		String salt = new UserFunctions().retrieveSalt();
 		if (salt == null) {
 
-			try (Transaction tx = PaprikaWebMain.driver.session().beginTransaction()) {
+			try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
 				LowNode nodeKey = new LowNode(PaprikaKeyWords.LABELKEY);
 				nodeKey.addParameter(PaprikaKeyWords.ATTRIBUTE_SALT, BCrypt.gensalt());
 
@@ -126,7 +126,7 @@ public final class PaprikaFacade {
 	public String getParameter(LowNode lownode, String parameter) {
 		StatementResult result;
 		Graph graph = new Graph();
-		try (Transaction tx = PaprikaWebMain.driver.session().beginTransaction()) {
+		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
 			result = tx.run(graph.matchSee(lownode));
 			tx.success();
 		}
@@ -157,7 +157,7 @@ public final class PaprikaFacade {
 		}
 		node2.setId(id);
 		node2.addParameter(parameter, attribute);
-		try (Transaction tx = PaprikaWebMain.driver.session().beginTransaction()) {
+		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
 			tx.run(graph.set(node, node2));
 			tx.success();
 		}
@@ -173,7 +173,7 @@ public final class PaprikaFacade {
 		StatementResult result;
 		LowNode nodeChildren = new LowNode(childrenLabel);
 		Graph graph = new Graph();
-		try (Transaction tx = PaprikaWebMain.driver.session().beginTransaction()) {
+		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
 			result = tx.run(graph.matchSee(lownode, nodeChildren, relation));
 			tx.success();
 		}

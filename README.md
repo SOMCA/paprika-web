@@ -22,6 +22,17 @@ Celle ci est coupé en deux parties.
 
 
 
+## Run: You need build paprika-analyze and web before with mvn clean package then put target/file.jar on the main repertory (with run.sh)
+Go on shell and launch:
+
+Docker version:
+$./run.sh
+
+Semi docker Version:
+$docker-compose build neoj
+$docker-compose up -d neoj
+$java -jar Paprika-web.jar
+
 ## Paprika online use:
 * Spark-core framework web.
 * Neo4J graph database.(With Cypher).

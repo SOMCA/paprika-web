@@ -1,5 +1,6 @@
 $(function() {
 
+
     Morris.Donut({
         element: 'morris-donut-chart',
         data: [{

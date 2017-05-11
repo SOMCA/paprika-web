@@ -89,7 +89,7 @@ public class Application extends Entity {
 				node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
 
 				name = node.get(PaprikaKeyWords.NAMEATTRIBUTE).asString();
-				versions.add(facade.version(this, name));
+				versions.add(new Version(name,node.id()));
 			}
 
 			// A sort for be sure than all versions are sort with order
@@ -120,36 +120,30 @@ public class Application extends Entity {
 		List<Version> lastVersion = new ArrayList<>();
 		int numberVersion = this.getNumberOfVersionReal();
 		Version version;
-		/*
-		while (numberVersion > number) {
-			version = versions.next();
-			numberVersion--;
-		}
-		*/
+
 		while (versions.hasNext()) {
 			version = versions.next();
-			if (version == null || numberVersion<=0)
+			if (version == null || numberVersion <= 0)
 				return lastVersion;
 			if (version.isAnalyzed()) {
-				System.out.println(version.getName());
 				lastVersion.add(version);
 				numberVersion--;
 			}
 		}
-		System.out.println("---");
 		return lastVersion;
 	}
 
-	public boolean isApplicationHaveAnalysedVersion() {
+	public int getNumberOfAnalysedVersion() {
+		int i = 0;
 		if (!reload) {
-			return false;
-		} else if (this.getNumberOfVersionReal() != 0) {
+			return i;
+		} else if (this.getNumberOfVersionReal() > 0) {
 			for (Version version : listofVersion) {
-				if (version.isAnalyzed())
-					return true;
+
+				if (version.isAnalyzed()) i+=1;
 			}
 		}
-		return false;
+		return i;
 	}
 
 	private List<Map<String, Long>> getDataGraph(Iterator<Version> versions) {
@@ -195,7 +189,7 @@ public class Application extends Entity {
 	}
 
 	/**
-	 * Besoin de refaire en beaucoup beaucoup plus simple
+	 * Renvoie sous forme de très très gros string, une data pour un radarD3
 	 * 
 	 * @return
 	 */
@@ -234,55 +228,57 @@ public class Application extends Entity {
 
 	public String getAreaChart() {
 		StringBuilder str = new StringBuilder();
-
 		List<Version> versions = getLastXVersion(10);
 		List<Map<String, Long>> datas = getDataGraph(versions.iterator());
-		if (datas.isEmpty())
-			return "";
 		Map<String, Long> data;
+		String key;
 		int i;
-		StringBuilder array = new StringBuilder("['Version'");
+		StringBuilder array;
+		String line;
+		long value;
 		String[] allkeyArray = getKey(datas);
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
-		for (i = 0; i < allkeyArray.length; i++) {
-			array.append(",'" + allkeyArray[i] + "'");
-		}
-		array.append("],");
-		str.append(array);
-
-		Long value;
+		Iterator<Version> versionsIter = versions.iterator();
 		String name;
-		int length;
-		int lengthstr = str.length();
-		Iterator<Version> versionsiter = versions.iterator();
-		while (versionsiter.hasNext()) {
-			name = versionsiter.next().getName();
-			length = name.length();
-			if (length > 10) {
-				name = ".." + name.substring(length - 7, length);
-			}
-			array = new StringBuilder("['" + name + "'");
+		
+		// Partie 3, création du string
+		while (versionsIter.hasNext()) {
+			name=versionsIter.next().getName();
 			data = dataiter.next();
+			array = new StringBuilder("{version: '"+name+"', ");
 			for (i = 0; i < allkeyArray.length; i++) {
-				value = data.get(allkeyArray[i]);
-				if (value == null)
-					value = Long.valueOf(0);
-				array.append("," + value.toString() + "");
-
+				key = allkeyArray[i];
+				if (data.containsKey(key)) {
+					value = data.get(key);
+				} else
+					value = 0;
+				line = key.toLowerCase()+": "+ value + ", ";
+				array.append(line);
 			}
-			array.append("],");
-			// Pour insérer dans le sens inverse
-			str.insert(lengthstr, array);
-			// str.append(array);
+			array.append("},");
+			// On change l'ordre de l'inclusion
+			str.insert(0, array);
 		}
-
-		// ['Version', 'LM', 'BLOB','CC'],
-		// ['test v1.0', 50, 1,2],
-		// ['test v1.1', 60, 3,6],
-		// ['test v1.3', 24, 2,4],
-		// ['test v1.6', 10, 0,0],
-		// ['test v2.0', 60, 3,6],
-		// ['test v2.2', 24, 2,4]
+		// Du aux autres options, on a du rajouter des choses non liés au data
+		StringBuilder xkeys= new StringBuilder();
+		StringBuilder labels= new StringBuilder();
+		for (i = 0; i < (allkeyArray.length-1); i++) {
+			key = "'"+allkeyArray[i]+"',";
+			xkeys.append(key.toLowerCase());
+			labels.append(key);
+		}
+		key = "'"+allkeyArray[allkeyArray.length-1]+"',";
+		xkeys.append(key.toLowerCase());
+		labels.append(key);
+		
+		str.append("],   ykeys:["+xkeys+"],labels: ["+labels+"],");
+		
 		return str.toString();
+	}
+	
+	@Override
+	public String toString(){
+		return "["+this.getName()+","+this.getID()+","+this.getNumberOfVersion()+"]";
+		
 	}
 }

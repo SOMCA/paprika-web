@@ -18,22 +18,19 @@
   <!-- /.navbar-header -->
 
   <ul class="nav navbar-top-links navbar-right">
-    #if($currentUser)
     <li class="dropdown">
       <a class="dropdown-toggle" data-toggle="dropdown" href="#">
         <i class="fa fa-plus fa-fw"></i> <i class="fa fa-caret-down"></i>
       </a>
       <ul class="dropdown-menu dropdown-messages">
         <li>
-          <li><a href="/velocity/pages/info.html" ><i class="fa fa-info fa-fw"></i>$msg.get("INDEX_UL_INFO")</a></li>
+          <li><a onclick="infoClick()" href="#" ><i class="fa fa-info fa-fw"></i>$msg.get("INDEX_UL_INFO")</a></li>
         </li>
       </ul>
       <!-- /.dropdown-messages -->
     </li>
   </li>
 
-  <!-- /.dropdown -->
-  #end
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
       <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
