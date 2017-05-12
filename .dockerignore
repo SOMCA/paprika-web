@@ -1,0 +1,15 @@
+.git
+.gitignore
+.metadata
+.recommenders
+.DS_STORE
+LICENSE
+VERSION
+README.md
+paprika-analyze/
+paprika-web/
+run.sh
+docker-compose.yml
+velocity.log
+velocity.log.1
+spirals-somca

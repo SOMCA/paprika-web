@@ -9,6 +9,9 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
+    <a class="navbar-brand" href="/index/">Paprika</a>
+  </div>
+  <div class="navbar-left">
     #if($user)
     <a class="navbar-brand" href="/index/">$msg.get("INDEX_NAV_AUTH_SUCCEEDED", $user.getUsername())</a>
     #else

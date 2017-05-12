@@ -19,7 +19,6 @@ public class PathIn {
          public static final String LOGIN = "/login/";
          public static final String LOGOUT = "/logout/";
          public static final String SIGNUP = "/signUp/";
-         public static final String FORM = "/form/";
          public static final String FORMDEL = "/form_delete/";
          public static final String VERSION = "/version/";
 
@@ -31,8 +30,6 @@ public class PathIn {
     public static class Template {
    
         public static final String INDEX = "/velocity/pages/index.vm";
-        public static final String FORM_APP = "/velocity/forms/form_app.vm";
-        public static final String FORM_TAB = "/velocity/forms/form_tab.vm";
         public static final String FORM_DELETE = "/velocity/forms/form_delete.vm";
         public static final String LOGIN = "/velocity/pages/login.vm";
         public static final String SIGNUP = "/velocity/pages/signUp.vm";

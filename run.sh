@@ -1,11 +1,11 @@
+#docker-machine create --driver generic --generic-ip-address=spirals-somca --generic-ssh-key ~/.ssh/id_rsa --generic-ssh-user=gwillefe spirals-somca
+
 
 docker-compose build neoj
 docker-compose up -d neoj
-#docker create -v /dock --name datafile training/postgres /bin/true
 docker build --file Dockerfile-web -t paprika-web .
 docker build --file Dockerfile-analyze -t paprika-analyze .
 docker-compose build web
-#docker-compose build analyse
 docker-compose up web
 
 #--verbose
