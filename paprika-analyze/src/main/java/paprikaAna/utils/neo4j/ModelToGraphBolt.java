@@ -61,7 +61,7 @@ public class ModelToGraphBolt {
     public ModelToGraphBolt(){
 
 		graph = new Graph();
-		session = PaprikaAnalyzeMain.driver.session();
+		session = PaprikaAnalyzeMain.getSession();
         methodNodeMap = new HashMap<>();
         classNodeMap = new HashMap<>();
         variableNodeMap = new HashMap<>();

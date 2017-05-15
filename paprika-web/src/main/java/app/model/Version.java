@@ -39,10 +39,8 @@ public class Version  extends Entity{
 	}
 	
 	public boolean checkAnalyzed(){
-		LowNode nodeVer= new LowNode(PaprikaKeyWords.VERSIONLABEL);
-		nodeVer.setId(getID());
 		PaprikaFacade facade= PaprikaFacade.getInstance();
-		this.analyzed=(facade.getParameter(nodeVer, PaprikaKeyWords.CODEA)!=null);
+		this.analyzed=(facade.getParameter(getID(), PaprikaKeyWords.CODEA)!=null);
 		return this.analyzed;
 	}
 	

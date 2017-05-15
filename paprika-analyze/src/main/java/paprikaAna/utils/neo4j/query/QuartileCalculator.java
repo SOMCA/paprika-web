@@ -38,7 +38,7 @@ public class QuartileCalculator {
 
 	public QuartileCalculator(QueryEngineBolt queryEngine) {
 		this.queryEngine = queryEngine;
-		session = PaprikaAnalyzeMain.driver.session();
+		session = PaprikaAnalyzeMain.getSession();
 	}
 
 	public void calculateClassComplexityQuartile() throws IOException {

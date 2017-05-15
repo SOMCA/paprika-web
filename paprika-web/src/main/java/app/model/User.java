@@ -9,7 +9,6 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaFacade;
-import app.functions.ApplicationFunctions;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
@@ -45,8 +44,8 @@ public class User extends Entity{
 	
 	
 	
-	public Iterator<String> getDataApplications() {
-		List<String> applications = new ArrayList<>();
+	public Iterator<Application> getDataApplications() {
+		List<Application> applications = new ArrayList<>();
 		Record record;
 		String name;
 
@@ -65,7 +64,7 @@ public class User extends Entity{
 			node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
 
 			name = node.get(PaprikaKeyWords.NAMEATTRIBUTE).asString();
-			applications.add(name);
+			applications.add(new Application(name,node.id()));
 		}
 		return applications.iterator();
 
@@ -77,13 +76,13 @@ public class User extends Entity{
 	 * @return
 	 */
 	
-	public List<String> getListVersionApplications(String application) {
-		List<String> applications = new ArrayList<>();
+	public List<Version> getListVersionApplications(long idapplication) {
+		List<Version> versions = new ArrayList<>();
 		Record record;
 		String name;
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		LowNode lownode= new LowNode(PaprikaKeyWords.LABELPROJECT);
-		lownode.setId(new ApplicationFunctions().receiveIDOfApplication(this.getName(), application));
+		lownode.setId(idapplication);
         List<Record> bigdata = facade.loadChildrenOfNode(lownode,  PaprikaKeyWords.REL_PROJECT_VERSION, PaprikaKeyWords.VERSIONLABEL);
 		
 		Iterator<Record> iter = bigdata.iterator();
@@ -93,13 +92,13 @@ public class User extends Entity{
 			node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
 
 			name = node.get(PaprikaKeyWords.NAMEATTRIBUTE).asString();
-			applications.add(name);
+			versions.add(new Version(name,node.id()));
 		}
-		return applications;
+		return versions;
 	}
 
-	public Iterator<String> getVersionApplications(String application) {
-		return getListVersionApplications(application).iterator();
+	public Iterator<Version> getVersionApplications(long idapplication) {
+		return getListVersionApplications(idapplication).iterator();
 	}
 	
 	

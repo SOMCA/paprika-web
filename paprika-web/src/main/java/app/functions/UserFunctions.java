@@ -106,7 +106,5 @@ public class UserFunctions extends Functions {
 		}
 	}
 	
-	
-
 
 }

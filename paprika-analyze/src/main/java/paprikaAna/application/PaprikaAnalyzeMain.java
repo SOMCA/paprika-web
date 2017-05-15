@@ -9,6 +9,9 @@ import java.util.logging.Logger;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
+
 import paprikaana.model.*;
 
 import net.dongliu.apk.parser.ApkFile;
@@ -17,7 +20,7 @@ import paprikaana.utils.neo4j.PaprikaKeyWords;
 
 public class PaprikaAnalyzeMain {
 
-	public static Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
+	private static Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 			AuthTokens.basic("neo4j", "paprika"));
 
 	/**
@@ -38,6 +41,21 @@ public class PaprikaAnalyzeMain {
 
 	private PaprikaAnalyzeMain(){
 		
+	}
+	
+	public static Session getSession(){
+		Session session=null;
+
+		try{
+		 session =driver.session();
+		}
+		catch(ServiceUnavailableException e){
+			driver.close();
+			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
+					AuthTokens.basic("neo4j", "paprika"));
+			 session =driver.session();
+		}
+		return session;
 	}
 
 	public static void main(String[] args) {
@@ -61,7 +79,7 @@ public class PaprikaAnalyzeMain {
 			apkfile = new ApkFile(pathstr);
 			PaprikaFacade facade = PaprikaFacade.getInstance();
 			AnalyzeProcess anaThread = new AnalyzeProcess(apkfile, fName, application, user, size, nodeVer);
-			facade.setParameterOnNode(nodeVer, PaprikaKeyWords.CODEA, "loading");
+			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "loading");
 			anaThread.run();
 		} catch (IOException e) {
 			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"main: IOException",e);

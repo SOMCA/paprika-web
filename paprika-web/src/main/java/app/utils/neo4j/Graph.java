@@ -54,25 +54,11 @@ public class Graph {
 	 * @param relationLabel
 	 * @return
 	 */
+	
 	public String relation(LowNode lowNode, LowNode lowNodeTarget, String relationLabel) {
 		return matchPrefabs("it", lowNode) + matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNodeTarget) + Graph.CREATEIT
 				+ relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ")";
 	}
-
-	/**
-	 * Return a command who Create a relation between two nodes who exist.
-	 * 
-	 * @param lowNode
-	 * @param lowNodeTarget
-	 * @param relationLabel
-	 * @return
-	 */
-	public String relation(LowNode lowNode, LowNode lowNodeTarget, LowNode lowNodeRelation) {
-		return matchPrefabs("it", lowNode) + matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNodeTarget) + Graph.CREATEIT
-				+ lowNodeRelation.getLabel() + lowNodeRelation.parametertoData() + "]->(" + PaprikaKeyWords.NAMELABEL
-				+ ")";
-	}
-
 	/**
 	 * Return a command who Create a relation between two nodes, where the left
 	 * node already exist
@@ -102,11 +88,6 @@ public class Graph {
 				+ lowNode.idfocus(labelname);
 	}
 
-	/**
-	 * Return a command for clean all database
-	 *
-	 * private String deleteAll() { return "MATCH (n) DETACH DELETE n"; }
-	 */
 
 	/**
 	 * renvoie une commande qui retourne les nodes d'un label avec pour

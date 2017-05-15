@@ -59,12 +59,13 @@ public class IndexController {
 		String project = request.queryParams("project");
 		String menu = RequestUtil.getParamMenu(request);
 		if (project != null) {
-			facade.addProject(RequestUtil.getSessionUser(request), project);
-			request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(user, project));
+			long idProject=facade.addProject(RequestUtil.getSessionUser(request), project);
+			if(idProject!=-1)
+			request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(idProject));
 		}
 		// Formulaire quand on choisit le menu.
 		else if (menu != null) {
-			request.session().attribute(PaprikaKeyWords.APPLICATION,facade.application(user,menu));
+			request.session().attribute(PaprikaKeyWords.APPLICATION,facade.application(Long.parseLong(menu)));
 		}
 		// Formulaire quand on upload un fichier ET analyse.
 		else if (menu == null && project == null) {

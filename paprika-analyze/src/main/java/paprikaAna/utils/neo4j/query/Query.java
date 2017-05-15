@@ -35,7 +35,7 @@ public abstract class Query {
 
     public Query(QueryEngineBolt queryEngine) {
         this.queryEngine = queryEngine;
-		session = PaprikaAnalyzeMain.driver.session();
+		session = PaprikaAnalyzeMain.getSession();
     }
 
     public abstract void execute(boolean details) throws CypherException, IOException;

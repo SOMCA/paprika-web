@@ -25,9 +25,7 @@ public class VersionController {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		Version version = RequestUtil.getSessionVersion(request);
 		if (version != null) {
-			LowNode nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
-			nodeVer.setId(version.getID());
-			String value = facade.getParameter(nodeVer, PaprikaKeyWords.ANALYSEINLOAD);
+			String value = facade.getParameter(version.getID(), PaprikaKeyWords.ANALYSEINLOAD);
 			if (value != null && !"100".equals(value)) {
 				model.put(PaprikaKeyWords.ANALYSEINLOAD, value);
 			}
@@ -65,10 +63,9 @@ public class VersionController {
 
 		System.out.println("-------handleVersionPost--------");
 		String menu = RequestUtil.getQueryVersion(request);
-		System.out.println(menu);
 		if (menu != null) {
 			System.out.println("etape menu: " + menu);
-			request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(user, menu));
+			request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(Long.parseLong(menu)));
 		}
 		Application application = RequestUtil.getSessionApplication(request);
 
@@ -76,12 +73,10 @@ public class VersionController {
 		String menuVer = RequestUtil.getParamMenuVersion(request);
 		if (menuVer != null) {
 			System.out.println("etape menuVer: " + menuVer);
-			request.session().attribute("version", facade.version(application, menuVer));
+			request.session().attribute("version", facade.version(Long.parseLong(menuVer)));
 			request.session().removeAttribute(ANALYSE);
 		}
 		Version version = RequestUtil.getSessionVersion(request);
-		LowNode nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
-		nodeVer.setId(version.getID());
 		String str;
 		// Formulaire quand on choisit d'ANALYSEr dans la page version.
 		String analys = request.queryParams(ANALYSE);
@@ -102,7 +97,7 @@ public class VersionController {
 			if (flag) {
 
 
-				 facade.callAnalyzeThread(nodeVer, fname, application, user, file.length(),PaprikaWebMain.dockerVersion);
+				 facade.callAnalyzeThread(version.getID(), fname, application, user, file.length(),PaprikaWebMain.dockerVersion);
 				model.put(PaprikaKeyWords.ANALYSEINLOAD, "0");
 
 			}
@@ -112,7 +107,7 @@ public class VersionController {
 
 		else {
 
-			str = facade.getParameter(nodeVer, PaprikaKeyWords.CODEA);
+			str = facade.getParameter(version.getID(), PaprikaKeyWords.CODEA);
 			if (str != null) {
 				System.out.println("loading statut");
 				request.session().attribute(ANALYSE, true);

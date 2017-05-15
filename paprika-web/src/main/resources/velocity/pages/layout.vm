@@ -75,9 +75,9 @@
       </li>
       #set ($velocityMenu=0)
       #foreach($title in $user.getDataApplications())
-      #set($titlename=$title)
-		  #if($title.length()>15)
-         #set($titlename="$title.substring(0,16)"+"..")
+      #set($titlename=$title.getName())
+		  #if($titlename.length()>15)
+         #set($titlename="$titlename.substring(0,16)"+"..")
          #end
       <li>
 
@@ -88,23 +88,23 @@
             <a href="#" onclick="menuclick('title$velocityMenu');return false;">  $msg.get("INDEX_UL_VIEW")</a>
           </li>
           <form id="forTitle$velocityMenu" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/index/">
-            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="title$velocityMenu" name="title" value="$title"></button>
+            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="title$velocityMenu" name="title" value="$title.getID()"></button>
           </form>
 
           #set ($velocityVer=1)
-          #foreach($titleVer in $user.getVersionApplications($title))
-          #set($titleVername=$titleVer)
-          #set($lengthTV=$titleVer.length())
+          #foreach($titleVer in $user.getVersionApplications($title.getID()))
+          #set($titleVername=$titleVer.getName())
+          #set($lengthTV=$titleVername.length())
           #if($lengthTV>20)
               #set($minLen=-15+$lengthTV)
-             #set($titleVername=".."+"$titleVer.substring($minLen,$lengthTV)")
+             #set($titleVername=".."+"$titleVername.substring($minLen,$lengthTV)")
              #end
           <li>
             <a href="#" onclick="titleVerClick('titleVer$velocityMenu$velocityVer');return false;">$titleVername</a>
           </li>
           <form style="visibility: hidden; width: 1px; height: 1px" method="post" action="/version/">
-              <input style="visibility: hidden; width: 1px; height: 1px" type="text" name="titleofVer" value="$title"></input>
-            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="titleVer$velocityMenu$velocityVer" name="titleVer" value="$titleVer"></button>
+              <input style="visibility: hidden; width: 1px; height: 1px" type="text" name="titleofVer" value="$title.getID()"></input>
+            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="titleVer$velocityMenu$velocityVer" name="titleVer" value="$titleVer.getID()"></button>
           </form>
           #set ($velocityVer=$velocityVer+1)
           #end

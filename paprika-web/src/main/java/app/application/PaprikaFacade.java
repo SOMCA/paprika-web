@@ -67,16 +67,16 @@ public final class PaprikaFacade {
 		return new UserFunctions().foundUser(email);
 	}
 
-	public Application application(User user, String application) {
+	public Application application(long application) {
 		ApplicationFunctions appFct = new ApplicationFunctions();
 
-		return new Application(application, appFct.receiveIDOfApplication(user.getName(), application));
+		return new Application(appFct.receiveOf(application), application);
 	}
 
-	public Version version(Application application, String version) {
+	public Version version(long version) {
 		VersionFunctions verFct = new VersionFunctions();
 
-		return new Version(version, verFct.receiveIDOfVersion(application.getID(), version));
+		return new Version(verFct.receiveOf(version), version);
 	}
 
 	/**
@@ -85,14 +85,14 @@ public final class PaprikaFacade {
 	 * @param user
 	 * @param project
 	 */
-	public void addProject(User user, String project) {
+	public long addProject(User user, String project) {
 		ApplicationFunctions appFct = new ApplicationFunctions();
-
+        long idProject=-1;
 		if (project != null && appFct.receiveIDOfApplication(user.getName(), project) == -1) {
-			appFct.writeApplicationOnUser(user.getName(), project);
+			idProject=appFct.writeApplicationOnUser(user.getName(), project);
 		}
 
-		return;
+		return idProject;
 	}
 
 	public void needReloadApp(Application application) {
@@ -123,44 +123,22 @@ public final class PaprikaFacade {
 	 * @param parameter
 	 * @return
 	 */
-	public String getParameter(LowNode lownode, String parameter) {
-		StatementResult result;
-		Graph graph = new Graph();
+	public String getParameter(long idNode, String parameter) {
+		StatementResult result=null;
 		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
-			result = tx.run(graph.matchSee(lownode));
+			result = tx.run("MATCH (n) WHERE ID(n) = "+idNode+" RETURN n");
 			tx.success();
 		}
-		if (result != null && result.hasNext()) {
+		if (result!= null && result.hasNext()) {
 			Record record = result.next();
-			Node node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
+			if(!record.get("n").isNull()){
+			Node node = record.get("n").asNode();
 			Value val = node.get(parameter);
-			if (val != null && !val.isNull())
+			if (!val.isNull())
 				return val.asString();
+			}
 		}
 		return null;
-	}
-
-	/**
-	 * Applique ou créer une nouvelle valeur dans le node en question. Le node
-	 * doit contenir une Id pour fonctionner.
-	 * 
-	 * @param nodeVer
-	 * @param parameter
-	 * @param key
-	 */
-	public void setParameterOnNode(LowNode node, String parameter, String attribute) {
-		LowNode node2 = new LowNode(node.getLabel());
-		Graph graph = new Graph();
-		long id = node.getID();
-		if (id == -1) {
-			return;
-		}
-		node2.setId(id);
-		node2.addParameter(parameter, attribute);
-		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
-			tx.run(graph.set(node, node2));
-			tx.success();
-		}
 	}
 
 	/**
@@ -206,12 +184,12 @@ public final class PaprikaFacade {
 	}
 
 
-	public void callAnalyzeThread(LowNode nodeVer, String fname, Application application, User user, long size,boolean dockerContainer) {
+	public void callAnalyzeThread(long idNode, String fname, Application application, User user, long size,boolean dockerContainer) {
 		try {
 			System.out.println("callAnalyzeThread:");
 			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
 					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
-					+ Long.toString(nodeVer.getID());
+					+ Long.toString(idNode);
 			System.out.println(command);
 			
 			if(!dockerContainer){
@@ -233,7 +211,7 @@ public final class PaprikaFacade {
 					.cmd("java","-jar","Paprika-analyze.jar",
 							fname,Long.toString(size), user.getName()
 					, application.getName(),Long.toString(application.getID()),
-					Long.toString(nodeVer.getID()))
+					Long.toString(idNode))
 					.workingDir("/dock")
 					.build();
 			ContainerCreation creation = docker.createContainer(containerConfig);

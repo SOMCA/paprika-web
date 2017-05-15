@@ -10,6 +10,7 @@ import app.utils.neo4j.LowNode;
 public class ApplicationFunctions extends Functions {
 
 
+	
 	/**
 	 * Retrouve l'id de l'application ciblé
 	 * 
@@ -17,6 +18,7 @@ public class ApplicationFunctions extends Functions {
 	 * @param application
 	 * @return
 	 */
+	
 	public long receiveIDOfApplication(String email, String application) {
 		LowNode nodeUser = new LowNode(PaprikaKeyWords.LABELUSER);
 		nodeUser.addParameter(PaprikaKeyWords.ATTRIBUTE_EMAIL, email);
@@ -24,25 +26,16 @@ public class ApplicationFunctions extends Functions {
 		LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
 		nodeApp.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, application);
 
-		return this.receiveIDOfApplication(nodeUser, nodeApp);
-	}
-
-
-	/**
-	 * Retrouve l'id de l'application ciblé
-	 * 
-	 * @param email
-	 * @param application
-	 * @return
-	 */
-	public long receiveIDOfApplication(LowNode nodeUser, LowNode nodeApp) {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
 			result = tx.run(graph.matchSee(nodeUser, nodeApp, PaprikaKeyWords.REL_USER_PROJECT));
 			tx.success();
 		}
 		return this.graph.getID(result,PaprikaKeyWords.NAMELABEL);
+	
 	}
+
+
 
 	/**
 	 * Prend un node application ou version, et incrémente de 1 à l'attribut en
@@ -69,12 +62,12 @@ public class ApplicationFunctions extends Functions {
 	 * @param email
 	 * @param application
 	 */
-	public void writeApplicationOnUser(String email, String application) {
+	public long writeApplicationOnUser(String email, String application) {
 
 		StatementResult result;
 		Record record;
 		Node node;
-
+		long id=-1;
 		LowNode nodeUser = new LowNode(PaprikaKeyWords.LABELUSER);
 		nodeUser.addParameter(PaprikaKeyWords.ATTRIBUTE_EMAIL, email);
 
@@ -94,12 +87,17 @@ public class ApplicationFunctions extends Functions {
 
 			// Créer une application node:
 			result = tx.run(graph.create(nodeApp));
-			long id = this.graph.getID(result, PaprikaKeyWords.NAMELABEL);
+			id = this.graph.getID(result, PaprikaKeyWords.NAMELABEL);
 			// Récupère son id:
 			nodeApp.setId(id);
 
 			tx.run(graph.relation(nodeUser, nodeApp, PaprikaKeyWords.REL_USER_PROJECT));
 			tx.success();
 		}
+		return id;
+	}
+
+	public String receiveOf(long idnode) {
+		return this.receiveNameOf(idnode, PaprikaKeyWords.NAMEATTRIBUTE);
 	}
 }

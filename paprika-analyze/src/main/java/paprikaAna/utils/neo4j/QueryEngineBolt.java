@@ -48,7 +48,7 @@ public class QueryEngineBolt {
 
 	public QueryEngineBolt(String keyApp) {
 		graph = new Graph();
-		session = PaprikaAnalyzeMain.driver.session();
+		session = PaprikaAnalyzeMain.getSession();
 		this.keyApp = keyApp;
 	}
 

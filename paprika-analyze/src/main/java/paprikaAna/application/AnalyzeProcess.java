@@ -33,7 +33,6 @@ public class AnalyzeProcess {
 		this.size = size;
 		this.nodeVer = nodeVer;
 	}
-
 	public void run() {
 		Analyse ana = new Analyse();
 		this.runPartAnalyse(ana);
@@ -43,7 +42,7 @@ public class AnalyzeProcess {
 	private void runPartAnalyse(Analyse ana) {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		String appname = this.application.getName();
-		facade.setParameterOnNode(nodeVer, "analyseInLoading", "0");
+		facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "0");
 		String realname = fName.substring(0, fName.lastIndexOf('.'));
 		String pathstr = "application/" + this.user + "/" + appname + "/" + fName;
 		String xml;
@@ -63,7 +62,7 @@ public class AnalyzeProcess {
 				indexVn += attributeVersionName.length() + 1;
 				String strversionname = realname + "_" + xml.substring(indexVn, xml.indexOf('"', indexVn));
 
-				if (!this.versionAlreadyExist(this.application.getID(), strversionname)) {
+				//if (!this.versionAlreadyExist(this.application.getID(), strversionname)) {
 
 					indexVc += attributeVersionCode.length() + 1;
 					String strversioncode = xml.substring(indexVc, xml.indexOf('"', indexVc));
@@ -75,24 +74,24 @@ public class AnalyzeProcess {
 							"1990-01-01", "-r", "250", "-s", Long.toString(size), "-u", "unsafe", "-omp", "True", "-vn",
 							strversionname, "-vc", strversioncode, pathstr };
 
-					facade.setParameterOnNode(nodeVer, "analyseInLoading", "10");
+					facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "10");
 					PaprikaApp paprikaapp;
 					paprikaapp = ana.runAnalysis(args);
 
-					facade.setParameterOnNode(nodeVer, "analyseInLoading", "50");
+					facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "50");
 
 					ModelToGraphBolt modelToGraph = new ModelToGraphBolt();
 					long idApp = modelToGraph.insertApp(paprikaapp, nodeVer).getID();
 
 					new VersionFunctions().writeAnalyzeOnVersion(nodeVer, idApp);
 
-					facade.setParameterOnNode(nodeVer, PaprikaKeyWords.APPKEY, databasekey);
+					facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, databasekey);
 					Path out = Paths.get(pathstr);
 					Files.deleteIfExists(out);
 
 					apkfile.close();
 
-				}
+				//}
 			}
 		} catch (IOException e) {
 			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE, "runPartAnalyse: IOException", e);
@@ -107,17 +106,17 @@ public class AnalyzeProcess {
 	private void runPartQuery(Analyse ana) {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 
-		String keyApp = facade.getParameter(nodeVer, PaprikaKeyWords.APPKEY);
+		String keyApp = facade.getParameter(nodeVer.getID(), PaprikaKeyWords.APPKEY);
 		if (keyApp != null) {
 			String[] args = { "query", "-k", keyApp, "-r", "ALLAP" };
 			new VersionFunctions().writeQueryOnVersion(nodeVer, keyApp);
 			ana.runQueryMode(args);
-			facade.setParameterOnNode(nodeVer, PaprikaKeyWords.CODEA, "done");
-			facade.setParameterOnNode(nodeVer, "analyseInLoading", "100");
+			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
+			facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
 
 		}
 	}
-
+/*
 	private boolean versionAlreadyExist(long idapplication, String version) {
 		if (new VersionFunctions().receiveIDOfVersion(idapplication, version) == -1) {
 			return false;
@@ -125,7 +124,7 @@ public class AnalyzeProcess {
 
 		return true;
 	}
-	
+*/	
 	
 	
 

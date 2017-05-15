@@ -17,4 +17,7 @@ public abstract class Entity {
 		
 		return this.id;
 	}
+	
+	
+	
 }

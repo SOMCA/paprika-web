@@ -11,7 +11,7 @@ public abstract class Functions {
 
 	public Functions() {
 		this.graph = new Graph();
-		this.session = PaprikaAnalyzeMain.driver.session();
+		this.session = PaprikaAnalyzeMain.getSession();
 	}
 	
 
