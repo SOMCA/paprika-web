@@ -232,7 +232,7 @@ public class Analyse {
 	
 	public void queryMode(Namespace arg) throws IOException {
 		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Executing Queries");
-		QueryEngineBolt queryEngine = new QueryEngineBolt(arg.getString("key"));
+		QueryEngineBolt queryEngine = new QueryEngineBolt(Long.parseLong(arg.getString("key")));
 		String request = arg.get("request");
 		Boolean details = arg.get("details");
 		switch (request) {

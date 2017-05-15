@@ -137,11 +137,11 @@ public class Graph {
 	 * Supprime une donnée de la base de donnée et tous ces enfants et petits
 	 * enfants.
 	 * 
-	 * @param lowNode
+	 * @param id String car récupérer sous forme de string à la base.
 	 * @return
 	 */
-	public String deleteDataAndAllChildrends(LowNode lowNode) {
-		return this.matchPrefabs("n", lowNode) + " MATCH (n)-[*]->(a)" + " DETACH DELETE n,a";
+	public String deleteDataAndAllChildrens(String id) {
+		return "MATCH(n) WHERE id(n)= "+id+" MATCH (n)-[*]->(a)" + " DETACH DELETE n,a";
 	}
 
 }

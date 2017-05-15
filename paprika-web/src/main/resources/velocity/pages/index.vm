@@ -253,7 +253,7 @@ $(function() {
       parseTime: false,
       pointSize: 2,
       hideHover: 'auto',
-      xLabelAngle:90,
+      xLabelAngle:45,
       resize: true
     });
 });

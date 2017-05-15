@@ -56,7 +56,7 @@ public class ModelToGraphBolt {
     private Map<PaprikaClass,LowNode> classNodeMap;
     private Map<PaprikaVariable,LowNode> variableNodeMap;
 
-    private String key;
+    private long key;
 
     public ModelToGraphBolt(){
 
@@ -68,7 +68,7 @@ public class ModelToGraphBolt {
     }
 
     public LowNode insertApp(PaprikaApp paprikaApp,LowNode nodeVer){
-        this.key = paprikaApp.getKey();
+        this.key =nodeVer.getID();
         LowNode appNode= new LowNode(PaprikaKeyWords.LABELAPP);
 		StatementResult result;
 

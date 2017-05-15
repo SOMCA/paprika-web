@@ -17,7 +17,6 @@ import javax.servlet.http.Part;
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
 import app.model.Application;
-import app.model.User;
 import app.utils.PaprikaKeyWords;
 import app.utils.PathIn;
 import app.utils.RequestUtil;
@@ -51,7 +50,6 @@ public class IndexController {
 	public static final Route handleIndexaddApp = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		PaprikaFacade facade= PaprikaFacade.getInstance();
-		User user=RequestUtil.getSessionUser(request);
 		Application application=RequestUtil.getSessionApplication(request);
 		
 		

@@ -31,7 +31,6 @@ public class PaprikaKeyWords {
 	public static final String REL_CAS_CODE="HAS_CODESMELL";
 	public static final String REL_CODESMELLS_CAS="RESULT";
 	
-	public static final String APPKEY = "app_key";
 	public static final String CODEA = "code_is_analyzed";
 	public static final String NAMEATTRIBUTE = "name";
 	public static final String NAMELABEL = "target";

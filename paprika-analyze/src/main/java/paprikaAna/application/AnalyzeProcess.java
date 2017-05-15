@@ -85,7 +85,7 @@ public class AnalyzeProcess {
 
 					new VersionFunctions().writeAnalyzeOnVersion(nodeVer, idApp);
 
-					facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, databasekey);
+					facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
 					Path out = Paths.get(pathstr);
 					Files.deleteIfExists(out);
 
@@ -106,15 +106,12 @@ public class AnalyzeProcess {
 	private void runPartQuery(Analyse ana) {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 
-		String keyApp = facade.getParameter(nodeVer.getID(), PaprikaKeyWords.APPKEY);
-		if (keyApp != null) {
-			String[] args = { "query", "-k", keyApp, "-r", "ALLAP" };
+		long keyApp = nodeVer.getID();
+			String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
 			new VersionFunctions().writeQueryOnVersion(nodeVer, keyApp);
 			ana.runQueryMode(args);
 			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
 			facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
-
-		}
 	}
 /*
 	private boolean versionAlreadyExist(long idapplication, String version) {

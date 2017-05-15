@@ -75,7 +75,7 @@ public class User extends Entity{
 	 * @param application
 	 * @return
 	 */
-	
+	/*
 	public List<Version> getListVersionApplications(long idapplication) {
 		List<Version> versions = new ArrayList<>();
 		Record record;
@@ -100,7 +100,7 @@ public class User extends Entity{
 	public Iterator<Version> getVersionApplications(long idapplication) {
 		return getListVersionApplications(idapplication).iterator();
 	}
-	
+	*/
 	
 
 

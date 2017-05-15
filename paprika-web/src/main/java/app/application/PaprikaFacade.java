@@ -1,7 +1,9 @@
 package app.application;
 
 import java.net.InetAddress;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.driver.v1.Record;
@@ -87,9 +89,9 @@ public final class PaprikaFacade {
 	 */
 	public long addProject(User user, String project) {
 		ApplicationFunctions appFct = new ApplicationFunctions();
-        long idProject=-1;
+		long idProject = -1;
 		if (project != null && appFct.receiveIDOfApplication(user.getName(), project) == -1) {
-			idProject=appFct.writeApplicationOnUser(user.getName(), project);
+			idProject = appFct.writeApplicationOnUser(user.getName(), project);
 		}
 
 		return idProject;
@@ -124,18 +126,18 @@ public final class PaprikaFacade {
 	 * @return
 	 */
 	public String getParameter(long idNode, String parameter) {
-		StatementResult result=null;
+		StatementResult result = null;
 		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
-			result = tx.run("MATCH (n) WHERE ID(n) = "+idNode+" RETURN n");
+			result = tx.run("MATCH (n) WHERE ID(n) = " + idNode + " RETURN n");
 			tx.success();
 		}
-		if (result!= null && result.hasNext()) {
+		if (result != null && result.hasNext()) {
 			Record record = result.next();
-			if(!record.get("n").isNull()){
-			Node node = record.get("n").asNode();
-			Value val = node.get(parameter);
-			if (!val.isNull())
-				return val.asString();
+			if (!record.get("n").isNull()) {
+				Node node = record.get("n").asNode();
+				Value val = node.get(parameter);
+				if (!val.isNull())
+					return val.asString();
 			}
 		}
 		return null;
@@ -183,43 +185,36 @@ public final class PaprikaFacade {
 		return true;
 	}
 
-
-	public void callAnalyzeThread(long idNode, String fname, Application application, User user, long size,boolean dockerContainer) {
+	public void callAnalyzeThread(long idNode, String fname, Application application, User user, long size,
+			boolean dockerContainer) {
 		try {
 			System.out.println("callAnalyzeThread:");
 			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
 					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
 					+ Long.toString(idNode);
 			System.out.println(command);
-			
-			if(!dockerContainer){
-			Runtime.getRuntime().exec(command);
-			System.out.println("Processus created");
-			}
-			else{
-			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
-			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
-			final HostConfig hostConfig = HostConfig.builder()
-					.networkMode("paprikaweb_default")
-					.links("neo4j-paprika","web-paprika")
-					.volumesFrom("web-paprika")
-					.build();
-			ContainerConfig containerConfig = ContainerConfig.builder()
-					.hostConfig(hostConfig)
-					.image("paprika-analyze:latest")
-			//fortest		.cmd("sh", "-c", "while :; do sleep 1; done")
-					.cmd("java","-jar","Paprika-analyze.jar",
-							fname,Long.toString(size), user.getName()
-					, application.getName(),Long.toString(application.getID()),
-					Long.toString(idNode))
-					.workingDir("/dock")
-					.build();
-			ContainerCreation creation = docker.createContainer(containerConfig);
-			
-			String id = creation.id();
-			docker.startContainer(id);
-			docker.close();
-			System.out.println("container create and start success");
+
+			if (!dockerContainer) {
+				Runtime.getRuntime().exec(command);
+				System.out.println("Processus created");
+			} else {
+				RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
+				DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth)
+						.build();
+				final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
+						.links("neo4j-paprika", "web-paprika").volumesFrom("web-paprika").build();
+				ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
+						.image("paprika-analyze:latest")
+						// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
+						.cmd("java", "-jar", "Paprika-analyze.jar", fname, Long.toString(size), user.getName(),
+								application.getName(), Long.toString(application.getID()), Long.toString(idNode))
+						.workingDir("/dock").build();
+				ContainerCreation creation = docker.createContainer(containerConfig);
+
+				String id = creation.id();
+				docker.startContainer(id);
+				docker.close();
+				System.out.println("container create and start success");
 			}
 
 		} catch (Exception e) {
@@ -227,6 +222,47 @@ public final class PaprikaFacade {
 			throw new RuntimeException(e);
 
 		}
+	}
+
+	public void deleteOnDataBase(Set<String> setOfId) {
+		Set<String> versionsToDelete = new HashSet<>();
+		StatementResult result;
+		Record record;
+		String begin;
+		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
+			for (String idAppli : setOfId) {
+				begin="MATCH (n:Project) WHERE ID(n) = " + idAppli;
+				result = tx.run(begin + " RETURN n");
+				if (result.hasNext()) {
+					result = tx.run(begin + " MATCH (n)-[:"
+							+ PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) RETURN v");
+					while (result.hasNext()) {
+						record = result.next();
+						Value value = record.get("v");
+						if (!value.isNull()) {
+							versionsToDelete.add(Long.toString(value.asNode().id()));
+						}
+					}
+					tx.run(begin+" DELETE n");
+				}
+				else versionsToDelete.add(idAppli);
+
+			}
+			for(String idVersion : versionsToDelete){
+				tx.run("MATCH (p {app_key:"+idVersion+"} DELETE p");
+			}
+			
+			
+			tx.success();
+		}
+		/*
+		 * On sépare application et versions, On ajoute les versions de
+		 * l'application dans le set des versions et supprime l'application.
+		 * puis on supprime les versions avec aussi leur
+		 * clé(ex:app_key:p@p/Example_2/com.lucasdnd.bitclock16_1_1.0), si elle
+		 * existe. pour supprimer les classes non reliés(rare, mais cela existe)
+		 */
+		// graph.deleteDataAndAllChildrens();
 	}
 
 	private static String getHostName() {

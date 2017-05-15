@@ -20,7 +20,7 @@ public class VersionFunctions extends Functions {
 	 * @param nodeVer
 	 * @param keyQuery
 	 */
-	public void writeQueryOnVersion(LowNode nodeVer, String keyQuery) {
+	public void writeQueryOnVersion(LowNode nodeVer, long keyQuery) {
 
 		LowNode nodeResult = new LowNode(PaprikaKeyWords.LABELQUERY);
 		// J'utilise nameattribute car le query a pour nom sa clé, pour moi.

@@ -132,6 +132,11 @@ public class Application extends Entity {
 		}
 		return lastVersion;
 	}
+	public Iterator<Version> getVersions() {
+		if (reload)
+		return listofVersion.iterator();
+		else return this.getListVersionApplications().iterator();
+	}
 
 	public int getNumberOfAnalysedVersion() {
 		int i = 0;

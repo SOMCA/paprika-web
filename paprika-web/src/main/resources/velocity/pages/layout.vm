@@ -81,18 +81,18 @@
          #end
       <li>
 
-        <a href="#" ondblclick="menuclick('title$velocityMenu')"><i class="fa fa-bar-database fa-fw"></i>$titlename<span class="fa arrow"></span></a>
+        <a href="#" ondblclick="menuclick('02-$velocityMenu')"><i class="fa fa-bar-database fa-fw"></i>$titlename<span class="fa arrow"></span></a>
         <ul class="nav nav-second-level">
 
           <li>
-            <a href="#" onclick="menuclick('title$velocityMenu');return false;">  $msg.get("INDEX_UL_VIEW")</a>
+            <a href="#" onclick="menuclick('02-$velocityMenu');return false;">  $msg.get("INDEX_UL_VIEW")</a>
           </li>
           <form id="forTitle$velocityMenu" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/index/">
-            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="title$velocityMenu" name="title" value="$title.getID()"></button>
+            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="02-$velocityMenu" name="title" value="$title.getID()"></button>
           </form>
 
           #set ($velocityVer=1)
-          #foreach($titleVer in $user.getVersionApplications($title.getID()))
+          #foreach($titleVer in $title.getVersions())
           #set($titleVername=$titleVer.getName())
           #set($lengthTV=$titleVername.length())
           #if($lengthTV>20)
@@ -100,11 +100,11 @@
              #set($titleVername=".."+"$titleVername.substring($minLen,$lengthTV)")
              #end
           <li>
-            <a href="#" onclick="titleVerClick('titleVer$velocityMenu$velocityVer');return false;">$titleVername</a>
+            <a href="#" onclick="titleVerClick('03-$velocityMenu$velocityVer');return false;">$titleVername</a>
           </li>
           <form style="visibility: hidden; width: 1px; height: 1px" method="post" action="/version/">
               <input style="visibility: hidden; width: 1px; height: 1px" type="text" name="titleofVer" value="$title.getID()"></input>
-            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="titleVer$velocityMenu$velocityVer" name="titleVer" value="$titleVer.getID()"></button>
+            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="03-$velocityMenu$velocityVer" name="titleVer" value="$titleVer.getID()"></button>
           </form>
           #set ($velocityVer=$velocityVer+1)
           #end

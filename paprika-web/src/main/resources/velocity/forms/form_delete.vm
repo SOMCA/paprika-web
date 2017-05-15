@@ -13,42 +13,66 @@
       <div class="row">
         <div class="col-lg-8">
           <form method="post" action="/form_delete/" style="visibility:hidden">
-          #set ($velocityMenu=0)
-          #foreach($titleD in $user.getDataApplications())
-          #set($titleDname=$titleD)
-    		  #if($titleD.length()>15)
-             #set($titleDname="$titleD.substring(0,16)"+"..")
-             #end
-<!--
+            #set ($velocityMenu=0)
+            #foreach($titleD in $user.getDataApplications())
+            #set($titleDname=$titleD.getName())
+            #if($titleDname.length()>15)
+            #set($titleDname="$titleDname.substring(0,16)"+"..")
+            #end
+            <!--
 
-                    <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 1/label><br />
-                    <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 2</label><br />
-                    <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 3</label><br />
-                    <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 4</label>
+            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 1/label><br />
+            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 2</label><br />
+            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 3</label><br />
+            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 4</label>
 
-           -->
+          -->
+
           <div class="panel panel-default">
             <div class="panel-heading">
               <i class="fa fa-bar-table-o fa-fw"></i>$titleDname
             </div>
             <div class="panel-footer">
-              <a href="#" onclick="return textswitch('1$namec');">Versions</a>
+              <a href="#" onclick="return textswitch('01-$velocityMenu');">Versions</a>
             </div>
-            <div class="panel-body" style="display:none" id="1$namec">
+            <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="01-$velocityMenu">
               <div style="margin-left: 25px;">
-                <!-- Listes de toutes les versions -->
+                #set ($velocityVer=0)
+                  #foreach($titleVerD in $titleD.getVersions())
+                  #set($titleVernameD=$titleVerD.getName())
+
+                  <label>
+                  <input type="checkbox" name="00-$velocityVer$velocityMenu" value="$titleD.getID()"/>$titleVernameD<br />
+                  </label>
+                  #set ($velocityVer=$velocityVer+1)
+                  #end
               </div>
             </div>
           </div>
+            #set ($velocityMenu=$velocityMenu+1)
           #end
-          </form>
-        </div>
+          <button type="submit" id="submitDelete" name="delete" value="00-"> Delete </button>
+        </form>
       </div>
-      <!-- /.row -->
     </div>
-    <!-- /#page-wrapper -->
+    <!-- /.row -->
   </div>
-  <!-- /#wrapper -->
+  <!-- /#page-wrapper -->
+</div>
+<!-- /#wrapper -->
 </body>
-  #parse("/velocity/pages/script.vm")
+#parse("/velocity/pages/script.vm")
+<script>
+function textswitch(divid) {
+
+  if(document.getElementById(divid).style.display=="none"){
+    document.getElementById(divid).style.display = "inline";
+
+  }
+  else{
+    document.getElementById(divid).style.display = "none";
+  }
+  return false;
+}
+</script>
 </html>
