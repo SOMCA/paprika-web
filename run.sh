@@ -1,6 +1,6 @@
 #docker-machine create --driver generic --generic-ip-address=spirals-somca --generic-ssh-key ~/.ssh/id_rsa --generic-ssh-user=gwillefe spirals-somca
 
-
+docker system prune -f
 docker-compose build neoj
 docker-compose up -d neoj
 docker build --file Dockerfile-web -t paprika-web .

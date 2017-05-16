@@ -244,11 +244,14 @@ function formsubmitWait2(){
 
 }
 #if($flagAreaStack)
+
+#set($dataAreaChart=$application.getAreaChart())
+#if($dataAreaChart!="")
 $(function() {
      Morris.Area({
       element: 'area-application',
       data: [
-        $application.getAreaChart()
+        $dataAreaChart
       xkey: 'version',
       parseTime: false,
       pointSize: 2,
@@ -257,6 +260,7 @@ $(function() {
       resize: true
     });
 });
+#end
 #end
 </script>
 </body>

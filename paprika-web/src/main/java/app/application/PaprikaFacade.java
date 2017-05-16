@@ -229,49 +229,73 @@ public final class PaprikaFacade {
 		StatementResult result;
 		Record record;
 		String begin;
+		String print;
+
 		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
 			for (String idAppli : setOfId) {
-				begin="MATCH (n:Project) WHERE ID(n) = " + idAppli;
+				begin = "MATCH (n:Project) WHERE ID(n) = " + idAppli;
 				result = tx.run(begin + " RETURN n");
 				if (result.hasNext()) {
-					result = tx.run(begin + " MATCH (n)-[:"
-							+ PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) RETURN v");
+					// Implique que l'id provient d'un projet
+					print = begin + " MATCH (n)-[:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v) RETURN v";
+					System.out.println(print);
+					result = tx.run(print);
+
 					while (result.hasNext()) {
 						record = result.next();
 						Value value = record.get("v");
+
 						if (!value.isNull()) {
-							versionsToDelete.add(Long.toString(value.asNode().id()));
+							String idv = Long.toString(value.asNode().id());
+							System.out.println(idv);
+							versionsToDelete.add(idv);
 						}
 					}
-					tx.run(" MATCH(u:"+PaprikaKeyWords.LABELUSER+")-[r:"+PaprikaKeyWords.REL_USER_PROJECT+"]->(n) DELETE n");
-					tx.run(begin+" DELETE n");
-				}
-				else versionsToDelete.add(idAppli);
+					print = begin + " MATCH(:" + PaprikaKeyWords.LABELUSER + ")-[r:" + PaprikaKeyWords.REL_USER_PROJECT
+							+ "]->(n) DELETE r";
+					System.out.println(print);
+					tx.run(print);
+					print = begin + " MATCH (n)-[r:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) DELETE r";
+					System.out.println(print);
+					tx.run(print);
+
+					tx.run(begin + " DELETE n");
+
+				} else
+					versionsToDelete.add(idAppli);
 
 			}
 			/*
-			 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on doit
-			 * aussi modifier l'ordre de toutes les versions restantes.
+			 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on
+			 * doit aussi modifier l'ordre de toutes les versions restantes.
 			 * Mais surtout, pas mal de transaction qui coûtent.
 			 */
-			for(String idVersion : versionsToDelete){
+
+			for (String idVersion : versionsToDelete) {
+
+				print = "MATCH (p) WHERE ID(p)= " + idVersion + " MATCH(:" + PaprikaKeyWords.LABELPROJECT + ")-[r:"
+						+ PaprikaKeyWords.REL_PROJECT_VERSION + "]->(p) DELETE r";
+				System.out.println(print);
+				tx.run(print);
+				print = "MATCH (p) WHERE p.app_key=" + idVersion + " DETACH DELETE p";
+				System.out.println(print);
+				tx.run(print);
 				
-				
-				tx.run("MATCH(n:"+PaprikaKeyWords.LABELAPP+")-[r:"+PaprikaKeyWords.REL_PROJECT_VERSION+"]->(p) DELETE r");
-				tx.run("MATCH (p {app_key:"+idVersion+"}) DELETE p");
+				print = "MATCH (p:Version) WHERE ID(p)=" + idVersion + " DELETE p";
+				System.out.println(print);
+				tx.run(print);
 			}
-			
-			
+
 			tx.success();
 		}
+
 		/*
 		 * On sépare application et versions, On ajoute les versions de
 		 * l'application dans le set des versions et supprime l'application.
 		 * puis on supprime les versions avec aussi leur
-		 * clé(ex:app_key:p@p/Example_2/com.lucasdnd.bitclock16_1_1.0), si elle
-		 * existe. pour supprimer les classes non reliés(rare, mais cela existe)
+		 * clé(ex:app_key:idVersion), si elle existe. pour supprimer les classes
+		 * non reliés(rare, mais cela existe)
 		 */
-		// graph.deleteDataAndAllChildrens();
 	}
 
 	private static String getHostName() {

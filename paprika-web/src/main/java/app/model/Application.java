@@ -214,6 +214,8 @@ public class Application extends Entity {
 		String line;
 		long value;
 		String[] allkeyArray = getKey(datas);
+		if(allkeyArray.length==0) return "";
+
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
 
 		// Partie 3, création du string
@@ -247,6 +249,7 @@ public class Application extends Entity {
 		String line;
 		long value;
 		String[] allkeyArray = getKey(datas);
+		if(allkeyArray.length==0) return "";
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
 		Iterator<Version> versionsIter = versions.iterator();
 		String name;
@@ -270,8 +273,10 @@ public class Application extends Entity {
 			str.insert(0, array);
 		}
 		// Du aux autres options, on a du rajouter des choses non liés au data
+
 		StringBuilder xkeys = new StringBuilder();
 		StringBuilder labels = new StringBuilder();
+		
 		for (i = 0; i < (allkeyArray.length - 1); i++) {
 			key = "'" + allkeyArray[i] + "',";
 			xkeys.append(key.toLowerCase());
@@ -282,7 +287,7 @@ public class Application extends Entity {
 		labels.append(key);
 
 		str.append("],   ykeys:[" + xkeys + "],labels: [" + labels + "],");
-
+System.out.println(str);
 		return str.toString();
 	}
 

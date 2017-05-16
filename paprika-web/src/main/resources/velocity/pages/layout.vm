@@ -65,7 +65,7 @@
         <form method="post" style="none" action="/index/">
           <div class="input-group custom-search-form">
 
-            <input type="text" maxlength="24" name="project" id="project" class="form-control" placeholder="$msg.get("INDEX_UL_NEWAPP")">
+            <input type="text" maxlength="24" pattern=".{3,}" name="project" id="project" class="form-control" placeholder="$msg.get("INDEX_UL_NEWAPP")">
             <span class="input-group-btn">
               <button class="btn btn-default" type="submit" id="project" name="for" value="project"><i class="fa fa-plus"></i></button>
             </span>

@@ -19,31 +19,25 @@
             #if($titleDname.length()>15)
             #set($titleDname="$titleDname.substring(0,16)"+"..")
             #end
-            <!--
-
-            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 1/label><br />
-            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 2</label><br />
-            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 3</label><br />
-            <input type="checkbox" name="ton_nom" id="ton_nom" /> <label for="ton_nom">version 4</label>
-
-          -->
-
           <div class="panel panel-default">
             <div class="panel-heading">
-              <i class="fa fa-bar-table-o fa-fw"></i>$titleDname
+              <label class="checkbox">
+              <input type="checkbox" name="00-$velocityMenu" value="$titleD.getID()"/><i class="fa fa-bar-table-o fa-fw"></i>$titleDname
+              </label>
+
             </div>
             <div class="panel-footer">
               <a href="#" onclick="return textswitch('01-$velocityMenu');">Versions</a>
             </div>
-            <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="01-$velocityMenu">
+            <div class="panel-body checkbox" style="display:none;overflow:scroll;overflow:auto;" id="01-$velocityMenu">
               <div style="margin-left: 25px;">
                 #set ($velocityVer=0)
                   #foreach($titleVerD in $titleD.getVersions())
                   #set($titleVernameD=$titleVerD.getName())
 
                   <label>
-                  <input type="checkbox" name="00-$velocityVer$velocityMenu" value="$titleD.getID()"/>$titleVernameD<br />
-                  </label>
+                  <input type="checkbox" name="00-$velocityVer$velocityMenu" value="$titleVerD.getID()"/>$titleVernameD
+                  </label><br/>
                   #set ($velocityVer=$velocityVer+1)
                   #end
               </div>

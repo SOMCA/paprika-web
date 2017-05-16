@@ -17,6 +17,9 @@
 	<body>
 
 		<div class="radarChart"></div>
+
+		#set($dataRadarChart=$application.getRadarD3())
+			#if($dataRadarChart!="")
 		<script>
 			//////////////////////////////////////////////////////////////
 			//////////////////////// Set-Up //////////////////////////////
@@ -30,7 +33,7 @@
 			////////////////////////// Data //////////////////////////////
 			//////////////////////////////////////////////////////////////
 
-			var data = [$application.getRadarD3()];
+			var data = [$dataRadarChart];
 
 
 
@@ -53,6 +56,7 @@
 			//Call function to draw the Radar chart
 			RadarChart(".radarChart", data, radarChartOptions);
 		</script>
+		#end
 	</body>
 </html>
 #end
