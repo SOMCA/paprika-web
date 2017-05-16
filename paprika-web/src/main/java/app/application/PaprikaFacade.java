@@ -243,7 +243,8 @@ public final class PaprikaFacade {
 							versionsToDelete.add(Long.toString(value.asNode().id()));
 						}
 					}
-					tx.run(begin+" DETACH DELETE n");
+					tx.run(" MATCH(u:"+PaprikaKeyWords.LABELUSER+")-[r:"+PaprikaKeyWords.REL_USER_PROJECT+"]->(n) DELETE n");
+					tx.run(begin+" DELETE n");
 				}
 				else versionsToDelete.add(idAppli);
 
@@ -255,7 +256,9 @@ public final class PaprikaFacade {
 			 */
 			for(String idVersion : versionsToDelete){
 				
-				tx.run("MATCH (p {app_key:"+idVersion+"}) DETACH DELETE p");
+				
+				tx.run("MATCH(n:"+PaprikaKeyWords.LABELAPP+")-[r:"+PaprikaKeyWords.REL_PROJECT_VERSION+"]->(p) DELETE r");
+				tx.run("MATCH (p {app_key:"+idVersion+"}) DELETE p");
 			}
 			
 			
