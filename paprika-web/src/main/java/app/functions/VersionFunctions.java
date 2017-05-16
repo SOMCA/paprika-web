@@ -24,6 +24,7 @@ public class VersionFunctions extends Functions {
 	 * @param parameter
 	 * @return
 	 */
+	
 	private String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
 
 		long size = value;

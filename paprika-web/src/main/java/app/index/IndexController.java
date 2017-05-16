@@ -107,6 +107,8 @@ public class IndexController {
 					uploadedFile = null;
 
 					facade.addVersion(application.getID() , realname);
+					facade.needReloadApp(application);
+					model.put("application", application);
 					
 				}
 			}

@@ -38,10 +38,10 @@ public class ViewUtil {
 		model.put("WebPath", PathIn.Web.class);
 
 		if (!model.containsKey("application")) {
-			PaprikaFacade facade = PaprikaFacade.getInstance();
+		
 			Application application= RequestUtil.getSessionApplication(request);
 			model.put("application", application);
-			facade.needReloadApp(application);
+
 		}
 
 		if (!model.containsKey("version")) {

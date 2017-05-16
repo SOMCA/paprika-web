@@ -243,13 +243,19 @@ public final class PaprikaFacade {
 							versionsToDelete.add(Long.toString(value.asNode().id()));
 						}
 					}
-					tx.run(begin+" DELETE n");
+					tx.run(begin+" DETACH DELETE n");
 				}
 				else versionsToDelete.add(idAppli);
 
 			}
+			/*
+			 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on doit
+			 * aussi modifier l'ordre de toutes les versions restantes.
+			 * Mais surtout, pas mal de transaction qui coûtent.
+			 */
 			for(String idVersion : versionsToDelete){
-				tx.run("MATCH (p {app_key:"+idVersion+"} DELETE p");
+				
+				tx.run("MATCH (p {app_key:"+idVersion+"}) DETACH DELETE p");
 			}
 			
 			

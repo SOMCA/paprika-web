@@ -35,6 +35,7 @@ public class Application extends Entity {
 	public Application(String name, long id) {
 		super(name, id);
 		this.reload = false;
+
 	}
 
 	/**
@@ -50,13 +51,14 @@ public class Application extends Entity {
 	 * Renvoie la taille de la liste de versions, comme celle ci peut être
 	 * nulle, si nulle, il renvoie 0
 	 * 
+	 * On n'utilise pas le nombre de Version du node application, car sinon, si on supprime des versions
+	 * on devra changer leur ordre à chacun ce qui sera long, alors le nombre de versions ne fait que grossir dans l'application
+	 * 
 	 * @return
 	 */
 	public int getNumberOfVersionReal() {
-		if (reload)
-			return listofVersion.size();
-		else
-			return getListVersionApplications().size();
+		if(reload) return this.listofVersion.size();
+		else return this.getListVersionApplications().size();
 	}
 
 	public void needReload() {
@@ -89,7 +91,7 @@ public class Application extends Entity {
 				node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
 
 				name = node.get(PaprikaKeyWords.NAMEATTRIBUTE).asString();
-				versions.add(new Version(name,node.id()));
+				versions.add(new Version(name, node.id()));
 			}
 
 			// A sort for be sure than all versions are sort with order
@@ -132,10 +134,12 @@ public class Application extends Entity {
 		}
 		return lastVersion;
 	}
+
 	public Iterator<Version> getVersions() {
 		if (reload)
-		return listofVersion.iterator();
-		else return this.getListVersionApplications().iterator();
+			return listofVersion.iterator();
+		else
+			return this.getListVersionApplications().iterator();
 	}
 
 	public int getNumberOfAnalysedVersion() {
@@ -145,7 +149,8 @@ public class Application extends Entity {
 		} else if (this.getNumberOfVersionReal() > 0) {
 			for (Version version : listofVersion) {
 
-				if (version.isAnalyzed()) i+=1;
+				if (version.isAnalyzed())
+					i += 1;
 			}
 		}
 		return i;
@@ -245,19 +250,19 @@ public class Application extends Entity {
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
 		Iterator<Version> versionsIter = versions.iterator();
 		String name;
-		
+
 		// Partie 3, création du string
 		while (versionsIter.hasNext()) {
-			name=versionsIter.next().getName();
+			name = versionsIter.next().getName();
 			data = dataiter.next();
-			array = new StringBuilder("{version: '"+name+"', ");
+			array = new StringBuilder("{version: '" + name + "', ");
 			for (i = 0; i < allkeyArray.length; i++) {
 				key = allkeyArray[i];
 				if (data.containsKey(key)) {
 					value = data.get(key);
 				} else
 					value = 0;
-				line = key.toLowerCase()+": "+ value + ", ";
+				line = key.toLowerCase() + ": " + value + ", ";
 				array.append(line);
 			}
 			array.append("},");
@@ -265,25 +270,25 @@ public class Application extends Entity {
 			str.insert(0, array);
 		}
 		// Du aux autres options, on a du rajouter des choses non liés au data
-		StringBuilder xkeys= new StringBuilder();
-		StringBuilder labels= new StringBuilder();
-		for (i = 0; i < (allkeyArray.length-1); i++) {
-			key = "'"+allkeyArray[i]+"',";
+		StringBuilder xkeys = new StringBuilder();
+		StringBuilder labels = new StringBuilder();
+		for (i = 0; i < (allkeyArray.length - 1); i++) {
+			key = "'" + allkeyArray[i] + "',";
 			xkeys.append(key.toLowerCase());
 			labels.append(key);
 		}
-		key = "'"+allkeyArray[allkeyArray.length-1]+"',";
+		key = "'" + allkeyArray[allkeyArray.length - 1] + "',";
 		xkeys.append(key.toLowerCase());
 		labels.append(key);
-		
-		str.append("],   ykeys:["+xkeys+"],labels: ["+labels+"],");
-		
+
+		str.append("],   ykeys:[" + xkeys + "],labels: [" + labels + "],");
+
 		return str.toString();
 	}
-	
+
 	@Override
-	public String toString(){
-		return "["+this.getName()+","+this.getID()+","+this.getNumberOfVersion()+"]";
-		
+	public String toString() {
+		return "[" + this.getName() + "," + this.getID() + "," + this.getNumberOfVersion() + "]";
+
 	}
 }

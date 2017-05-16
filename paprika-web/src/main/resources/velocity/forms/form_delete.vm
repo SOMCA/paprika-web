@@ -12,7 +12,7 @@
       </div>
       <div class="row">
         <div class="col-lg-8">
-          <form method="post" action="/form_delete/" style="visibility:hidden">
+          <form method="post" action="/form_delete/" >
             #set ($velocityMenu=0)
             #foreach($titleD in $user.getDataApplications())
             #set($titleDname=$titleD.getName())
