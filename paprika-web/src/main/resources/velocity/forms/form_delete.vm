@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-8">
+        <div class="col-lg-8 checkbox">
           <form method="post" action="/form_delete/" >
             #set ($velocityMenu=0)
             #foreach($titleD in $user.getDataApplications())
@@ -21,7 +21,7 @@
             #end
           <div class="panel panel-default">
             <div class="panel-heading">
-              <label class="checkbox">
+              <label>
               <input type="checkbox" name="00-$velocityMenu" value="$titleD.getID()"/><i class="fa fa-bar-table-o fa-fw"></i>$titleDname
               </label>
 
@@ -29,7 +29,7 @@
             <div class="panel-footer">
               <a href="#" onclick="return textswitch('01-$velocityMenu');">Versions</a>
             </div>
-            <div class="panel-body checkbox" style="display:none;overflow:scroll;overflow:auto;" id="01-$velocityMenu">
+            <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="01-$velocityMenu">
               <div style="margin-left: 25px;">
                 #set ($velocityVer=0)
                   #foreach($titleVerD in $titleD.getVersions())

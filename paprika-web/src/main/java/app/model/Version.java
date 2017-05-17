@@ -1,5 +1,9 @@
 package app.model;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +20,7 @@ import app.utils.neo4j.LowNode;
 
 public class Version  extends Entity{
 
-	private boolean analyzed;
+	private int analyzed;
 	
 	public Version(String name, long id) {
 		super(name, id);
@@ -38,14 +42,42 @@ public class Version  extends Entity{
 		return number;	
 	}
 	
-	public boolean checkAnalyzed(){
+	public int checkAnalyzed(){
 		PaprikaFacade facade= PaprikaFacade.getInstance();
-		this.analyzed=(facade.getParameter(getID(), PaprikaKeyWords.CODEA)!=null);
+		String ana=facade.getParameter(getID(), PaprikaKeyWords.CODEA);
+		// null(0),loading(1) , inprogress(2), done(3)
+		
+		this.analyzed=(
+				ana==null?0:(
+						ana.charAt(0)=='l'?1:(
+								ana.charAt(0)=='i'?2:3
+										)
+								)
+						);
+		//System.out.println(this.analyzed);
+		if(this.analyzed==3){
+			String path=facade.getParameter(getID(), "PathFile");
+			if(path!=null){
+				Path out = Paths.get(path);
+				try {
+					Files.deleteIfExists(out);
+				} catch (IOException e) {
+				}
+				facade.removeParameterOnNode(getID(), "PathFile");
+				facade.removeParameterOnNode(getID(), "analyseInLoading");
+				facade.removeContainer(facade.getParameter(getID(), "idContainer"));
+				facade.removeParameterOnNode(getID(), "idContainer");
+			}
+		}
 		return this.analyzed;
 	}
 	
-	public boolean isAnalyzed(){
+	public int isAnalyzed(){
 		return this.analyzed;
+	}
+	public String getAnalyseInLoading(){
+		PaprikaFacade facade= PaprikaFacade.getInstance();
+		return facade.getParameter(getID(), "analyseInLoading");
 	}
 	
 	

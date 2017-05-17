@@ -16,8 +16,18 @@ services:
     container_name: web-paprika
     command: java -jar Paprika-web.jar -d
     volumes:
-       - .:/dock
+       - /tmp/application:/dock/application
        - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - neoj
+    depends_on:
+      - neoj
+  test:
+    command: sh -c while(0) sleep 1; done
+    image: paprika-analyze:latest
+    container_name: analyze-paprika
+    volumes:
+       - /tmp/toto:/application
     links:
       - neoj
     depends_on:

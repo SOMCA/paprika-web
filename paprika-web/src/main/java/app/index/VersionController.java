@@ -18,43 +18,43 @@ import app.utils.ViewUtil;
 
 public class VersionController {
 
-	private static final String ANALYSE = "analyse";
-
 	public static final String renderVersion(Request request, Map<String, Object> model, String templatePath) {
-		PaprikaFacade facade = PaprikaFacade.getInstance();
-		Version version = RequestUtil.getSessionVersion(request);
-		if (version != null) {
-			String value = facade.getParameter(version.getID(), PaprikaKeyWords.ANALYSEINLOAD);
-			if (value != null && !"100".equals(value)) {
-				model.put(PaprikaKeyWords.ANALYSEINLOAD, value);
-			}
-		}
+
 		return ViewUtil.render(request, model, templatePath);
 	}
 
 	public static final Route serveVersionPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 
-		Application application = RequestUtil.getSessionApplication(request);
-
-		if (application == null)
-			return ViewUtil.render(request, model, PathIn.Template.INDEX);
-
 		/*
 		 * Impossible d'accéder à cette page avant d'être connecter.
 		 */
 		LoginController.ensureUserIsLoggedIn(request, response);
 
-		// On ne le garde que dans la page version, sinon on le récupère par
-		// Post
-		model.put(ANALYSE, request.session().attribute(ANALYSE));
+		Application application = RequestUtil.getSessionApplication(request);
+
+		if (application == null)
+			return ViewUtil.render(request, model, PathIn.Template.INDEX);
 
 		System.out.println("-------serveVersionPage--------");
+
+		PaprikaFacade facade = PaprikaFacade.getInstance();
+		Version version = RequestUtil.getSessionVersion(request);
+		if (version != null)
+			if (version.isAnalyzed() != 3) {
+				facade.reloadVersion(version);
+				model.put("version", version);
+			}
 
 		return VersionController.renderVersion(request, model, PathIn.Template.VERSION);
 	};
 
 	public static final Route handleVersionPost = (Request request, Response response) -> {
+		/*
+		 * Impossible d'accéder à cette page avant d'être connecter.
+		 */
+		LoginController.ensureUserIsLoggedIn(request, response);
+
 		Map<String, Object> model = new HashMap<>();
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 
@@ -73,18 +73,16 @@ public class VersionController {
 		if (menuVer != null) {
 			System.out.println("etape menuVer: " + menuVer);
 			request.session().attribute("version", facade.version(Long.parseLong(menuVer)));
-			request.session().removeAttribute(ANALYSE);
 		}
 		Version version = RequestUtil.getSessionVersion(request);
 		String str;
 		// Formulaire quand on choisit d'ANALYSEr dans la page version.
-		String analys = request.queryParams(ANALYSE);
+		String analys = request.queryParams("analyse");
 		if (analys != null) {
 			System.out.println("etape ANALYSE");
-			request.session().attribute(ANALYSE, true);
 			String fname = version.getName() + ".apk";
-			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/" + application.getName()
-					+ "/" + fname;
+			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/"
+					+ application.getName() + "/" + fname;
 			boolean flag = false;
 			File file = null;
 			try {
@@ -95,32 +93,12 @@ public class VersionController {
 			}
 			if (flag) {
 
-
-				 facade.callAnalyzeThread(version.getID(), fname, application, user, file.length(),PaprikaWebMain.dockerVersion);
-				model.put(PaprikaKeyWords.ANALYSEINLOAD, "0");
-
+				facade.callAnalyzeThread(version.getID(), fname, application, user, file.length(),
+						PaprikaWebMain.dockerVersion);
+				facade.reloadVersion(version);
+				model.put("version", version);
 			}
-
 		}
-		// Regarde si la version a déjà été analysé ou non.
-
-		else {
-
-			str = facade.getParameter(version.getID(), PaprikaKeyWords.CODEA);
-			if (str != null) {
-				System.out.println("loading statut");
-				request.session().attribute(ANALYSE, true);
-				if ("loading".equals(str)) {
-					model.put(PaprikaKeyWords.ANALYSEINLOAD, "0");
-				}
-			} else
-				request.session().removeAttribute(ANALYSE);
-		}
-
-		// Formulaire quand on choisit de recevoir les données dans la page
-		// version sous forme de csv.
-
-		model.put(ANALYSE, request.session().attribute(ANALYSE));
 
 		return VersionController.renderVersion(request, model, PathIn.Template.VERSION);
 	};

@@ -127,7 +127,7 @@ public class Application extends Entity {
 			version = versions.next();
 			if (version == null || numberVersion <= 0)
 				return lastVersion;
-			if (version.isAnalyzed()) {
+			if (version.isAnalyzed()==3) {
 				lastVersion.add(version);
 				numberVersion--;
 			}
@@ -149,7 +149,7 @@ public class Application extends Entity {
 		} else if (this.getNumberOfVersionReal() > 0) {
 			for (Version version : listofVersion) {
 
-				if (version.isAnalyzed())
+				if (version.isAnalyzed()==3)
 					i += 1;
 			}
 		}

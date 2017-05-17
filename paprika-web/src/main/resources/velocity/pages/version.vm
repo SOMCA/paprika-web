@@ -20,14 +20,16 @@
 
       <div class="row">
         #if($version)
+        #set($analyse=$version.isAnalyzed())
+
         #set($flagothers=false)
         #set($numberCodeSmells=$version.getNumberCodeSmells())
-        #if($analyse)
-        #if($analyseInLoading)
+        #if($analyse != 0)
+        #if($analyse <= 2)
         <div class="col-lg-8">
           <div class="panel panel-default">
             <div class="panel-heading">
-              $msg.get("VERSION_SPAN_AV_WAIT_LOADING", $analyseInLoading)
+              $msg.get("VERSION_SPAN_AV_WAIT_LOADING", $version.getAnalyseInLoading())
               <div class="pull-right"><i class="fa fa-spinner fa-spin"></i></div>
 
             </div>
@@ -79,7 +81,7 @@
           <div class="panel panel-red">
             <div class="panel-heading">
               <div class="row">
-                #if($analyse)
+                #if($analyse==3)
                 <div class="col-xs-3">
                   <i class="fa fa-file-text fa-5x"></i>
                 </div>
@@ -100,7 +102,7 @@
                 #end
               </div>
             </div>
-            #if($analyse)
+            #if($analyse>0)
             <div class="panel-footer">
               <div class="clearfix"></div>
             </div>
@@ -160,7 +162,9 @@
 
 
   <script>
-  #if($analyse)
+  #if($version)
+  #set($analyse=$version.isAnalyzed())
+  #if($analyse==3)
   $(function() {
     Morris.Donut({
       element: 'donutVersion',
@@ -179,6 +183,7 @@
       resize: true
     });
   });
+  #end
   #end
   function textswitch(divid) {
 

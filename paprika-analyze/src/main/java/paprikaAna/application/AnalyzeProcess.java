@@ -42,7 +42,7 @@ public class AnalyzeProcess {
 	private void runPartAnalyse(Analyse ana) {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		String appname = this.application.getName();
-		facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "0");
+		
 		String realname = fName.substring(0, fName.lastIndexOf('.'));
 		String pathstr = "application/" + this.user + "/" + appname + "/" + fName;
 		String xml;
@@ -86,9 +86,8 @@ public class AnalyzeProcess {
 					new VersionFunctions().writeAnalyzeOnVersion(nodeVer, idApp);
 
 					facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
-					Path out = Paths.get(pathstr);
-					Files.deleteIfExists(out);
 
+	
 					apkfile.close();
 
 				//}

@@ -79,7 +79,7 @@ public class PaprikaAnalyzeMain {
 			apkfile = new ApkFile(pathstr);
 			PaprikaFacade facade = PaprikaFacade.getInstance();
 			AnalyzeProcess anaThread = new AnalyzeProcess(apkfile, fName, application, user, size, nodeVer);
-			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "loading");
+			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "inprogress");
 			anaThread.run();
 		} catch (IOException e) {
 			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"main: IOException",e);

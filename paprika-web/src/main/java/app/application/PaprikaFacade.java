@@ -1,6 +1,10 @@
 package app.application;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +18,8 @@ import org.neo4j.driver.v1.types.Node;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.exceptions.DockerCertificateException;
+import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.HostConfig;
@@ -101,6 +107,9 @@ public final class PaprikaFacade {
 		if (application != null)
 			application.needReload();
 	}
+	public void reloadVersion(Version version){
+		version.checkAnalyzed();
+	}
 
 	/**
 	 * Ajoute une version dans l'application d'id "idproject"
@@ -141,6 +150,39 @@ public final class PaprikaFacade {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Applique ou créer une nouvelle valeur dans le node en question. Le node
+	 * doit contenir une Id pour fonctionner.
+	 * 
+	 * @param nodeVer
+	 * @param parameter
+	 * @param key
+	 */
+	public void setParameterOnNode(long idnode, String parameter, String attribute) {
+		if (idnode == -1) {
+			return;
+		}
+		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
+			tx.run("MATCH (n) WHERE ID(n)= "+idnode+" SET n+={"+parameter+":\""+attribute+"\"}");
+			
+			tx.success();
+		}
+	}
+	/**
+	 * Retire une propriété du node.
+	 * 
+	 * @param idnode
+	 * @param parameter
+	 */
+	public void removeParameterOnNode(long idnode, String parameter) {
+		if (idnode == -1) {
+			return;
+		}
+		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
+			tx.run("MATCH (n) WHERE ID(n)= "+idnode+" REMOVE n."+parameter);
+			tx.success();
+		}
 	}
 
 	/**
@@ -187,13 +229,16 @@ public final class PaprikaFacade {
 
 	public void callAnalyzeThread(long idNode, String fname, Application application, User user, long size,
 			boolean dockerContainer) {
+		this.setParameterOnNode(idNode, PaprikaKeyWords.CODEA, "loading");
+		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
 			System.out.println("callAnalyzeThread:");
 			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
 					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
 					+ Long.toString(idNode);
 			System.out.println(command);
-
+			String pathstr = "application/" + user.getName() + "/" + application.getName()+ "/" + fname;
+			this.setParameterOnNode(idNode,"PathFile", pathstr);
 			if (!dockerContainer) {
 				Runtime.getRuntime().exec(command);
 				System.out.println("Processus created");
@@ -201,8 +246,13 @@ public final class PaprikaFacade {
 				RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 				DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth)
 						.build();
+			
 				final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
-						.links("neo4j-paprika", "web-paprika").volumesFrom("web-paprika").build();
+						.links("neo4j-paprika", "web-paprika")
+						.binds("/tmp/application:/dock/application:ro")
+						//
+						//.volumesFrom("web-paprika")
+						.build();
 				ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
 						.image("paprika-analyze:latest")
 						// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
@@ -213,15 +263,32 @@ public final class PaprikaFacade {
 
 				String id = creation.id();
 				docker.startContainer(id);
+
 				docker.close();
 				System.out.println("container create and start success");
+				this.setParameterOnNode(idNode, "idContainer",id);
 			}
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			throw new RuntimeException(e);
-
 		}
+	}
+	public void removeContainer(String id){
+		RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
+		DockerClient docker;
+		try {
+			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth)
+					.build();
+			docker.removeContainer(id);
+		} catch (DockerCertificateException e) {
+			System.out.println("DockerCertificateException");
+		} catch (DockerException e) {
+			System.out.println("DockerException");
+		} catch (InterruptedException e) {
+			System.out.println("InterruptedException");
+		}
+		
 	}
 
 	public void deleteOnDataBase(Set<String> setOfId) {
@@ -272,7 +339,16 @@ public final class PaprikaFacade {
 			 */
 
 			for (String idVersion : versionsToDelete) {
-
+				String path=this.getParameter(Long.parseLong(idVersion), "PathFile");
+				if(path!=null){
+					Path out = Paths.get(path);
+					try {
+						Files.deleteIfExists(out);
+					} catch (IOException e) {
+					}
+				}
+				
+				
 				print = "MATCH (p) WHERE ID(p)= " + idVersion + " MATCH(:" + PaprikaKeyWords.LABELPROJECT + ")-[r:"
 						+ PaprikaKeyWords.REL_PROJECT_VERSION + "]->(p) DELETE r";
 				System.out.println(print);
