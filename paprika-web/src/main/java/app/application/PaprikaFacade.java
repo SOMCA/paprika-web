@@ -281,6 +281,7 @@ public final class PaprikaFacade {
 			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth)
 					.build();
 			docker.removeContainer(id);
+			
 		} catch (DockerCertificateException e) {
 			System.out.println("DockerCertificateException");
 		} catch (DockerException e) {
@@ -288,7 +289,7 @@ public final class PaprikaFacade {
 		} catch (InterruptedException e) {
 			System.out.println("InterruptedException");
 		}
-		
+		System.out.println("Work?");
 	}
 
 	public void deleteOnDataBase(Set<String> setOfId) {
