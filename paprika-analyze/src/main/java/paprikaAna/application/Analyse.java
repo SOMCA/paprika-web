@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
 
 import org.neo4j.cypher.CypherException;
 
@@ -43,7 +42,7 @@ import paprikaana.analyzer.SootAnalyzer;
 public class Analyse {
 
 	public PaprikaApp runAnalysis(String[] args) {
-		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Start runAnalysis");
+		PaprikaAnalyzeMain.LOGGER.trace("Start runAnalysis");
 		ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
 		Subparsers subparsers = parser.addSubparsers().dest("sub_command");
 
@@ -76,22 +75,19 @@ public class Analyse {
 		try {
 		 res = parser.parseArgs(args);
 		} catch (ArgumentParserException e) {
-			System.out.println("runAnalysis: ArgumentParserException");
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runAnalysis: ArgumentParserException",e);
+			PaprikaAnalyzeMain.LOGGER.error("runAnalysis: ArgumentParserException",e);
 			throw new AnalyseException();
 		}
-		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Collecting metrics");
-		System.out.println("Collecting metrics");
-
+		PaprikaAnalyzeMain.LOGGER.trace("Collecting metrics");
 
 		if (res.get("unsafe") == null) {
 			try {
 				checkArgs(res);
 			} catch (NoSuchAlgorithmException e) {
-				PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runAnalysis: NoSuchAlgorithmException",e);
+				PaprikaAnalyzeMain.LOGGER.error("runAnalysis: NoSuchAlgorithmException",e);
 				throw new AnalyseException();
 			} catch (IOException e) {
-				PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runAnalysis: IOException",e);
+				PaprikaAnalyzeMain.LOGGER.error("runAnalysis: IOException",e);
 				throw new AnalyseException();
 			}
 		}
@@ -100,15 +96,15 @@ public class Analyse {
 				res.getString("developer"), res.getString("category"), res.getString("price"), res.getDouble("rating"),
 				res.getString("nbDownload"), res.getString("versionCode"), res.getString("versionName"),
 				res.getString("sdkVersion"), res.getString("targetSdkVersion"), res.getBoolean("onlyMainPackage"));
-		System.out.println("start init");
+		PaprikaAnalyzeMain.LOGGER.trace("start init");
 
 		analyzer.init();
-		System.out.println("End init, begin analyze");
+		PaprikaAnalyzeMain.LOGGER.trace("End init, begin analyze");
 
 		analyzer.runAnalysis();
-		System.out.println("End collecting metrics");
+		PaprikaAnalyzeMain.LOGGER.trace("End collecting metrics");
 
-		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"End runAnalysis");
+		PaprikaAnalyzeMain.LOGGER.trace("End runAnalysis");
 		return analyzer.getPaprikaApp();
 
 	}
@@ -116,12 +112,12 @@ public class Analyse {
 	public void checkArgs(Namespace arg) throws NoSuchAlgorithmException, IOException {
 		String sha256 = computeSha256(arg.getString("apk"));
 		if (!sha256.equals(arg.getString("key"))) {
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"The given key is different from sha256 of the apk");
+			PaprikaAnalyzeMain.LOGGER.error("The given key is different from sha256 of the apk");
 			throw new AnalyseException("The given key is different from sha256 of the apk");
 		}
 		if (!arg.getString("date").matches(
 				"^([0-9]{4})-([0-1][0-9])-([0-3][0-9])\\s([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9]).([0-9]*)$")) {
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"Date should be formatted : yyyy-mm-dd hh:mm:ss.S");
+			PaprikaAnalyzeMain.LOGGER.error("Date should be formatted : yyyy-mm-dd hh:mm:ss.S");
 			throw new AnalyseException("Date should be formatted : yyyy-mm-dd hh:mm:ss.S");
 		}
 	}
@@ -148,7 +144,7 @@ public class Analyse {
 	}
 
 	public  void runQueryMode(String[] args)  {
-		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Start runQueryMode");
+		PaprikaAnalyzeMain.LOGGER.trace("Start runQueryMode");
 		ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
 		Subparsers subparsers = parser.addSubparsers().dest("sub_command");
 
@@ -164,16 +160,16 @@ public class Analyse {
 			Namespace res = parser.parseArgs(args);
 			this.queryMode(res);
 		} catch (ArgumentParserException e) {
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runQueryMode: ArgumentParserException",e);
+			PaprikaAnalyzeMain.LOGGER.error("runQueryMode: ArgumentParserException",e);
 			throw new AnalyseException();
 		} catch (CypherException e){
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runQueryMode: CypherException",e);
+			PaprikaAnalyzeMain.LOGGER.error("runQueryMode: CypherException",e);
 			throw new AnalyseException();
 		}catch (IOException e){
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"runQueryMode: IOException",e);
+			PaprikaAnalyzeMain.LOGGER.error("runQueryMode: IOException",e);
 			throw new AnalyseException();
 		}
-		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"End runQueryMode");
+		PaprikaAnalyzeMain.LOGGER.trace("End runQueryMode");
 	}
 
 	private void launchStats(QueryEngineBolt queryEngine) throws IOException{
@@ -231,7 +227,7 @@ public class Analyse {
 	}
 	
 	public void queryMode(Namespace arg) throws IOException {
-		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Executing Queries");
+		PaprikaAnalyzeMain.LOGGER.trace("Executing Queries");
 		QueryEngineBolt queryEngine = new QueryEngineBolt(Long.parseLong(arg.getString("key")));
 		String request = arg.get("request");
 		Boolean details = arg.get("details");
@@ -249,9 +245,9 @@ public class Analyse {
 			launchFORCENOFUZZY(queryEngine,details);
 			break;
 		default:
-			PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Executing custom request");
+			PaprikaAnalyzeMain.LOGGER.trace("Executing custom request");
 			queryEngine.executeRequest(request);
 		}
-		PaprikaAnalyzeMain.LOGGER.log(Level.FINER,"Done");
+		PaprikaAnalyzeMain.LOGGER.trace("Done");
 	}
 }

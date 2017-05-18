@@ -9,6 +9,7 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaFacade;
+import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
@@ -23,7 +24,7 @@ public class User extends Entity{
 		lownode.addParameter(PaprikaKeyWords.ATTRIBUTE_EMAIL, email);
         List<Record> bigdata = facade.loadChildrenOfNode(lownode,  PaprikaKeyWords.REL_USER_PROJECT, PaprikaKeyWords.LABELPROJECT);
 		if (bigdata == null || bigdata.isEmpty()) {
-			System.out.println(email);
+			PaprikaWebMain.LOGGER.trace(email);
 		
 			for (int i = 0; i < 3; i++)
 				facade.addProject(this, "Example_" + i);

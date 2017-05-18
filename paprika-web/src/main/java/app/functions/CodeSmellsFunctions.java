@@ -5,6 +5,8 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.types.Node;
 
+import app.application.PaprikaWebMain;
+
 public class CodeSmellsFunctions extends Functions {
 
 	public Node getNode(String labelname) {
@@ -12,7 +14,7 @@ public class CodeSmellsFunctions extends Functions {
 		String fuzzy = "_NO_FUZZY";
 		if (labelname.endsWith(fuzzy)) {
 			labelname = labelname.substring(0, labelname.length() - fuzzy.length());
-			System.out.println(labelname);
+			PaprikaWebMain.LOGGER.trace(labelname);
 		}
 		StatementResult result;
 		Node node = null;
@@ -106,7 +108,7 @@ public class CodeSmellsFunctions extends Functions {
 			break;
 
 		default:
-			System.out.println("Problem");
+			PaprikaWebMain.LOGGER.trace("Problem");
 			break;
 		}
 		String[] strs={search,command};

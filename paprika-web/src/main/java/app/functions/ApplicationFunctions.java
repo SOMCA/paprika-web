@@ -4,6 +4,8 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.types.Node;
+
+import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
@@ -77,7 +79,7 @@ public class ApplicationFunctions extends Functions {
 			result = tx.run(graph.matchSee(nodeUser));
 			record = result.next();
 			node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
-			System.out.println(node.get(PaprikaKeyWords.ATTRIBUTE_NB_APP));
+			PaprikaWebMain.LOGGER.trace(node.get(PaprikaKeyWords.ATTRIBUTE_NB_APP));
 			LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
 			nodeApp.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, application);
 			nodeApp.addParameter(PaprikaKeyWords.ATTRIBUTE_NB_VERSION, 0);

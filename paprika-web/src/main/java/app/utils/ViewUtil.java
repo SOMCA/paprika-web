@@ -2,7 +2,6 @@ package app.utils;
 
 import org.apache.velocity.app.VelocityEngine;
 
-import app.application.PaprikaFacade;
 import app.model.Application;
 import spark.*;
 import java.util.*;

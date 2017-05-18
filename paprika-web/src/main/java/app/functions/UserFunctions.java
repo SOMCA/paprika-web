@@ -7,7 +7,7 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.types.Node;
 
-
+import app.application.PaprikaWebMain;
 import app.model.User;
 import app.utils.PaprikaKeyWords;
 
@@ -31,7 +31,7 @@ public class UserFunctions extends Functions {
 			if (result.hasNext()) {
 				Record record = result.next();
 				Node node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
-				System.out.println(node.toString());
+				PaprikaWebMain.LOGGER.trace(node.toString());
 				return node.get(PaprikaKeyWords.ATTRIBUTE_SALT).asString();
 
 			}

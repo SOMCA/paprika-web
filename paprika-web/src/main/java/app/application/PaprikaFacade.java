@@ -2,6 +2,7 @@ package app.application;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,13 +19,12 @@ import org.neo4j.driver.v1.types.Node;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
-import com.spotify.docker.client.exceptions.DockerCertificateException;
-import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.HostConfig;
 import com.spotify.docker.client.messages.RegistryAuth;
 
+import app.exception.PapWebRunTimeException;
 import app.functions.ApplicationFunctions;
 import app.functions.UserFunctions;
 import app.functions.VersionFunctions;
@@ -107,7 +107,8 @@ public final class PaprikaFacade {
 		if (application != null)
 			application.needReload();
 	}
-	public void reloadVersion(Version version){
+
+	public void reloadVersion(Version version) {
 		version.checkAnalyzed();
 	}
 
@@ -151,6 +152,7 @@ public final class PaprikaFacade {
 		}
 		return null;
 	}
+
 	/**
 	 * Applique ou créer une nouvelle valeur dans le node en question. Le node
 	 * doit contenir une Id pour fonctionner.
@@ -164,11 +166,12 @@ public final class PaprikaFacade {
 			return;
 		}
 		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
-			tx.run("MATCH (n) WHERE ID(n)= "+idnode+" SET n+={"+parameter+":\""+attribute+"\"}");
-			
+			tx.run("MATCH (n) WHERE ID(n)= " + idnode + " SET n+={" + parameter + ":\"" + attribute + "\"}");
+
 			tx.success();
 		}
 	}
+
 	/**
 	 * Retire une propriété du node.
 	 * 
@@ -180,7 +183,7 @@ public final class PaprikaFacade {
 			return;
 		}
 		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
-			tx.run("MATCH (n) WHERE ID(n)= "+idnode+" REMOVE n."+parameter);
+			tx.run("MATCH (n) WHERE ID(n)= " + idnode + " REMOVE n." + parameter);
 			tx.success();
 		}
 	}
@@ -232,26 +235,25 @@ public final class PaprikaFacade {
 		this.setParameterOnNode(idNode, PaprikaKeyWords.CODEA, "loading");
 		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
-			System.out.println("callAnalyzeThread:");
+			PaprikaWebMain.LOGGER.trace("callAnalyzeThread:");
 			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
 					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
 					+ Long.toString(idNode);
-			System.out.println(command);
-			String pathstr = "application/" + user.getName() + "/" + application.getName()+ "/" + fname;
-			this.setParameterOnNode(idNode,"PathFile", pathstr);
+			PaprikaWebMain.LOGGER.trace(command);
+			String pathstr = "application/" + user.getName() + "/" + application.getName() + "/" + fname;
+			this.setParameterOnNode(idNode, "PathFile", pathstr);
 			if (!dockerContainer) {
 				Runtime.getRuntime().exec(command);
-				System.out.println("Processus created");
+				PaprikaWebMain.LOGGER.trace("Processus created");
 			} else {
 				RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 				DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth)
 						.build();
-			
+
 				final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
-						.links("neo4j-paprika", "web-paprika")
-						.binds("/tmp/application:/dock/application:ro")
+						.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro")
 						//
-						//.volumesFrom("web-paprika")
+						// .volumesFrom("web-paprika")
 						.build();
 				ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
 						.image("paprika-analyze:latest")
@@ -265,34 +267,31 @@ public final class PaprikaFacade {
 				docker.startContainer(id);
 
 				docker.close();
-				System.out.println("container create and start success");
-				this.setParameterOnNode(idNode, "idContainer",id);
+				PaprikaWebMain.LOGGER.trace("container create and start success");
+				this.setParameterOnNode(idNode, "idContainer", id);
 			}
-
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			throw new RuntimeException(e);
+			PaprikaWebMain.LOGGER.error(e.getMessage(), e);
+			throw new PapWebRunTimeException(e.getMessage());
 		}
 	}
-	public void removeContainer(String id){
+
+	public void removeContainer(String id) {
+		try {
 		RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 		DockerClient docker;
-		try {
-			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth)
-					.build();
+	
+			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
 			docker.removeContainer(id);
-			
-		} catch (DockerCertificateException e) {
-			System.out.println("DockerCertificateException");
-		} catch (DockerException e) {
-			System.out.println("DockerException");
-		} catch (InterruptedException e) {
-			System.out.println("InterruptedException");
+
+		} catch (Exception e) {
+			PaprikaWebMain.LOGGER.error(e.getMessage(), e);
+			throw new PapWebRunTimeException(e.getMessage());
 		}
-		System.out.println("Work?");
+		PaprikaWebMain.LOGGER.trace("Work?");
 	}
 
-	public void deleteOnDataBase(Set<String> setOfId) {
+	public void deleteOnDataBase(Set<String> setOfId) throws IOException {
 		Set<String> versionsToDelete = new HashSet<>();
 		StatementResult result;
 		Record record;
@@ -306,7 +305,7 @@ public final class PaprikaFacade {
 				if (result.hasNext()) {
 					// Implique que l'id provient d'un projet
 					print = begin + " MATCH (n)-[:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v) RETURN v";
-					System.out.println(print);
+					PaprikaWebMain.LOGGER.trace(print);
 					result = tx.run(print);
 
 					while (result.hasNext()) {
@@ -315,16 +314,16 @@ public final class PaprikaFacade {
 
 						if (!value.isNull()) {
 							String idv = Long.toString(value.asNode().id());
-							System.out.println(idv);
+							PaprikaWebMain.LOGGER.trace(idv);
 							versionsToDelete.add(idv);
 						}
 					}
 					print = begin + " MATCH(:" + PaprikaKeyWords.LABELUSER + ")-[r:" + PaprikaKeyWords.REL_USER_PROJECT
 							+ "]->(n) DELETE r";
-					System.out.println(print);
+					PaprikaWebMain.LOGGER.trace(print);
 					tx.run(print);
 					print = begin + " MATCH (n)-[r:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) DELETE r";
-					System.out.println(print);
+					PaprikaWebMain.LOGGER.trace(print);
 					tx.run(print);
 
 					tx.run(begin + " DELETE n");
@@ -340,26 +339,27 @@ public final class PaprikaFacade {
 			 */
 
 			for (String idVersion : versionsToDelete) {
-				String path=this.getParameter(Long.parseLong(idVersion), "PathFile");
-				if(path!=null){
+				String path = this.getParameter(Long.parseLong(idVersion), "PathFile");
+				if (path != null) {
 					Path out = Paths.get(path);
 					try {
 						Files.deleteIfExists(out);
 					} catch (IOException e) {
+						PaprikaWebMain.LOGGER.error("Files.deleteIfExists", e);
+						throw new IOException(e);
 					}
 				}
-				
-				
+
 				print = "MATCH (p) WHERE ID(p)= " + idVersion + " MATCH(:" + PaprikaKeyWords.LABELPROJECT + ")-[r:"
 						+ PaprikaKeyWords.REL_PROJECT_VERSION + "]->(p) DELETE r";
-				System.out.println(print);
+				PaprikaWebMain.LOGGER.trace(print);
 				tx.run(print);
 				print = "MATCH (p) WHERE p.app_key=" + idVersion + " DETACH DELETE p";
-				System.out.println(print);
+				PaprikaWebMain.LOGGER.trace(print);
 				tx.run(print);
-				
+
 				print = "MATCH (p:Version) WHERE ID(p)=" + idVersion + " DELETE p";
-				System.out.println(print);
+				PaprikaWebMain.LOGGER.trace(print);
 				tx.run(print);
 			}
 
@@ -375,13 +375,14 @@ public final class PaprikaFacade {
 		 */
 	}
 
-	private static String getHostName() {
+	private static String getHostName() throws UnknownHostException {
 		try {
 			String str = InetAddress.getByName("web-paprika").getHostAddress();
-			System.out.println(str);
+			PaprikaWebMain.LOGGER.trace(str);
 			return str;
-		} catch (final Exception e) {
-			throw new Error(e);
+		} catch (UnknownHostException e) {
+			PaprikaWebMain.LOGGER.error("InetAddress.getByName(string) Error", e);
+			throw new UnknownHostException();
 		}
 	}
 

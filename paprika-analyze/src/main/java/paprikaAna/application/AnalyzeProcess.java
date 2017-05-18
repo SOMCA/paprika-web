@@ -1,10 +1,6 @@
 package paprikaana.application;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.Level;
 
 
 import net.dongliu.apk.parser.ApkFile;
@@ -35,7 +31,9 @@ public class AnalyzeProcess {
 	}
 	public void run() {
 		Analyse ana = new Analyse();
+		PaprikaAnalyzeMain.LOGGER.trace("Analyse part");
 		this.runPartAnalyse(ana);
+		PaprikaAnalyzeMain.LOGGER.trace("Query part");
 		this.runPartQuery(ana);
 	}
 
@@ -93,10 +91,10 @@ public class AnalyzeProcess {
 				//}
 			}
 		} catch (IOException e) {
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE, "runPartAnalyse: IOException", e);
+			PaprikaAnalyzeMain.LOGGER.error("runPartAnalyse: IOException", e);
 			throw new AnalyseException();
 		} catch (AnalyseException e) {
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE, "runPartAnalyse: AnalyseException", e);
+			PaprikaAnalyzeMain.LOGGER.error("runPartAnalyse: AnalyseException", e);
 			throw new AnalyseException();
 		}
 

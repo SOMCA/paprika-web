@@ -14,6 +14,7 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaFacade;
+import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
@@ -287,7 +288,7 @@ public class Application extends Entity {
 		labels.append(key);
 
 		str.append("],   ykeys:[" + xkeys + "],labels: [" + labels + "],");
-System.out.println(str);
+PaprikaWebMain.LOGGER.trace(str);
 		return str.toString();
 	}
 

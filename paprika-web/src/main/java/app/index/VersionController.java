@@ -36,7 +36,7 @@ public class VersionController {
 		if (application == null)
 			return ViewUtil.render(request, model, PathIn.Template.INDEX);
 
-		System.out.println("-------serveVersionPage--------");
+		PaprikaWebMain.LOGGER.trace("-------serveVersionPage--------");
 
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		Version version = RequestUtil.getSessionVersion(request);
@@ -60,10 +60,10 @@ public class VersionController {
 
 		User user = RequestUtil.getSessionUser(request);
 
-		System.out.println("-------handleVersionPost--------");
+		PaprikaWebMain.LOGGER.trace("-------handleVersionPost--------");
 		String menu = RequestUtil.getQueryVersion(request);
 		if (menu != null) {
-			System.out.println("etape menu: " + menu);
+			PaprikaWebMain.LOGGER.trace("etape menu: " + menu);
 			request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(Long.parseLong(menu)));
 		}
 		Application application = RequestUtil.getSessionApplication(request);
@@ -71,15 +71,14 @@ public class VersionController {
 		// Formulaire quand on choisit la version dans la page layout.
 		String menuVer = RequestUtil.getParamMenuVersion(request);
 		if (menuVer != null) {
-			System.out.println("etape menuVer: " + menuVer);
+			PaprikaWebMain.LOGGER.trace("etape menuVer: " + menuVer);
 			request.session().attribute("version", facade.version(Long.parseLong(menuVer)));
 		}
 		Version version = RequestUtil.getSessionVersion(request);
-		String str;
 		// Formulaire quand on choisit d'ANALYSEr dans la page version.
 		String analys = request.queryParams("analyse");
 		if (analys != null) {
-			System.out.println("etape ANALYSE");
+			PaprikaWebMain.LOGGER.trace("etape ANALYSE");
 			String fname = version.getName() + ".apk";
 			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/"
 					+ application.getName() + "/" + fname;

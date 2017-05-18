@@ -3,6 +3,8 @@ package app.application;
 import static spark.Spark.*;
 import static spark.debug.DebugScreen.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -16,7 +18,6 @@ import app.index.VersionController;
 import app.login.LoginController;
 import app.register.SignUpController;
 import app.utils.PathIn;
-
 import spark.Spark;
 import java.net.InetAddress;
 
@@ -34,25 +35,28 @@ public class PaprikaWebMain {
 	private static String getHostName() {
 		try {
 			String str= InetAddress.getByName("neo4j-paprika").getHostAddress();
-			System.out.println(str);
+			PaprikaWebMain.LOGGER.trace(str);
 			return str;
 		} catch (final Exception e) {
 			return "localhost";
 		}
 	}
 	public static boolean dockerVersion;
+	public static final Logger LOGGER = LogManager.getLogger(PaprikaWebMain.class);//.getLog(PaprikaAnalyzeMain.class.getName());//.getLogger(PaprikaAnalyzeMain.class.getName());
 
+	
 	private PaprikaWebMain() {
 
 	}
-	
 	public static Session getSession(){
 		Session session=null;
 
 		try{
 		 session =driver.session();
+		 LOGGER.trace("Open a new session.");
 		}
 		catch(ServiceUnavailableException e){
+			LOGGER.error("Driver problem, we re-open a driver.");
 			driver.close();
 			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 					AuthTokens.basic("neo4j", "paprika"));
@@ -60,7 +64,6 @@ public class PaprikaWebMain {
 		}
 		return session;
 	}
-
 	public static void main(String[] args) {
 		dockerVersion=false;
 		if(args.length!=0)

@@ -83,14 +83,14 @@ public class IndexController {
 				String realname = fName.substring(0, fName.lastIndexOf('.'));
 				String format = fName.substring(fName.lastIndexOf('.'), fName.length());
 				if (!".apk".equals(format)) {
-					System.out.println("The file is not a .apk file! We have: "+format);
+					PaprikaWebMain.LOGGER.trace("The file is not a .apk file! We have: "+format);
 				}
 				else if(realname.length() > 50){
-					System.out.println("The name of the file is too long, maximal size: 21");
+					PaprikaWebMain.LOGGER.trace("The name of the file is too long, maximal size: 21");
 				}
 				else {
 
-					System.out.println(realname);
+					PaprikaWebMain.LOGGER.trace(realname);
 					
 					String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + '/'
 							+ application.getName() + '/' + fName;

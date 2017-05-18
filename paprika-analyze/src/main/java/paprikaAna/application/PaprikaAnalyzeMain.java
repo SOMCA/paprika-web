@@ -3,15 +3,14 @@ package paprikaana.application;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
-
 import paprikaana.model.*;
 
 import net.dongliu.apk.parser.ApkFile;
@@ -37,10 +36,9 @@ public class PaprikaAnalyzeMain {
 			return "localhost";
 		}
 	}
-	public static final Logger LOGGER = Logger.getLogger(PaprikaAnalyzeMain.class.getName());
+	public static final Logger LOGGER = LogManager.getLogger(PaprikaAnalyzeMain.class);//.getLog(PaprikaAnalyzeMain.class.getName());//.getLogger(PaprikaAnalyzeMain.class.getName());
 
 	private PaprikaAnalyzeMain(){
-		
 	}
 	
 	public static Session getSession(){
@@ -48,8 +46,10 @@ public class PaprikaAnalyzeMain {
 
 		try{
 		 session =driver.session();
+		 LOGGER.trace("Open a new session.");
 		}
 		catch(ServiceUnavailableException e){
+			LOGGER.error("Driver problem, we re-open a driver.");
 			driver.close();
 			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 					AuthTokens.basic("neo4j", "paprika"));
@@ -64,7 +64,7 @@ public class PaprikaAnalyzeMain {
 		if(leng!=6) {
 			return;
 		}
-		System.out.println("Launch Analyse");
+		LOGGER.trace("Launch Analyse");
 		String fName = args[0];
 		long size = Long.parseLong(args[1]);
 
@@ -75,14 +75,16 @@ public class PaprikaAnalyzeMain {
 		String pathstr = "application/" + user + "/" + application.getName() + "/" + fName;
 
 		ApkFile apkfile = null;
+		PaprikaFacade facade = PaprikaFacade.getInstance();
 		try {
 			apkfile = new ApkFile(pathstr);
-			PaprikaFacade facade = PaprikaFacade.getInstance();
+			
 			AnalyzeProcess anaThread = new AnalyzeProcess(apkfile, fName, application, user, size, nodeVer);
 			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "inprogress");
 			anaThread.run();
 		} catch (IOException e) {
-			PaprikaAnalyzeMain.LOGGER.log(Level.SEVERE,"main: IOException",e);
+			LOGGER.error("IOException error: File not found");
+			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "error");
 			throw new AnalyseException();
 		}
 	}

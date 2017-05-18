@@ -5,10 +5,10 @@ import spark.*;
 import java.util.*;
 
 import app.application.PaprikaFacade;
+import app.application.PaprikaWebMain;
 import app.login.LoginController;
 import app.model.Application;
-import app.model.User;
-import app.utils.PaprikaKeyWords;
+
 import app.utils.PathIn;
 import app.utils.RequestUtil;
 import app.utils.ViewUtil;
@@ -26,7 +26,7 @@ public class FormController {
 
 		LoginController.ensureUserIsLoggedIn(request, response);
 		Map<String, Object> model = new HashMap<>();
-		System.out.println("-------handleFormDelPage--------");
+		PaprikaWebMain.LOGGER.trace("-------handleFormDelPage--------");
 		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
 	};
 
@@ -34,11 +34,11 @@ public class FormController {
 		Map<String, Object> model = new HashMap<>();
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		Application application= RequestUtil.getSessionApplication(request);
-		System.out.println("-------handleFormDeletePost--------");
+		PaprikaWebMain.LOGGER.trace("-------handleFormDeletePost--------");
 		String delete = request.queryParams("delete");
 		if (delete != null) {
 
-			System.out.println("etape delete: " + delete);
+			PaprikaWebMain.LOGGER.trace("etape delete: " + delete);
 			Set<String> setQueryParams = request.queryParams();
 			Set<String> setOfIdToDelete = new HashSet<>();
 			for (String params : setQueryParams) {

@@ -91,9 +91,9 @@ public class SootAnalyzer extends Analyzer {
 				// Nothing, this is normal
 			}
 		}));
-System.out.println("G.reset();");
+PaprikaAnalyzeMain.LOGGER.trace("G.reset();");
 		G.reset();
-		System.out.println("options");
+		PaprikaAnalyzeMain.LOGGER.trace("options");
 		Options.v().set_verbose(false);
 		// Path to android-sdk-platforms
 		Options.v().set_android_jars(androidJAR);
@@ -107,7 +107,7 @@ System.out.println("G.reset();");
 		Options.v().set_output_format(Options.output_format_grimple);
 		// Get directly the home directory and work on it
 		Options.v().set_output_dir(System.getProperty("user.home") + File.separator + "/These/decompiler/out");
-		System.out.println("phaseoptions");
+		PaprikaAnalyzeMain.LOGGER.trace("phaseoptions");
 		PhaseOptions.v().setPhaseOption("gop", "enabled:true");
 		System.setOut(originalStream);
 
@@ -119,10 +119,10 @@ System.out.println("G.reset();");
 		excludeList.add("soot.");
 		excludeList.add("javax.servlet.");
 		Options.v().set_exclude(excludeList);
-		System.out.println("scene load");
+		PaprikaAnalyzeMain.LOGGER.trace("scene load");
 
 		Scene.v().loadNecessaryClasses();
-		System.out.println("end init method");
+		PaprikaAnalyzeMain.LOGGER.trace("end init method");
 		System.out.flush();
 	}
 
@@ -139,12 +139,12 @@ System.out.println("G.reset();");
 			}
 
 		}));
-		System.out.println("runPacks");
+		PaprikaAnalyzeMain.LOGGER.trace("runPacks");
 
 		PackManager.v().runPacks();
-		System.out.println("computemetrics");
+		PaprikaAnalyzeMain.LOGGER.trace("computemetrics");
 		computeMetrics();
-		System.out.println("callGraphMetrics");
+		PaprikaAnalyzeMain.LOGGER.trace("callGraphMetrics");
 
 		collectCallGraphMetrics();
 
@@ -369,8 +369,7 @@ System.out.println("G.reset();");
 										IsARGB8888.createIsARGB8888(paprikaExternalArgument, true);
 									}
 								} catch (Exception exc) {
-									PaprikaAnalyzeMain.LOGGER.log(Level.FINE,
-											"collectMethodMetricsFromCallGraph: Exception", exc);
+									PaprikaAnalyzeMain.LOGGER.error("collectMethodMetricsFromCallGraph: Exception", exc);
 								}
 							}
 						}
