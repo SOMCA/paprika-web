@@ -12,6 +12,7 @@ import app.utils.*;
 public class LoginController {
 	
 
+	private static final String CURRENTUSER="currentUser";
 
 	public static final Route serveLoginPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
@@ -26,10 +27,10 @@ public class LoginController {
 			model.put("authenticationFailed", true);
 			return ViewUtil.render(request, model, PathIn.Template.LOGIN);
 		}
-
+		
 		model.put("authenticationSucceeded", true);
-		request.session().attribute("currentUser", RequestUtil.getQueryUsername(request));
-		request.session().attribute("user",
+		request.session().attribute(CURRENTUSER, RequestUtil.getQueryUsername(request));
+		request.session().attribute("user", 
 				PaprikaFacade.getInstance().user(RequestUtil.getQueryUsername(request)));
 		if (RequestUtil.getQueryLoginRedirect(request) != null) {
 			response.redirect(RequestUtil.getQueryLoginRedirect(request));
@@ -38,7 +39,7 @@ public class LoginController {
 	};
 
 	public static final Route handleLogoutPost = (Request request, Response response) -> {
-		request.session().removeAttribute("currentUser");
+		request.session().removeAttribute(CURRENTUSER);
 		request.session().removeAttribute("user");
 		request.session().removeAttribute(PaprikaKeyWords.APPLICATION);
 		request.session().removeAttribute(PaprikaKeyWords.VERSION);
@@ -47,10 +48,14 @@ public class LoginController {
 		return null;
 	};
 
+	  private LoginController() {
+		    throw new IllegalAccessError("Controller class");
+		  }
+	
 	// The origin of the request (request.pathInfo()) is saved in the session so
 	// the user can be redirected back after login
 	public static final void ensureUserIsLoggedIn(Request request, Response response) {
-		if (request.session().attribute("currentUser") == null) {
+		if (request.session().attribute(CURRENTUSER) == null) {
 			request.session().attribute("loginRedirect", request.pathInfo());
 			response.redirect(PathIn.Web.LOGIN);
 		}
@@ -78,8 +83,6 @@ public class LoginController {
 		return hashedPassword.equals(user.getHashedPassword());
 	}
 
-	  private LoginController() {
-		    throw new IllegalAccessError("Controller class");
-		  }
+
 
 }

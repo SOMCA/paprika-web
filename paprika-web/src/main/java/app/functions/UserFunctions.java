@@ -14,7 +14,7 @@ import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
 public class UserFunctions extends Functions {
-	private static final String ATTRIBUTE_PWD = "hashpwd";
+	private static final String ATTRIBUTE_KEY = "hashpwd";
 		/**
 	 * Return the salt of the first node of label "key" If not found, return
 	 * null
@@ -74,7 +74,7 @@ public class UserFunctions extends Functions {
 
 			if (node.get(PaprikaKeyWords.ATTRIBUTE_EMAIL).asString().equals(email)) {
 
-				String hashpwd = node.get(ATTRIBUTE_PWD).asString();
+				String hashpwd = node.get(ATTRIBUTE_KEY).asString();
 				long id = node.id();
 				return new User(email, id, hashpwd);
 			}
@@ -94,7 +94,7 @@ public class UserFunctions extends Functions {
 	public void writeUser(String email, String newHashedPassword) {
 		LowNode nodeUser = new LowNode(PaprikaKeyWords.LABELUSER);
 		nodeUser.addParameter(PaprikaKeyWords.ATTRIBUTE_EMAIL, email);
-		nodeUser.addParameter(ATTRIBUTE_PWD, newHashedPassword);
+		nodeUser.addParameter(ATTRIBUTE_KEY, newHashedPassword);
 		nodeUser.addParameter(PaprikaKeyWords.ATTRIBUTE_NB_APP, 0);
 
 		LowNode nodeKey = new LowNode(PaprikaKeyWords.LABELKEY);

@@ -12,6 +12,7 @@ import spark.*;
  */
 public class RequestUtil {
 
+	private static final String LOGINREDIRECT="loginRedirect";
 	  private RequestUtil() {
 		    throw new IllegalAccessError("Utility class");
 		  }
@@ -47,7 +48,7 @@ public class RequestUtil {
     }
 
     public static String getQueryLoginRedirect(Request request) {
-        return request.queryParams("loginRedirect");
+        return request.queryParams(LOGINREDIRECT);
     }
 
     public static String getSessionLocale(Request request) {
@@ -69,8 +70,8 @@ public class RequestUtil {
     }
 
     public static String removeSessionAttrLoginRedirect(Request request) {
-        String loginRedirect = request.session().attribute("loginRedirect");
-        request.session().removeAttribute("loginRedirect");
+        String loginRedirect = request.session().attribute(LOGINREDIRECT);
+        request.session().removeAttribute(LOGINREDIRECT);
         return loginRedirect;
     }
     public static Application getSessionApplication(Request request) {

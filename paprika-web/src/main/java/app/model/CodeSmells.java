@@ -13,6 +13,8 @@ public class CodeSmells extends Entity {
 	private long numberOfSmells;
 	private String description;
 	private String longName;
+	
+	private static final String[] arrayHtml= {"<tr>","</tr>","<td>","</td>","<th>","</th>"};
 
 	public CodeSmells(String name, long id, long numberOfSmells) {
 		super(name, id);
@@ -78,24 +80,24 @@ public class CodeSmells extends Entity {
 
 		return arrayData.toString();
 	}
-
+	
 	private StringBuilder getParameter(Record record, String object) {
-		StringBuilder line = new StringBuilder("<tr>");
+		StringBuilder line = new StringBuilder(arrayHtml[0]);
 
-			line.append("<th >"+object+"</th>");
+			line.append(arrayHtml[4]+object+arrayHtml[5]);
 		// style='text-align: center;'
 		Iterator<String> recordIter = record.keys().iterator();
 		while (recordIter.hasNext()) {
-			line.append("<th  >");
+			line.append(arrayHtml[4]);
 			line.append(recordIter.next());
-			line.append("</th>");
+			line.append(arrayHtml[5]);
 		}
-		line.append("</tr>");
+		line.append(arrayHtml[1]);
 		return line;
 	}
 
 	private StringBuilder getLineMethod(Record record) {
-		StringBuilder line = new StringBuilder("<tr>");
+		StringBuilder line = new StringBuilder(arrayHtml[0]);
 		Iterator<Value> recordIter = record.values().iterator();
 		String value;
 		String newvalue;
@@ -107,29 +109,29 @@ public class CodeSmells extends Entity {
 			if ("<init>".equals(values[0])) {
 				newvalue = value.substring(value.lastIndexOf('.')+1, value.length());
 			}else newvalue=values[0];
-			line.append("<td >");
+			line.append(arrayHtml[2]);
 			line.append(newvalue);
-			line.append("</td>");
+			line.append(arrayHtml[3]);
 			
-			line.append("<td >");
+			line.append(arrayHtml[2]);
 			line.append(values[1]);
-			line.append("</td>");
+			line.append(arrayHtml[3]);
 		}
 
 		while (recordIter.hasNext()) {
 			value = recordIter.next().toString();
 			
-			line.append("<td >");
+			line.append(arrayHtml[2]);
 			line.append(value);
-			line.append("</td>");
+			line.append(arrayHtml[3]);
 			
 		}
-		line.append("</tr>");
+		line.append(arrayHtml[1]);
 		return line;
 	}
 	
 	private StringBuilder getLineClass(Record record) {
-		StringBuilder line = new StringBuilder("<tr>");
+		StringBuilder line = new StringBuilder(arrayHtml[0]);
 		Iterator<Value> recordIter = record.values().iterator();
 		String value;
 
@@ -137,24 +139,24 @@ public class CodeSmells extends Entity {
 			
 			value = recordIter.next().asString();
 			String newvalue = value.substring(value.lastIndexOf('.')+1, value.length());
-			line.append("<td >");
+			line.append(arrayHtml[2]);
 			line.append(newvalue);
-			line.append("</td>");
+			line.append(arrayHtml[3]);
 			
-			line.append("<td >");
+			line.append(arrayHtml[2]);
 			line.append(value);
-			line.append("</td>");
+			line.append(arrayHtml[3]);
 		}
 
 		while (recordIter.hasNext()) {
 			value = recordIter.next().toString();
 			
-			line.append("<td >");
+			line.append(arrayHtml[2]);
 			line.append(value);
-			line.append("</td>");
+			line.append(arrayHtml[3]);
 			
 		}
-		line.append("</tr>");
+		line.append(arrayHtml[1]);
 		return line;
 	}
 	

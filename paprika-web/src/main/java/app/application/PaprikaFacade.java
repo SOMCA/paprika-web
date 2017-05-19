@@ -1,6 +1,8 @@
 package app.application;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -9,6 +11,8 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.servlet.http.Part;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.driver.v1.Record;
@@ -230,13 +234,13 @@ public final class PaprikaFacade {
 		return true;
 	}
 
-	public void callAnalyzeThread(long idNode, String fname, Application application, User user, long size,
+	public void callAnalyzeThread(long idNode, String fname, Application application, User user,
 			boolean dockerContainer) {
 		this.setParameterOnNode(idNode, PaprikaKeyWords.CODEA, "loading");
 		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
 			PaprikaWebMain.LOGGER.trace("callAnalyzeThread:");
-			String command = "java -jar Paprika-analyze.jar " + fname + " " + Long.toString(size) + " " + user.getName()
+			String command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName()
 					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
 					+ Long.toString(idNode);
 			PaprikaWebMain.LOGGER.trace(command);
@@ -258,7 +262,7 @@ public final class PaprikaFacade {
 				ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
 						.image("paprika-analyze:latest")
 						// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
-						.cmd("java", "-jar", "Paprika-analyze.jar", fname, Long.toString(size), user.getName(),
+						.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(),
 								application.getName(), Long.toString(application.getID()), Long.toString(idNode))
 						.workingDir("/dock").build();
 				ContainerCreation creation = docker.createContainer(containerConfig);
@@ -370,7 +374,7 @@ public final class PaprikaFacade {
 		
 	}
 
-	private static String getHostName() throws UnknownHostException {
+	private String getHostName() throws UnknownHostException {
 		try {
 			String str = InetAddress.getByName("web-paprika").getHostAddress();
 			PaprikaWebMain.LOGGER.trace(str);
@@ -379,6 +383,24 @@ public final class PaprikaFacade {
 			PaprikaWebMain.LOGGER.error("InetAddress.getByName(string) Error", e);
 			throw new UnknownHostException();
 		}
+	}
+	
+	
+	public void addFile(String currentUser,Application application, String fName,Part uploadedFile,String realname) throws IOException{
+		String pathstr = PaprikaKeyWords.REPERTORY + currentUser + '/'
+				+ application.getName() + '/' + fName;
+		Path out = Paths.get(pathstr);
+		File file = new File(pathstr);
+		file.mkdirs();
+		file = null;
+		Files.deleteIfExists(out);
+		try (final InputStream in = uploadedFile.getInputStream()) {
+			Files.copy(in, out);
+			uploadedFile.delete();
+		}
+		
+	this.addVersion(application.getID() , realname);
+		this.needReloadApp(application);
 	}
 
 }

@@ -42,9 +42,9 @@ public class VersionController {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		Version version = RequestUtil.getSessionVersion(request);
 		if (version != null && version.isAnalyzed() != 3) {
-				facade.reloadVersion(version);
-				model.put(PaprikaKeyWords.VERSION, version);
-			}
+			facade.reloadVersion(version);
+			model.put(PaprikaKeyWords.VERSION, version);
+		}
 
 		return VersionController.renderVersion(request, model, PathIn.Template.VERSION);
 	};
@@ -83,18 +83,9 @@ public class VersionController {
 			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/"
 					+ application.getName() + "/" + fname;
 			boolean flag = false;
-			File file = null;
-			try {
-				file = new File(pathstr);
-				flag = true;
-			} catch (NullPointerException e) {
-				PaprikaWebMain.LOGGER.error("The path for the file is null",e);
-				throw new PapWebRunTimeException(e.getMessage());
-			}
+			flag = analyseVersion(pathstr);
 			if (flag) {
-
-				facade.callAnalyzeThread(version.getID(), fname, application, user, file.length(),
-						PaprikaWebMain.dockerVersion);
+				facade.callAnalyzeThread(version.getID(), fname, application, user, PaprikaWebMain.dockerVersion);
 				facade.reloadVersion(version);
 				model.put(PaprikaKeyWords.VERSION, version);
 			}
@@ -105,6 +96,16 @@ public class VersionController {
 
 	private VersionController() {
 		throw new IllegalAccessError("Controller class");
+	}
+
+	private static boolean analyseVersion(String pathstr) {
+		try {
+			new File(pathstr);
+			return true;
+		} catch (NullPointerException e) {
+			PaprikaWebMain.LOGGER.error("The path for the file is null", e);
+			throw new PapWebRunTimeException(e.getMessage());
+		}
 	}
 
 }

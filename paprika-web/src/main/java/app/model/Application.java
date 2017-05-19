@@ -1,8 +1,6 @@
 package app.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,16 +50,16 @@ public class Application extends Entity {
 	 * Renvoie la taille de la liste de versions, comme celle ci peut être
 	 * nulle, si nulle, il renvoie 0
 	 * 
-	 * On n'utilise pas le nombre de Version du node application, car sinon, si on supprime des versions
-	 * on devra changer leur ordre à chacun ce qui sera long, alors le nombre de versions ne fait que grossir dans l'application
+	 * On n'utilise pas le nombre de Version du node application, car sinon, si
+	 * on supprime des versions on devra changer leur ordre à chacun ce qui sera
+	 * long, alors le nombre de versions ne fait que grossir dans l'application
 	 * 
 	 * @return
 	 */
 	public int getNumberOfVersionReal() {
-		if(reload) {
+		if (reload) {
 			return this.listofVersion.size();
-		}
-		else {
+		} else {
 			return this.getListVersionApplications().size();
 		}
 	}
@@ -98,17 +96,9 @@ public class Application extends Entity {
 				name = node.get(PaprikaKeyWords.NAMEATTRIBUTE).asString();
 				versions.add(new Version(name, node.id()));
 			}
-
 			// A sort for be sure than all versions are sort with order
-			Collections.sort(versions, new Comparator<Version>() {
-				@Override
-				public int compare(Version v1, Version v2) {
-					if (v1.getOrder() < v2.getOrder()) {
-						return 1;
-					}
-					return (v1.getOrder() > v2.getOrder()) ? -1 : 0;
-				}
-			});
+			versions.sort((Version v1, Version v2) -> (int) v2.getOrder() - (int) v1.getOrder());
+
 			this.listofVersion = versions;
 			return versions;
 		} else
@@ -126,13 +116,19 @@ public class Application extends Entity {
 		Iterator<Version> versions = getListVersionApplications().iterator();
 		List<Version> lastVersion = new ArrayList<>();
 		int numberVersion = this.getNumberOfVersionReal();
+		
+		// si le nombre de version disponible est plus grand que le nombre voulu, on lui dit d'ajouter que le minimum qu'on veut
+		// number cannot be lower than 1
+		if(number>0 && number<numberVersion){
+			numberVersion=number;
+		}
 		Version version;
 
 		while (versions.hasNext()) {
 			version = versions.next();
 			if (version == null || numberVersion <= 0)
 				return lastVersion;
-			if (version.isAnalyzed()==3) {
+			if (version.isAnalyzed() == 3) {
 				lastVersion.add(version);
 				numberVersion--;
 			}
@@ -154,7 +150,7 @@ public class Application extends Entity {
 		} else if (this.getNumberOfVersionReal() > 0) {
 			for (Version version : listofVersion) {
 
-				if (version.isAnalyzed()==3)
+				if (version.isAnalyzed() == 3)
 					i += 1;
 			}
 		}
@@ -202,35 +198,34 @@ public class Application extends Entity {
 		// Puis transforme le tout en tableau
 		return allkey.toArray(new String[allkey.size()]);
 	}
-	
-	public String getGraph(String renderGraph,int numberVersion){
+
+	public String getGraph(String renderGraph, int numberVersion) {
 		List<Version> versions = getLastXVersion(numberVersion);
 		List<Map<String, Long>> datas = getDataGraph(versions.iterator());
 		String[] allkeyArray = getKey(datas);
-		if(allkeyArray.length==0) {
+		if (allkeyArray.length == 0) {
 			return "";
 		}
 
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
 
-		if("radar".equals(renderGraph)){
-			return radarD3(dataiter,allkeyArray).toString();
-		}
-		else if ("area".equals(renderGraph)){
-			return areaChart(dataiter,allkeyArray,versions).toString();
+		if ("radar".equals(renderGraph)) {
+			return radarD3(dataiter, allkeyArray).toString();
+		} else if ("area".equals(renderGraph)) {
+			return areaChart(dataiter, allkeyArray, versions).toString();
 		}
 		return "";
 
 	}
-	
-	private StringBuilder radarD3(Iterator<Map<String, Long>> dataiter,String[] allkeyArray){
+
+	private StringBuilder radarD3(Iterator<Map<String, Long>> dataiter, String[] allkeyArray) {
 		String line;
 		long value;
 		StringBuilder array;
 		int i;
 		String key;
 		Map<String, Long> data;
-		StringBuilder str= new StringBuilder();
+		StringBuilder str = new StringBuilder();
 		while (dataiter.hasNext()) {
 			data = dataiter.next();
 			array = new StringBuilder("[");
@@ -248,8 +243,9 @@ public class Application extends Entity {
 		}
 		return str;
 	}
-	
-	private StringBuilder areaChart(Iterator<Map<String, Long>> dataiter,String[] allkeyArray,List<Version> versions){
+
+	private StringBuilder areaChart(Iterator<Map<String, Long>> dataiter, String[] allkeyArray,
+			List<Version> versions) {
 		Map<String, Long> data;
 		String key;
 		int i;
@@ -258,7 +254,7 @@ public class Application extends Entity {
 		long value;
 		Iterator<Version> versionsIter = versions.iterator();
 		String name;
-		StringBuilder str= new StringBuilder();
+		StringBuilder str = new StringBuilder();
 
 		// Partie 3, création du string
 		while (versionsIter.hasNext()) {
@@ -282,7 +278,7 @@ public class Application extends Entity {
 
 		StringBuilder xkeys = new StringBuilder();
 		StringBuilder labels = new StringBuilder();
-		
+
 		for (i = 0; i < (allkeyArray.length - 1); i++) {
 			key = "'" + allkeyArray[i] + "',";
 			xkeys.append(key.toLowerCase());
@@ -296,7 +292,7 @@ public class Application extends Entity {
 		PaprikaWebMain.LOGGER.trace(str);
 		return str;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + this.getName() + "," + this.getID() + "," + this.getNumberOfVersion() + "]";

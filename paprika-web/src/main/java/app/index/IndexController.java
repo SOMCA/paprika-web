@@ -2,16 +2,13 @@ package app.index;
 
 import spark.*;
 
-import java.io.File;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
 
 import java.util.*;
 
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletException;
 import javax.servlet.http.Part;
 
 import app.application.PaprikaFacade;
@@ -63,9 +60,25 @@ public class IndexController {
 		}
 		// Formulaire quand on upload un fichier ET analyse.
 		else if (menu == null && project == null) {
+			boolean fileadded=addFile(request,application,facade);
+			if(fileadded)	{
+				model.put(PaprikaKeyWords.APPLICATION, application);
+			}
+		}
+		return ViewUtil.render(request, model, PathIn.Template.INDEX);
+	};
+	
+	  private IndexController() {
+		    throw new IllegalAccessError("Controller class");
+		  }
+
+	  
+	 private static boolean addFile(Request request,Application application,PaprikaFacade facade) throws IOException, ServletException{
 			
 			String location = "../application";
-			if(PaprikaWebMain.dockerVersion) location="/application";
+			if(PaprikaWebMain.dockerVersion){
+				location="/application";
+			}
 			long maxFileSize = 100000000;
 			long maxRequestSize = 100000000;
 			int fileSizeThreshold = 1024;
@@ -87,36 +100,12 @@ public class IndexController {
 				else {
 
 					PaprikaWebMain.LOGGER.trace(realname);
-					
-					String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + '/'
-							+ application.getName() + '/' + fName;
-					Path out = Paths.get(pathstr);
-					File file = new File(pathstr);
-					file.mkdirs();
-					file = null;
-					Files.deleteIfExists(out);
-					try (final InputStream in = uploadedFile.getInputStream()) {
-						Files.copy(in, out);
-						uploadedFile.delete();
-					}
-					multipartConfigElement = null;
-					uploadedFile = null;
-
-					facade.addVersion(application.getID() , realname);
-					facade.needReloadApp(application);
-					model.put(PaprikaKeyWords.APPLICATION, application);
-					
+					facade.addFile( RequestUtil.getSessionCurrentUser(request),application,fName,uploadedFile,realname);
+				/*	multipartConfigElement = null;
+					uploadedFile = null;*/
+					return true;
 				}
 			}
-		}
-
-		return ViewUtil.render(request, model, PathIn.Template.INDEX);
-	};
-	
-	  private IndexController() {
-		    throw new IllegalAccessError("Controller class");
-		  }
-
-
-
+			return false;
+	 }
 }

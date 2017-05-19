@@ -70,9 +70,9 @@ public class PaprikaWebMain {
 		return session;
 	}
 	public static void main(String[] args) {
-		dockerVersion=false;
+		PaprikaWebMain.dockerVersion=false;
 		if(args.length!=0 && "-d".equals(args[0])){
-				dockerVersion=true;
+			PaprikaWebMain.dockerVersion=true;
 			}
 		
 		new DescriptionFunctions().addAllClassicDescription();
