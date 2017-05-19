@@ -7,6 +7,7 @@ import java.util.*;
 
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
+import app.exception.PapWebRunTimeException;
 import app.login.LoginController;
 import app.model.Application;
 import app.model.User;
@@ -87,8 +88,9 @@ public class VersionController {
 			try {
 				file = new File(pathstr);
 				flag = true;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+			} catch (NullPointerException e) {
+				PaprikaWebMain.LOGGER.error("The path for the file is null",e);
+				throw new PapWebRunTimeException(e.getMessage());
 			}
 			if (flag) {
 

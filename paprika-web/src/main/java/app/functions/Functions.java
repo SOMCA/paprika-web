@@ -42,7 +42,9 @@ public abstract class Functions {
 		if(result.hasNext()){
 			Record record= result.next();
 			Value name= record.get("name");
-			if(!name.isNull()) return name.asString();
+			if(!name.isNull()){
+				return name.asString();
+			}
 		}
 		return null;
 	}

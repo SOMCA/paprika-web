@@ -2,6 +2,7 @@ package app.form;
 
 import spark.*;
 
+import java.io.IOException;
 import java.util.*;
 
 import app.application.PaprikaFacade;
@@ -32,35 +33,30 @@ public class FormController {
 
 	public static final Route handleFormDeletePost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
-		PaprikaFacade facade = PaprikaFacade.getInstance();
+		
 		Application application= RequestUtil.getSessionApplication(request);
 		PaprikaWebMain.LOGGER.trace("-------handleFormDeletePost--------");
 		String delete = request.queryParams("delete");
 		if (delete != null) {
-
 			PaprikaWebMain.LOGGER.trace("etape delete: " + delete);
-			Set<String> setQueryParams = request.queryParams();
-			Set<String> setOfIdToDelete = new HashSet<>();
-			for (String params : setQueryParams) {
-				String idtoDelete = request.queryParams(params);
-
-	
-
-				if (idtoDelete == null || idtoDelete.equals("00-")) {
-						continue;
-					
-				}
-				setOfIdToDelete.add(idtoDelete);
-				
-			}
-			facade.deleteOnDataBase(setOfIdToDelete);
-			
-			
-			facade.needReloadApp(application);
+			deleteNotNull(request,application);
 			model.put("application", application);
 		}
-
 		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
 	};
+	private static void deleteNotNull(Request request,Application application) throws IOException{
+		Set<String> setQueryParams = request.queryParams();
+		Set<String> setOfIdToDelete = new HashSet<>();
+		for (String params : setQueryParams) {
+			String idtoDelete = request.queryParams(params);
+			if (idtoDelete == null || "00-".equals(idtoDelete)) {
+					continue;
+			}
+			setOfIdToDelete.add(idtoDelete);	
+		}
+		PaprikaFacade facade = PaprikaFacade.getInstance();
+		facade.deleteOnDataBase(setOfIdToDelete);
+		facade.needReloadApp(application);
+	}
 
 }

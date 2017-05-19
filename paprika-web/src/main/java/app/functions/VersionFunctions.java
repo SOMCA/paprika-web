@@ -16,6 +16,10 @@ import app.utils.neo4j.LowNode;
 public class VersionFunctions extends Functions {
 
 
+	private static final String MATCHN="MATCH (n:";
+	private static final String WHEREID=") where ID(n)=";
+	
+	
 	/**
 	 * Prend un node version, et incrémente de 1 à l'attribut en prenant en
 	 * compte qu'il s'agit d'un long
@@ -119,6 +123,9 @@ public class VersionFunctions extends Functions {
 	}
 
 	
+	private String beginString(long id){
+		return MATCHN+PaprikaKeyWords.VERSIONLABEL+WHEREID+Long.toString(id);
+	}
 	/**
 	 * Donne le nombre de codesmell contenu dans le noeud codesmell
 	 * @param id
@@ -127,7 +134,7 @@ public class VersionFunctions extends Functions {
 	public long getNumberOfSmells(long id){
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
-		result = tx.run("MATCH (n:"+PaprikaKeyWords.VERSIONLABEL+") where ID(n)="+id
+		result = tx.run(beginString(id)
 				+ " MATCH (n)-[:"+PaprikaKeyWords.REL_VERSION_CODESMELLS+"]->(target:"+PaprikaKeyWords.LABELQUERY+")"
 						+ " return target.number");
 		tx.success();
@@ -150,7 +157,7 @@ public class VersionFunctions extends Functions {
 	public void applyNumberOfCodeSmells(long id,long number){
 
 		try (Transaction tx = this.session.beginTransaction()) {
-		tx.run("MATCH (n:"+PaprikaKeyWords.VERSIONLABEL+") where ID(n)="+Long.toString(id)
+		tx.run(beginString(id)
 				+ " MATCH (n)-[:"+PaprikaKeyWords.REL_VERSION_CODESMELLS+"]->(target:"+PaprikaKeyWords.LABELQUERY+")"
 						+ "set target.number="+Long.toString(number));
 		tx.success();
@@ -161,7 +168,7 @@ public class VersionFunctions extends Functions {
 	public long getOrder(long id){
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
-		result = tx.run("MATCH (n:"+PaprikaKeyWords.VERSIONLABEL+") where ID(n)="+id+" return n."+PaprikaKeyWords.ORDER);
+		result = tx.run(beginString(id)+" return n."+PaprikaKeyWords.ORDER);
 		tx.success();
 		}
 		if(result.hasNext()){

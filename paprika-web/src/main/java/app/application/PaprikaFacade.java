@@ -318,13 +318,10 @@ public final class PaprikaFacade {
 							versionsToDelete.add(idv);
 						}
 					}
-					print = begin + " MATCH(:" + PaprikaKeyWords.LABELUSER + ")-[r:" + PaprikaKeyWords.REL_USER_PROJECT
-							+ "]->(n) DELETE r";
-					PaprikaWebMain.LOGGER.trace(print);
-					tx.run(print);
-					print = begin + " MATCH (n)-[r:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) DELETE r";
-					PaprikaWebMain.LOGGER.trace(print);
-					tx.run(print);
+					tx.run(begin + " MATCH(:" + PaprikaKeyWords.LABELUSER + ")-[r:" + PaprikaKeyWords.REL_USER_PROJECT
+							+ "]->(n) DELETE r");
+				
+					tx.run(begin + " MATCH (n)-[r:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) DELETE r");
 
 					tx.run(begin + " DELETE n");
 
@@ -332,40 +329,10 @@ public final class PaprikaFacade {
 					versionsToDelete.add(idAppli);
 
 			}
-			/*
-			 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on
-			 * doit aussi modifier l'ordre de toutes les versions restantes.
-			 * Mais surtout, pas mal de transaction qui coûtent.
-			 */
-
-			for (String idVersion : versionsToDelete) {
-				String path = this.getParameter(Long.parseLong(idVersion), "PathFile");
-				if (path != null) {
-					Path out = Paths.get(path);
-					try {
-						Files.deleteIfExists(out);
-					} catch (IOException e) {
-						PaprikaWebMain.LOGGER.error("Files.deleteIfExists", e);
-						throw new IOException(e);
-					}
-				}
-
-				print = "MATCH (p) WHERE ID(p)= " + idVersion + " MATCH(:" + PaprikaKeyWords.LABELPROJECT + ")-[r:"
-						+ PaprikaKeyWords.REL_PROJECT_VERSION + "]->(p) DELETE r";
-				PaprikaWebMain.LOGGER.trace(print);
-				tx.run(print);
-				print = "MATCH (p) WHERE p.app_key=" + idVersion + " DETACH DELETE p";
-				PaprikaWebMain.LOGGER.trace(print);
-				tx.run(print);
-
-				print = "MATCH (p:Version) WHERE ID(p)=" + idVersion + " DELETE p";
-				PaprikaWebMain.LOGGER.trace(print);
-				tx.run(print);
-			}
+			deleteVersionsOnDataBase(tx,versionsToDelete);
 
 			tx.success();
 		}
-
 		/*
 		 * On sépare application et versions, On ajoute les versions de
 		 * l'application dans le set des versions et supprime l'application.
@@ -373,6 +340,34 @@ public final class PaprikaFacade {
 		 * clé(ex:app_key:idVersion), si elle existe. pour supprimer les classes
 		 * non reliés(rare, mais cela existe)
 		 */
+	}
+	
+	private void deleteVersionsOnDataBase(Transaction tx,Set<String> versionsToDelete) throws IOException{
+		/*
+		 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on
+		 * doit aussi modifier l'ordre de toutes les versions restantes.
+		 * Mais surtout, pas mal de transaction qui coûtent.
+		 */
+
+		for (String idVersion : versionsToDelete) {
+			String path = this.getParameter(Long.parseLong(idVersion), "PathFile");
+			if (path != null) {
+				Path out = Paths.get(path);
+				try {
+					Files.deleteIfExists(out);
+				} catch (IOException e) {
+					PaprikaWebMain.LOGGER.error("Files.deleteIfExists", e);
+					throw new IOException(e);
+				}
+			}
+
+			tx.run("MATCH (p) WHERE ID(p)= " + idVersion + " MATCH(:" + PaprikaKeyWords.LABELPROJECT + ")-[r:"
+					+ PaprikaKeyWords.REL_PROJECT_VERSION + "]->(p) DELETE r");
+			tx.run("MATCH (p) WHERE p.app_key=" + idVersion + " DETACH DELETE p");
+
+			tx.run("MATCH (p:Version) WHERE ID(p)=" + idVersion + " DELETE p");
+		}
+		
 	}
 
 	private static String getHostName() throws UnknownHostException {

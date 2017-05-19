@@ -45,8 +45,24 @@ public class Version extends Entity {
 		String ana = facade.getParameter(getID(), PaprikaKeyWords.CODEA);
 		// null(0),loading(1) , inprogress(2), done(3)
 
-		this.analyzed = ((ana == null || ana.charAt(0) == 'e') ? 0
-				: (ana.charAt(0) == 'l' ? 1 : (ana.charAt(0) == 'i' ? 2 : 3)));
+		if (ana == null)
+			this.analyzed = 0;
+		else {
+			switch (ana.charAt(0)) {
+			case 'e':
+				break;
+			case 'l':
+				this.analyzed = 1;
+				break;
+			case 'i':
+				this.analyzed = 2;
+				break;
+			default:
+				this.analyzed = 3;
+				break;
+			}
+		}
+
 		// PaprikaWebMain.LOGGER.trace(this.analyzed);
 		if (this.analyzed == 3) {
 			String path = facade.getParameter(getID(), "PathFile");

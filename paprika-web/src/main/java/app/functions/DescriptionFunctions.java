@@ -49,7 +49,6 @@ public class DescriptionFunctions extends Functions {
 		}
 	}
 
-	private static final String FRENCHSITE = "<br>See: <a href='https://tel.archives-ouvertes.fr/tel-01418158/document'>Code Smells PDF french</a>";
 
 	/**
 	 * Method qui envoie des données basiques des differents code_smells de
@@ -61,6 +60,7 @@ public class DescriptionFunctions extends Functions {
 		List<LowNode> desclist = new ArrayList<>();
 
 		LowNode node;
+		final String frenchsite = "<br>See: <a href='https://tel.archives-ouvertes.fr/tel-01418158/document'>Code Smells PDF french</a>";
 
 		node = getNodeDescription("ARGB8888", "bitmap configuration of Image",
 				"Usage of a bad bitmap format. This is a minor problem, not a code smell"
@@ -69,71 +69,71 @@ public class DescriptionFunctions extends Functions {
 		desclist.add(node);
 
 		node = getNodeDescription("BLOB", "God Object", "A class that has grown too large."
-				+ "<br>See: <a href='https://en.wikipedia.org/wiki/God_object'>God Object</a>" + FRENCHSITE);
+				+ "<br>See: <a href='https://en.wikipedia.org/wiki/God_object'>God Object</a>" + frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("CC", "Complex Class/Cyclomatic complexity",
 				"Too many branches or loops; this may indicate a function needs to be broken up into smaller functions, "
 						+ "<br>or that it has potential for simplification."
 						+ "<br>See: <a href='https://en.wikipedia.org/wiki/Cyclomatic_complexity'>Cyclomatic complexity</a>"
-						+ FRENCHSITE);
+						+ frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("HMU", "Hashmap Usage",
 				"Usage of a HashMap for a small Map instead of ArrayMap who is better for small Map, contrary to HashMap reserved to big Map"
-						+ FRENCHSITE);
+						+ frenchsite);
 		desclist.add(node);
 
-		node = getNodeDescription("HAS", "Heavy AsyncTask", "///" + FRENCHSITE);
+		node = getNodeDescription("HAS", "Heavy AsyncTask", "///" + frenchsite);
 		desclist.add(node);
 
-		node = getNodeDescription("HBR", "Heavy BroadcastReceiver","Usage of a onReceive of BroadCastReceiver for a long process on the main thread" + FRENCHSITE);
+		node = getNodeDescription("HBR", "Heavy BroadcastReceiver","Usage of a onReceive of BroadCastReceiver for a long process on the main thread" + frenchsite);
 		desclist.add(node);
 		
-		node = getNodeDescription("HSS","Heavy Service Start", "A method OnStartCommand have be called to the main thread." + FRENCHSITE);
+		node = getNodeDescription("HSS","Heavy Service Start", "A method OnStartCommand have be called to the main thread." + frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("IGS","Internal Getter/Setter", 				"Internal fields are accessed via getters and setters."
 				+ "<br>But in Android virtual method are expensive."
 				+ "<br>See: <a href='http://www.modelrefactoring.org/smell_catalog/smells/internal_getter_setter.html'>Internal Getter/Setter</a>"
-				+ FRENCHSITE);
+				+ frenchsite);
 		desclist.add(node);
 
-		node = getNodeDescription("IOD","Init OnDraw", "Too long process for the method OnDraw of class who extends of View" + FRENCHSITE);
+		node = getNodeDescription("IOD","Init OnDraw", "Too long process for the method OnDraw of class who extends of View" + frenchsite);
 		desclist.add(node);
 
-		node = getNodeDescription("IWR","Invalidate Without Rect", "Bad pratice of the method Invalidate" + FRENCHSITE);
+		node = getNodeDescription("IWR","Invalidate Without Rect", "Bad pratice of the method Invalidate" + frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("LIC", "Leaking Inner Class",				"Memory Efficiency"
 				+ "<br>See: <a href='http://www.modelrefactoring.org/smell_catalog/smells/leaking_inner_class.html'>Leaking Inner Class</a>"
-				+ FRENCHSITE);
+				+ frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("LM","Long Method", "A method too long who can be simplified."
-				+ "<br>See: <a href='https://en.wikipedia.org/wiki/Code_smell'>Code Smell Wikipedia</a>" + FRENCHSITE);
+				+ "<br>See: <a href='https://en.wikipedia.org/wiki/Code_smell'>Code Smell Wikipedia</a>" + frenchsite);
 		desclist.add(node);
 		
 		node = getNodeDescription("MIM","Member Ignoring Method",				"Non-static methods that don't access any property."
 				+ "<br>See: <a href='http://www.modelrefactoring.org/smell_catalog/smells/member_ignoring_method.html'>Member Ignoring Method</a>"
-				+ FRENCHSITE);
+				+ frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("NLMR","No Low Memory Resolver", 				"Problem of memory of the Android, where it can automatic kill low process if developper have not implemented a onLowMemory()"
 				+ "<br>See: <a href='http://www.modelrefactoring.org/smell_catalog/smells/no_low_memory_handler.html'>No Low Memory Resolver</a>"
-				+ FRENCHSITE);
+				+ frenchsite);
 		desclist.add(node);
 
 
 		node = getNodeDescription("UIO", "UI Overdraw",
 				"Generate a pixel hide per a other pixel"
 						+ "<br>See: <a href='http://www.modelrefactoring.org/smell_catalog/smells/overdrawn_pixel.html'>Overdrawn Pixel</a>"
-						+ FRENCHSITE);
+						+ frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("SAK", "Swiss Army Knife",
 				"A too huge interface for multiples classes who do not use all methods of the implementation"
-						+ FRENCHSITE);
+						+ frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("THI", "Tracking Hardware Id",
@@ -142,7 +142,7 @@ public class DescriptionFunctions extends Functions {
 		desclist.add(node);
 
 		node = getNodeDescription("UCS", "Unsuited LRU Cache Size",
-				"Use a LRU(Least Recently Used) without use a getMemoryClass" + FRENCHSITE);
+				"Use a LRU(Least Recently Used) without use a getMemoryClass" + frenchsite);
 		desclist.add(node);
 
 		node = getNodeDescription("UHA", "Unsupported Hardware Acceleration",
