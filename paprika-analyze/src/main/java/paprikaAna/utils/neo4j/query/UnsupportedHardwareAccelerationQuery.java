@@ -19,7 +19,7 @@ package paprikaana.utils.neo4j.query;
 
 import java.io.IOException;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -39,7 +39,7 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
         StatementResult result;
         String [] uhas = {
                 "drawPicture#android.graphics.Canvas",

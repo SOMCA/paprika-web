@@ -19,7 +19,7 @@
 
 package paprikaana.utils.neo4j;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
@@ -68,7 +68,7 @@ public class QueryEngineBolt {
 	}
 
 
-	public void analyzedAppQuery() throws CypherException, IOException {
+	public void analyzedAppQuery() throws IOException {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
 			result = tx.run("MATCH (a:App {app_key:" + this.keyApp
@@ -256,7 +256,7 @@ public class QueryEngineBolt {
 	*/
 	}
 
-	public void deleteQuery(String appKey) throws CypherException, IOException {
+	public void deleteQuery(String appKey) throws IOException {
 		try (Transaction tx = this.session.beginTransaction()) {
 			tx.run("MATCH (n {app_key: '" + appKey + "'})-[r]-() DELETE n,r");
 			tx.success();
@@ -306,7 +306,7 @@ public class QueryEngineBolt {
 	private void deleteApp(String appKey) {
 		try (Transaction tx = this.session.beginTransaction()) {
 			String request = "MATCH (n:App {app_key: '" + appKey + "'}) DELETE n";
-			System.out.println(request);
+			PaprikaAnalyzeMain.LOGGER.trace(request);
 			tx.run(request);
 			tx.success();
 		}
@@ -316,7 +316,7 @@ public class QueryEngineBolt {
 		try (Transaction tx = this.session.beginTransaction()) {
 			String request = QueryEngineBolt.MATCHN + nodeType1 + "  {app_key: '" + appKey + "'})-[r:" + reltype + "]->(m:"
 					+ nodeType2 + QueryEngineBolt.APPKEY + appKey + "'}) DELETE r";
-			System.out.println(request);
+			PaprikaAnalyzeMain.LOGGER.trace(request);
 			tx.run(request);
 			tx.success();
 		}
@@ -326,7 +326,7 @@ public class QueryEngineBolt {
 		try (Transaction tx = this.session.beginTransaction()) {
 			String request = QueryEngineBolt.MATCHN + nodeType1 + QueryEngineBolt.APPKEY + appKey + "'})<-[r:" + reltype + "]-(m:"
 					+ nodeType2 + QueryEngineBolt.APPKEY + appKey + "'}) DELETE n,r";
-			System.out.println(request);
+			PaprikaAnalyzeMain.LOGGER.trace(request);
 			tx.run(request);
 			tx.success();
 		}
@@ -336,7 +336,7 @@ public class QueryEngineBolt {
 		try (Transaction tx = this.session.beginTransaction()) {
 			String request = QueryEngineBolt.MATCHN + nodeType1 + QueryEngineBolt.APPKEY + appKey + "'})-[r:" + reltype + "]->(m:"
 					+ nodeType2 + QueryEngineBolt.APPKEY + appKey + "'}) DELETE n,r";
-			System.out.println(request);
+			PaprikaAnalyzeMain.LOGGER.trace(request);
 			tx.run(request);
 
 			tx.success();
@@ -359,7 +359,7 @@ public class QueryEngineBolt {
 		deleteApp(appKey);
 	}
 
-	public List<String> findKeysFromPackageName(String appName) throws CypherException, IOException {
+	public List<String> findKeysFromPackageName(String appName) throws IOException {
 		ArrayList<String> keys = new ArrayList<>();
 		try (Transaction tx = this.session.beginTransaction()) {
 			StatementResult result = tx.run("MATCH (n:App) WHERE n.package='" + appName + "' RETURN n.app_key as key");
@@ -373,15 +373,15 @@ public class QueryEngineBolt {
 	}
 
 	public void deleteEntireAppFromPackage(String name) throws IOException {
-		System.out.println("Deleting app with package :" + name);
+		PaprikaAnalyzeMain.LOGGER.trace("Deleting app with package :" + name);
 		List<String> keys = findKeysFromPackageName(name);
 		for (String key : keys) {
-			System.out.println("Deleting app with app_key :" + key);
+			PaprikaAnalyzeMain.LOGGER.trace("Deleting app with app_key :" + key);
 			deleteEntireApp(key);
 		}
 	}
 
-	public void countVariables() throws CypherException, IOException {
+	public void countVariables() throws IOException {
 		StatementResult result;
 		try (Transaction ignored = this.session.beginTransaction()) {
 			result = this.session.run("MATCH (n:Variable) return n.app_key as app_key, count(n) as nb_variables");
@@ -389,7 +389,7 @@ public class QueryEngineBolt {
 		}
 	}
 
-	public void countInnerClasses() throws CypherException, IOException {
+	public void countInnerClasses() throws IOException {
 		StatementResult result;
 		try (Transaction ignored = this.session.beginTransaction()) {
 			result = this.session.run(
@@ -398,7 +398,7 @@ public class QueryEngineBolt {
 		}
 	}
 
-	public void countAsyncClasses() throws CypherException, IOException {
+	public void countAsyncClasses() throws IOException {
 		StatementResult result;
 		try (Transaction ignored = this.session.beginTransaction()) {
 			result = this.session.run(
@@ -407,7 +407,7 @@ public class QueryEngineBolt {
 		}
 	}
 
-	public void countViews() throws CypherException, IOException {
+	public void countViews() throws IOException {
 		StatementResult result;
 		try (Transaction ignored = this.session.beginTransaction()) {
 			result = this.session.run(
@@ -416,7 +416,7 @@ public class QueryEngineBolt {
 		}
 	}
 
-	public void executeRequest(String request) throws CypherException, IOException {
+	public void executeRequest(String request) throws IOException {
 		StatementResult result;
 		try (Transaction ignored = this.session.beginTransaction()) {
 			result = this.session.run(request);

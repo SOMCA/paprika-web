@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Created by Geoffrey Hecht on 20/05/14.
@@ -123,7 +122,6 @@ PaprikaAnalyzeMain.LOGGER.trace("G.reset();");
 
 		Scene.v().loadNecessaryClasses();
 		PaprikaAnalyzeMain.LOGGER.trace("end init method");
-		System.out.flush();
 	}
 
 	@Override

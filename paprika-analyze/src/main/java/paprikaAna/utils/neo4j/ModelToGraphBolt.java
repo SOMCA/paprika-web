@@ -44,13 +44,14 @@ public class ModelToGraphBolt {
 	private Graph graph;
 	private Session session;
 
-    private static final String classLabel = "Class";
-    private static final String externalClassLabel ="ExternalClass";
-    private static final String methodLabel = "Method";
-    private static final String externalMethodLabel ="ExternalMethod";
-    private static final String variableLabel ="Variable";
-    private static final String argumentLabel = "Argument";
-    private static final String externalArgumentLabel = "ExternalArgument";
+    private static final String CLASSLABEL = "Class";
+    private static final String EXTERNALCLASSLABEL ="ExternalClass";
+    private static final String METHODLABEL = "Method";
+    private static final String EXTERNALMETHODLABEL ="ExternalMethod";
+    private static final String VARIABLELABEL ="Variable";
+    private static final String ARGUMENTLABEL = "Argument";
+    private static final String EXTERNALARGUMENTLABEL = "ExternalArgument";
+    private static final String MODIFIED = "modifier";
 
     private Map<Entity,LowNode> methodNodeMap;
     private Map<PaprikaClass,LowNode> classNodeMap;
@@ -104,29 +105,29 @@ public class ModelToGraphBolt {
 			if(idi==-1) 
 			nodeVerSet.setId(idi);
 			
-    		System.out.println("etape 1");
+    		PaprikaAnalyzeMain.LOGGER.trace("etape 1");
             for(PaprikaClass paprikaClass : paprikaApp.getPaprikaClasses()){
-            	System.out.println(paprikaClass.getName());
+            	PaprikaAnalyzeMain.LOGGER.trace(paprikaClass.getName());
             	tx.run(graph.relation(appNode,insertClass(paprikaClass,tx),RelationTypes.APP_OWNS_CLASS.name()));
             }
-			nodeVerSet.addParameter("analyseInLoading", "60");
+			nodeVerSet.addParameter(PaprikaKeyWords.ANALYSEINLOAD, "60");
 			tx.run(graph.set(nodeVer, nodeVerSet));
 			
-        	System.out.println("etape 2");
+        	PaprikaAnalyzeMain.LOGGER.trace("etape 2");
             for(PaprikaExternalClass paprikaExternalClass : paprikaApp.getPaprikaExternalClasses()){
-            	System.out.println(paprikaExternalClass.getName());
+            	PaprikaAnalyzeMain.LOGGER.trace(paprikaExternalClass.getName());
                 insertExternalClass(paprikaExternalClass,tx);
             }
-			nodeVerSet.addParameter("analyseInLoading", "80");
+			nodeVerSet.addParameter(PaprikaKeyWords.ANALYSEINLOAD, "80");
 			tx.run(graph.set(nodeVer, nodeVerSet));
             
-        	System.out.println("etape 3");
+        	PaprikaAnalyzeMain.LOGGER.trace("etape 3");
             for(Metric metric : paprikaApp.getMetrics()){
-            	System.out.println(metric.getName());
+            	PaprikaAnalyzeMain.LOGGER.trace(metric.getName());
                 insertMetric(metric, appNode);
             }
             
-			nodeVerSet.addParameter("analyseInLoading", "90");
+			nodeVerSet.addParameter(PaprikaKeyWords.ANALYSEINLOAD, "90");
 			tx.run(graph.set(nodeVer, nodeVerSet));
             
             /*
@@ -135,7 +136,7 @@ public class ModelToGraphBolt {
             LowNode rawNode=new LowNode(PaprikaKeyWords.LABELAPP);
             rawNode.setId(id);
             tx.run(graph.set(rawNode, appNode));
-        	nodeVerSet.addParameter("analyseInLoading", "95");
+        	nodeVerSet.addParameter(PaprikaKeyWords.ANALYSEINLOAD, "95");
             
             tx.success();
             
@@ -157,11 +158,11 @@ public class ModelToGraphBolt {
 
 
     public LowNode insertClass(PaprikaClass paprikaClass,Transaction tx){
-        LowNode classNode = new LowNode(classLabel);
+        LowNode classNode = new LowNode(CLASSLABEL);
         classNodeMap.put(paprikaClass,classNode);
         classNode.addParameter(PaprikaKeyWords.APPKEY, key);
         classNode.addParameter("name", paprikaClass.getName());
-        classNode.addParameter("modifier",  paprikaClass.getModifier().toString().toLowerCase());
+        classNode.addParameter(MODIFIED,  paprikaClass.getModifier().toString().toLowerCase());
         
         if(paprikaClass.getParentName() != null){
         	  classNode.addParameter("parent_name",  paprikaClass.getParentName());
@@ -184,7 +185,7 @@ public class ModelToGraphBolt {
             insertMetric(metric,classNode);
         }
         
-        LowNode rawNode=new LowNode(classLabel);
+        LowNode rawNode=new LowNode(CLASSLABEL);
         rawNode.setId(id);
         tx.run(graph.set(rawNode, classNode));
 
@@ -194,7 +195,7 @@ public class ModelToGraphBolt {
 
     public LowNode insertExternalClass(PaprikaExternalClass paprikaClass,Transaction tx){
      
-        LowNode classNode = new LowNode(externalClassLabel);
+        LowNode classNode = new LowNode(EXTERNALCLASSLABEL);
         classNode.addParameter(PaprikaKeyWords.APPKEY, this.key);
         classNode.addParameter("name", paprikaClass.getName());
         if(paprikaClass.getParentName() != null){
@@ -212,7 +213,7 @@ public class ModelToGraphBolt {
         for(Metric metric : paprikaClass.getMetrics()){
             insertMetric(metric,classNode);
         }
-        LowNode rawNode=new LowNode(externalClassLabel);
+        LowNode rawNode=new LowNode(EXTERNALCLASSLABEL);
         rawNode.setId(id);
         tx.run(graph.set(rawNode, classNode));
 		
@@ -220,12 +221,12 @@ public class ModelToGraphBolt {
     }
 
     public LowNode insertVariable(PaprikaVariable paprikaVariable,Transaction tx){
-        LowNode variableNode = new LowNode(variableLabel);
+        LowNode variableNode = new LowNode(VARIABLELABEL);
 
         variableNodeMap.put(paprikaVariable,variableNode);
         variableNode.addParameter(PaprikaKeyWords.APPKEY, key);
         variableNode.addParameter("name", paprikaVariable.getName());
-        variableNode.addParameter("modifier",  paprikaVariable.getModifier().toString().toLowerCase());
+        variableNode.addParameter(MODIFIED,  paprikaVariable.getModifier().toString().toLowerCase());
         variableNode.addParameter("type", paprikaVariable.getType());
         
       	StatementResult result=tx.run(graph.create(variableNode));
@@ -236,7 +237,7 @@ public class ModelToGraphBolt {
         for(Metric metric : paprikaVariable.getMetrics()){
             insertMetric(metric, variableNode);
         }
-        LowNode rawNode=new LowNode(variableLabel);
+        LowNode rawNode=new LowNode(VARIABLELABEL);
         rawNode.setId(id);
         tx.run(graph.set(rawNode, variableNode));
         
@@ -245,12 +246,12 @@ public class ModelToGraphBolt {
     }
     
     public LowNode insertMethod(PaprikaMethod paprikaMethod,Transaction tx){
-        LowNode methodNode = new LowNode(methodLabel);
+        LowNode methodNode = new LowNode(METHODLABEL);
         methodNodeMap.put(paprikaMethod,methodNode);
         
-        methodNode.addParameter(PaprikaKeyWords.APPKEY, (key));
+        methodNode.addParameter(PaprikaKeyWords.APPKEY, key);
         methodNode.addParameter("name", paprikaMethod.getName());
-        methodNode.addParameter("modifier",  paprikaMethod.getModifier().toString().toLowerCase());
+        methodNode.addParameter(MODIFIED,  paprikaMethod.getModifier().toString().toLowerCase());
         methodNode.addParameter("full_name", paprikaMethod.toString());
         methodNode.addParameter("return_type", paprikaMethod.getReturnType());
         
@@ -274,11 +275,11 @@ public class ModelToGraphBolt {
     }
 
     public LowNode insertExternalMethod(PaprikaExternalMethod paprikaMethod,Transaction tx){
-        LowNode methodNode = new LowNode(externalMethodLabel);
+        LowNode methodNode = new LowNode(EXTERNALMETHODLABEL);
 
         methodNodeMap.put(paprikaMethod,methodNode);
         
-        methodNode.addParameter(PaprikaKeyWords.APPKEY, (key));
+        methodNode.addParameter(PaprikaKeyWords.APPKEY, key);
         methodNode.addParameter("name", paprikaMethod.getName());
         methodNode.addParameter("full_name", paprikaMethod.toString());
         methodNode.addParameter("return_type", paprikaMethod.getReturnType());
@@ -301,9 +302,9 @@ public class ModelToGraphBolt {
     }
 
     public LowNode insertArgument(PaprikaArgument paprikaArgument,Transaction tx){
-        LowNode argNode = new LowNode(argumentLabel);
+        LowNode argNode = new LowNode(ARGUMENTLABEL);
 
-        argNode.addParameter(PaprikaKeyWords.APPKEY, (key));
+        argNode.addParameter(PaprikaKeyWords.APPKEY, key);
         argNode.addParameter("name",paprikaArgument.getName());
         argNode.addParameter("position",paprikaArgument.getPosition());
         
@@ -315,9 +316,9 @@ public class ModelToGraphBolt {
     }
 
     public LowNode insertExternalArgument(PaprikaExternalArgument paprikaExternalArgument,Transaction tx){
-        LowNode argNode = new LowNode(externalArgumentLabel);
+        LowNode argNode = new LowNode(EXTERNALARGUMENTLABEL);
 
-        argNode.addParameter(PaprikaKeyWords.APPKEY, (key));
+        argNode.addParameter(PaprikaKeyWords.APPKEY, key);
         argNode.addParameter("name", paprikaExternalArgument.getName());
         argNode.addParameter("position",paprikaExternalArgument.getPosition());
         

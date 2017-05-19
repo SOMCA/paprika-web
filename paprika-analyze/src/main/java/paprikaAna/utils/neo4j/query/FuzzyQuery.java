@@ -21,7 +21,7 @@ package paprikaana.utils.neo4j.query;
 import java.io.File;
 import java.io.IOException;
 
-import org.neo4j.cypher.CypherException;
+
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
@@ -37,7 +37,7 @@ public abstract class FuzzyQuery extends Query {
         super(queryEngine);
     }
 
-    public abstract void executeFuzzy(boolean details) throws CypherException, IOException;
+    public abstract void executeFuzzy(boolean details) throws IOException;
     
     
     protected FunctionBlock fuzzyFunctionBlock(){

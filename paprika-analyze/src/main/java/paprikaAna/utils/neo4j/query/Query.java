@@ -20,7 +20,7 @@ package paprikaana.utils.neo4j.query;
 
 import java.io.IOException;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.Session;
 
 import paprikaana.application.PaprikaAnalyzeMain;
@@ -38,5 +38,5 @@ public abstract class Query {
 		session = PaprikaAnalyzeMain.getSession();
     }
 
-    public abstract void execute(boolean details) throws CypherException, IOException;
+    public abstract void execute(boolean details) throws IOException;
 }

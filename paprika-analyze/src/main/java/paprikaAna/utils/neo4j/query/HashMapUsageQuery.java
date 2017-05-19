@@ -21,7 +21,7 @@ package paprikaana.utils.neo4j.query;
 
 import java.io.IOException;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -42,7 +42,7 @@ public class HashMapUsageQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
     	StatementResult result;
         try (Transaction tx = this.session.beginTransaction()) {
             String query = "MATCH (m:Method  {app_key:"+queryEngine.getKeyApp()+"})-[:CALLS]->(e:ExternalMethod{full_name:'<init>#java.util.HashMap'}) return m as nod,m.app_key";

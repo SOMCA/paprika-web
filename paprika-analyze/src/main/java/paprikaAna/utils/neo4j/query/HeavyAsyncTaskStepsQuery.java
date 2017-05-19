@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -50,7 +50,7 @@ public class HeavyAsyncTaskStepsQuery extends FuzzyQuery{
         return new HeavyAsyncTaskStepsQuery(queryEngine);
     }
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
     	StatementResult result;
         try (Transaction tx = this.session.beginTransaction()) {
             String query = "MATCH (c:Class{parent_name:'android.os.AsyncTask',app_key:"+queryEngine.getKeyApp()+"})-[:CLASS_OWNS_METHOD]->(m:Method) WHERE (m.name='onPreExecute' OR m.name='onProgressUpdate' OR m.name='onPostExecute')  AND  m.number_of_instructions >"+veryHigh_noi+" AND m.cyclomatic_complexity > "+veryHigh_cc+" return m as nod,m.app_key as app_key";
@@ -65,7 +65,7 @@ public class HeavyAsyncTaskStepsQuery extends FuzzyQuery{
         }
     }
     @Override
-    public void executeFuzzy(boolean details) throws CypherException, IOException {
+    public void executeFuzzy(boolean details) throws IOException {
     	StatementResult result;
             try (Transaction tx = this.session.beginTransaction()) {
                 String query = "MATCH (c:Class{parent_name:'android.os.AsyncTask' ,app_key:"+queryEngine.getKeyApp()+"})-[:CLASS_OWNS_METHOD]->(m:Method) WHERE (m.name='onPreExecute' OR m.name='onProgressUpdate' OR m.name='onPostExecute')   AND  m.number_of_instructions >"+high_noi+" AND m.cyclomatic_complexity > "+high_cc+" return m as nod,m.app_key as app_key,m.cyclomatic_complexity as cyclomatic_complexity, m.number_of_instructions as number_of_instructions";

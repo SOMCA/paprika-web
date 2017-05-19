@@ -20,7 +20,7 @@ package paprikaana.utils.neo4j.query;
 
 import java.io.IOException;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -41,7 +41,7 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
         try (Transaction tx = this.session.beginTransaction()) {
             String query = "Match (m:Method  {app_key:"+queryEngine.getKeyApp()+"})-[:CALLS]->(e:ExternalMethod {full_name:'<init>#android.util.LruCache'}) WHERE NOT (m)-[:CALLS]->(:ExternalMethod {full_name:'getMemoryClass#android.app.ActivityManager'}) return m as nod,m.app_key as app_key";
             if(details){

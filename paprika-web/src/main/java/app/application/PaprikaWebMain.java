@@ -61,7 +61,7 @@ public class PaprikaWebMain {
 		 LOGGER.trace("Open a new session.");
 		}
 		catch(ServiceUnavailableException e){
-			LOGGER.error("Driver problem, we re-open a driver.");
+			LOGGER.error("Driver problem, we re-open a driver.",e);
 			driver.close();
 			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 					AuthTokens.basic("neo4j", "paprika"));

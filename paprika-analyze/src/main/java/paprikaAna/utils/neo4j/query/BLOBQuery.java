@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -56,7 +56,7 @@ public class BLOBQuery extends FuzzyQuery{
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
     	StatementResult result;
         try (Transaction tx = this.session.beginTransaction()) {
             String query = "MATCH (cl:Class  {app_key:"+queryEngine.getKeyApp()+"}) WHERE cl.lack_of_cohesion_in_methods >" + veryHigh_lcom + " AND cl.number_of_methods > " + veryHigh_nom + " AND cl.number_of_attributes > " + veryHigh_noa + " RETURN cl as nod,cl.app_key as app_key";
@@ -72,7 +72,7 @@ public class BLOBQuery extends FuzzyQuery{
     }
 
     @Override
-    public void executeFuzzy(boolean details) throws CypherException, IOException {
+    public void executeFuzzy(boolean details) throws IOException {
     	StatementResult result;
         try (Transaction tx = this.session.beginTransaction()) {
                 String query = "MATCH (cl:Class  {app_key:"+queryEngine.getKeyApp()+"}) WHERE cl.lack_of_cohesion_in_methods >" + high_lcom + "  AND cl.number_of_methods > " + high_nom + " AND cl.number_of_attributes > " + high_noa + " RETURN cl as nod,cl.app_key as app_key,cl.lack_of_cohesion_in_methods as lack_of_cohesion_in_methods,cl.number_of_methods as number_of_methods, cl.number_of_attributes as number_of_attributes";

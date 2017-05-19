@@ -5,8 +5,7 @@ package app.utils;
  * 
  * @author guillaume
  *
- *         Cette classe doit être refaite, celle ci est un gros code smell
- *
+ *   Classe qui sert à stocker des static final variables
  */
 public class PaprikaKeyWords {
 

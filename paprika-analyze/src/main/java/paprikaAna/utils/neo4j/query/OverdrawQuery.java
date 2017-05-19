@@ -20,7 +20,7 @@ package paprikaana.utils.neo4j.query;
 
 import java.io.IOException;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -42,7 +42,7 @@ public class OverdrawQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
         try (Transaction tx = this.session.beginTransaction()) {
             String query = "MATCH (:Class{parent_name:\"android.view.View\",app_key:"+queryEngine.getKeyApp()+"})-[:CLASS_OWNS_METHOD]->(n:Method{name:\"onDraw\"})-[:METHOD_OWNS_ARGUMENT]->(:Argument{position:1,name:\"android.graphics.Canvas\"}) \n" +
                     "WHERE NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"clipRect#android.graphics.Canvas\"}) AND NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"quickReject#android.graphics.Canvas\"})\n" +

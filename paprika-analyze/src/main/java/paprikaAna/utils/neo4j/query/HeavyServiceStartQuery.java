@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -54,7 +54,7 @@ public class HeavyServiceStartQuery extends FuzzyQuery{
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
         StatementResult result;
         try (Transaction tx = this.session.beginTransaction()) {
             String query = "MATCH (c:Class{is_service:true ,app_key:"+queryEngine.getKeyApp()+"})-[:CLASS_OWNS_METHOD]->(m:Method{name:'onStartCommand'}) WHERE m.number_of_instructions > "+veryHigh_noi+" AND m.cyclomatic_complexity>"+veryHigh_cc+" return m as nod,m.app_key as app_key";
@@ -69,7 +69,7 @@ public class HeavyServiceStartQuery extends FuzzyQuery{
         }
     }
     @Override
-    public void executeFuzzy(boolean details) throws CypherException, IOException {
+    public void executeFuzzy(boolean details) throws IOException {
     	StatementResult result;
             try (Transaction tx = this.session.beginTransaction()) {
                 String query = "MATCH (c:Class{is_service:true ,app_key:"+queryEngine.getKeyApp()+"})-[:CLASS_OWNS_METHOD]->(m:Method{name:'onStartCommand'}) WHERE m.number_of_instructions > "+high_noi+"  AND m.cyclomatic_complexity>"+high_cc+" return m as nod,m.app_key as app_key,m.cyclomatic_complexity as cyclomatic_complexity, m.number_of_instructions as number_of_instructions";

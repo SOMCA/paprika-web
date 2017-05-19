@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.neo4j.cypher.CypherException;
+
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
@@ -48,7 +48,7 @@ public class LMQuery extends FuzzyQuery{
         return new LMQuery(queryEngine);
     }
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public void execute(boolean details) throws IOException {
     	StatementResult result;
         try (Transaction tx = this.session.beginTransaction()) {
         	
@@ -64,7 +64,7 @@ public class LMQuery extends FuzzyQuery{
         }
     }
     @Override
-    public void executeFuzzy(boolean details) throws CypherException, IOException {
+    public void executeFuzzy(boolean details) throws IOException {
     	StatementResult result;
             try (Transaction tx = this.session.beginTransaction()) {
                 String query =  "MATCH (m:Method {app_key:"+queryEngine.getKeyApp()+"} ) WHERE m.number_of_instructions >" + high + "  RETURN m as nod,m.app_key as app_key,m.number_of_instructions as number_of_instructions";

@@ -1,9 +1,6 @@
 package paprikaana.application;
 
-import java.io.IOException;
 
-
-import net.dongliu.apk.parser.ApkFile;
 import paprikaana.entities.PaprikaApp;
 import paprikaana.functions.VersionFunctions;
 import paprikaana.utils.neo4j.LowNode;
@@ -13,16 +10,16 @@ import paprikaana.model.*;
 
 public class AnalyzeProcess {
 
-	private ApkFile apkfile;
+	private String xml;
 	private String fName;
 	private Application application;
 	private String user;
 	private long size;
 	private LowNode nodeVer;
 
-	public AnalyzeProcess(ApkFile apkfile, String fName, Application application, String user, long size,
+	public AnalyzeProcess(String xml, String fName, Application application, String user, long size,
 			LowNode nodeVer) {
-		this.apkfile = apkfile;
+		this.xml = xml;
 		this.fName = fName;
 		this.user = user;
 		this.application = application;
@@ -43,11 +40,8 @@ public class AnalyzeProcess {
 		
 		String realname = fName.substring(0, fName.lastIndexOf('.'));
 		String pathstr = "application/" + this.user + "/" + appname + "/" + fName;
-		String xml;
 
 		try {
-			xml = apkfile.getManifestXml();
-
 			String attributepackage = "package=";
 			String attributeVersionName = "android:versionName=";
 			String attributeVersionCode = "android:versionCode=\"400\"=";
@@ -60,8 +54,7 @@ public class AnalyzeProcess {
 				indexVn += attributeVersionName.length() + 1;
 				String strversionname = realname + "_" + xml.substring(indexVn, xml.indexOf('"', indexVn));
 
-				//if (!this.versionAlreadyExist(this.application.getID(), strversionname)) {
-
+		
 					indexVc += attributeVersionCode.length() + 1;
 					String strversioncode = xml.substring(indexVc, xml.indexOf('"', indexVc));
 					indexP += attributepackage.length() + 1;
@@ -72,11 +65,11 @@ public class AnalyzeProcess {
 							"1990-01-01", "-r", "250", "-s", Long.toString(size), "-u", "unsafe", "-omp", "True", "-vn",
 							strversionname, "-vc", strversioncode, pathstr };
 
-					facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "10");
+					facade.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "10");
 					PaprikaApp paprikaapp;
 					paprikaapp = ana.runAnalysis(args);
 
-					facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "50");
+					facade.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "50");
 
 					ModelToGraphBolt modelToGraph = new ModelToGraphBolt();
 					long idApp = modelToGraph.insertApp(paprikaapp, nodeVer).getID();
@@ -86,13 +79,9 @@ public class AnalyzeProcess {
 					facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
 
 	
-					apkfile.close();
+					
 
-				//}
 			}
-		} catch (IOException e) {
-			PaprikaAnalyzeMain.LOGGER.error("runPartAnalyse: IOException", e);
-			throw new AnalyseException();
 		} catch (AnalyseException e) {
 			PaprikaAnalyzeMain.LOGGER.error("runPartAnalyse: AnalyseException", e);
 			throw new AnalyseException();
@@ -110,16 +99,7 @@ public class AnalyzeProcess {
 			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
 			facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
 	}
-/*
-	private boolean versionAlreadyExist(long idapplication, String version) {
-		if (new VersionFunctions().receiveIDOfVersion(idapplication, version) == -1) {
-			return false;
-		}
 
-		return true;
-	}
-*/	
-	
 	
 
 }
