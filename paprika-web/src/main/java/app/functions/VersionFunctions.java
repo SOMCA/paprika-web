@@ -18,8 +18,8 @@ public class VersionFunctions extends Functions {
 
 	private static final String MATCHN="MATCH (n:";
 	private static final String WHEREID=") where ID(n)=";
-	
-	
+	private static final String REL_VERSION_CODESMELLS = "EXHIBITS";
+	private static final String LABELQUERY = "CodeSmells";
 	/**
 	 * Prend un node version, et incrémente de 1 à l'attribut en prenant en
 	 * compte qu'il s'agit d'un long
@@ -84,9 +84,8 @@ public class VersionFunctions extends Functions {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
 			result = tx.run("MATCH (ver:" + PaprikaKeyWords.VERSIONLABEL + ") WHERE ID(ver)="
-					+ version.getID() + " MATCH (ver)-[:" + PaprikaKeyWords.REL_VERSION_CODESMELLS
-					+ "]->(codesmells) MATCH (codesmells)-[:" + PaprikaKeyWords.REL_CODESMELLS_CAS
-					+ "]->(target) RETURN target ");
+					+ version.getID() + " MATCH (ver)-[:" + REL_VERSION_CODESMELLS
+					+ "]->(codesmells) MATCH (codesmells)-[:RESULT]->(target) RETURN target ");
 			tx.success();
 		}
 		return result;
@@ -135,7 +134,7 @@ public class VersionFunctions extends Functions {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
 		result = tx.run(beginString(id)
-				+ " MATCH (n)-[:"+PaprikaKeyWords.REL_VERSION_CODESMELLS+"]->(target:"+PaprikaKeyWords.LABELQUERY+")"
+				+ " MATCH (n)-[:"+REL_VERSION_CODESMELLS+"]->(target:"+LABELQUERY+")"
 						+ " return target.number");
 		tx.success();
 		}
@@ -158,7 +157,7 @@ public class VersionFunctions extends Functions {
 
 		try (Transaction tx = this.session.beginTransaction()) {
 		tx.run(beginString(id)
-				+ " MATCH (n)-[:"+PaprikaKeyWords.REL_VERSION_CODESMELLS+"]->(target:"+PaprikaKeyWords.LABELQUERY+")"
+				+ " MATCH (n)-[:"+REL_VERSION_CODESMELLS+"]->(target:"+LABELQUERY+")"
 						+ "set target.number="+Long.toString(number));
 		tx.success();
 		}

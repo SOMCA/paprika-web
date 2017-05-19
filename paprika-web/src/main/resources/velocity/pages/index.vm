@@ -245,7 +245,7 @@ function formsubmitWait2(){
 }
 #if($flagAreaStack)
 
-#set($dataAreaChart=$application.getAreaChart())
+#set($dataAreaChart=$application.getGraph("area",10))
 #if($dataAreaChart!="")
 $(function() {
      Morris.Area({

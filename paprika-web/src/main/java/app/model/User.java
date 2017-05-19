@@ -68,41 +68,5 @@ public class User extends Entity{
 			applications.add(new Application(name,node.id()));
 		}
 		return applications.iterator();
-
 	}
-
-	/**
-	 * Renvoie la liste des versions de l'application
-	 * @param application
-	 * @return
-	 */
-	/*
-	public List<Version> getListVersionApplications(long idapplication) {
-		List<Version> versions = new ArrayList<>();
-		Record record;
-		String name;
-		PaprikaFacade facade = PaprikaFacade.getInstance();
-		LowNode lownode= new LowNode(PaprikaKeyWords.LABELPROJECT);
-		lownode.setId(idapplication);
-        List<Record> bigdata = facade.loadChildrenOfNode(lownode,  PaprikaKeyWords.REL_PROJECT_VERSION, PaprikaKeyWords.VERSIONLABEL);
-		
-		Iterator<Record> iter = bigdata.iterator();
-		Node node;
-		while (iter.hasNext()) {
-			record = iter.next();
-			node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
-
-			name = node.get(PaprikaKeyWords.NAMEATTRIBUTE).asString();
-			versions.add(new Version(name,node.id()));
-		}
-		return versions;
-	}
-
-	public Iterator<Version> getVersionApplications(long idapplication) {
-		return getListVersionApplications(idapplication).iterator();
-	}
-	*/
-	
-
-
 }

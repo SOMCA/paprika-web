@@ -31,7 +31,7 @@ public class RequestUtil {
     }
 
     public static String getQueryApplication(Request request) {
-        return request.queryParams("application");
+        return request.queryParams(PaprikaKeyWords.APPLICATION);
     }
 
     public static String getQueryVersion(Request request) {
@@ -74,10 +74,10 @@ public class RequestUtil {
         return loginRedirect;
     }
     public static Application getSessionApplication(Request request) {
-    	return (Application)request.session().attribute("application");
+    	return (Application)request.session().attribute(PaprikaKeyWords.APPLICATION);
     }
     public static Version getSessionVersion(Request request) {
-    	return (Version)request.session().attribute("version");
+    	return (Version)request.session().attribute(PaprikaKeyWords.VERSION);
     }
     
 

@@ -25,10 +25,6 @@ import app.utils.ViewUtil;
 
 public class IndexController {
 
-	
-	  private IndexController() {
-		    throw new IllegalAccessError("Controller class");
-		  }
 
 	/**
 	 * First index, who have the form.
@@ -108,7 +104,7 @@ public class IndexController {
 
 					facade.addVersion(application.getID() , realname);
 					facade.needReloadApp(application);
-					model.put("application", application);
+					model.put(PaprikaKeyWords.APPLICATION, application);
 					
 				}
 			}
@@ -117,6 +113,10 @@ public class IndexController {
 		return ViewUtil.render(request, model, PathIn.Template.INDEX);
 	};
 	
+	  private IndexController() {
+		    throw new IllegalAccessError("Controller class");
+		  }
+
 
 
 }

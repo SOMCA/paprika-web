@@ -43,7 +43,7 @@ public class Version extends Entity {
 	public int checkAnalyzed() {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		String ana = facade.getParameter(getID(), PaprikaKeyWords.CODEA);
-		// null(0),loading(1) , inprogress(2), done(3)
+		// null/error(0),loading(1) , inprogress(2), done(3)
 
 		if (ana == null)
 			this.analyzed = 0;
@@ -63,7 +63,6 @@ public class Version extends Entity {
 			}
 		}
 
-		// PaprikaWebMain.LOGGER.trace(this.analyzed);
 		if (this.analyzed == 3) {
 			String path = facade.getParameter(getID(), "PathFile");
 			if (path != null) {

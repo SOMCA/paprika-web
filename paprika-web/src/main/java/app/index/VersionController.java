@@ -41,10 +41,9 @@ public class VersionController {
 
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		Version version = RequestUtil.getSessionVersion(request);
-		if (version != null)
-			if (version.isAnalyzed() != 3) {
+		if (version != null && version.isAnalyzed() != 3) {
 				facade.reloadVersion(version);
-				model.put("version", version);
+				model.put(PaprikaKeyWords.VERSION, version);
 			}
 
 		return VersionController.renderVersion(request, model, PathIn.Template.VERSION);
@@ -73,7 +72,7 @@ public class VersionController {
 		String menuVer = RequestUtil.getParamMenuVersion(request);
 		if (menuVer != null) {
 			PaprikaWebMain.LOGGER.trace("etape menuVer: " + menuVer);
-			request.session().attribute("version", facade.version(Long.parseLong(menuVer)));
+			request.session().attribute(PaprikaKeyWords.VERSION, facade.version(Long.parseLong(menuVer)));
 		}
 		Version version = RequestUtil.getSessionVersion(request);
 		// Formulaire quand on choisit d'ANALYSEr dans la page version.
@@ -97,7 +96,7 @@ public class VersionController {
 				facade.callAnalyzeThread(version.getID(), fname, application, user, file.length(),
 						PaprikaWebMain.dockerVersion);
 				facade.reloadVersion(version);
-				model.put("version", version);
+				model.put(PaprikaKeyWords.VERSION, version);
 			}
 		}
 

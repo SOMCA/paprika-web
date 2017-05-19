@@ -41,7 +41,7 @@ public class LoginController {
 		request.session().removeAttribute("currentUser");
 		request.session().removeAttribute("user");
 		request.session().removeAttribute(PaprikaKeyWords.APPLICATION);
-		request.session().removeAttribute("version");
+		request.session().removeAttribute(PaprikaKeyWords.VERSION);
 		request.session().attribute("loggedOut", true);
 		response.redirect(PathIn.Web.INDEX);
 		return null;

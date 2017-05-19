@@ -36,15 +36,15 @@ public class ViewUtil {
 		model.put("user", RequestUtil.getSessionUser(request));
 		model.put("WebPath", PathIn.Web.class);
 
-		if (!model.containsKey("application")) {
+		if (!model.containsKey(PaprikaKeyWords.APPLICATION)) {
 		
 			Application application= RequestUtil.getSessionApplication(request);
-			model.put("application", application);
+			model.put(PaprikaKeyWords.APPLICATION, application);
 
 		}
 
-		if (!model.containsKey("version")) {
-			model.put("version", RequestUtil.getSessionVersion(request));
+		if (!model.containsKey(PaprikaKeyWords.VERSION)) {
+			model.put(PaprikaKeyWords.VERSION, RequestUtil.getSessionVersion(request));
 		}
 
 		return strictVelocityEngine().render(new ModelAndView(model, templatePath));

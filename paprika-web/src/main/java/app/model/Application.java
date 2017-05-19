@@ -58,8 +58,12 @@ public class Application extends Entity {
 	 * @return
 	 */
 	public int getNumberOfVersionReal() {
-		if(reload) return this.listofVersion.size();
-		else return this.getListVersionApplications().size();
+		if(reload) {
+			return this.listofVersion.size();
+		}
+		else {
+			return this.getListVersionApplications().size();
+		}
 	}
 
 	public void needReload() {
@@ -198,28 +202,35 @@ public class Application extends Entity {
 		// Puis transforme le tout en tableau
 		return allkey.toArray(new String[allkey.size()]);
 	}
-
-	/**
-	 * Renvoie sous forme de très très gros string, une data pour un radarD3
-	 * 
-	 * @return
-	 */
-	public String getRadarD3() {
-		StringBuilder str = new StringBuilder();
-		List<Version> versions = getLastXVersion(3);
+	
+	public String getGraph(String renderGraph,int numberVersion){
+		List<Version> versions = getLastXVersion(numberVersion);
 		List<Map<String, Long>> datas = getDataGraph(versions.iterator());
-		Map<String, Long> data;
-		String key;
-		int i;
-		StringBuilder array;
-		String line;
-		long value;
 		String[] allkeyArray = getKey(datas);
-		if(allkeyArray.length==0) return "";
+		if(allkeyArray.length==0) {
+			return "";
+		}
 
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
 
-		// Partie 3, création du string
+		if("radar".equals(renderGraph)){
+			return radarD3(dataiter,allkeyArray).toString();
+		}
+		else if ("area".equals(renderGraph)){
+			return areaChart(dataiter,allkeyArray,versions).toString();
+		}
+		return "";
+
+	}
+	
+	private StringBuilder radarD3(Iterator<Map<String, Long>> dataiter,String[] allkeyArray){
+		String line;
+		long value;
+		StringBuilder array;
+		int i;
+		String key;
+		Map<String, Long> data;
+		StringBuilder str= new StringBuilder();
 		while (dataiter.hasNext()) {
 			data = dataiter.next();
 			array = new StringBuilder("[");
@@ -235,25 +246,19 @@ public class Application extends Entity {
 			array.append("],");
 			str.insert(0, array);
 		}
-
-		return str.toString();
+		return str;
 	}
-
-	public String getAreaChart() {
-		StringBuilder str = new StringBuilder();
-		List<Version> versions = getLastXVersion(10);
-		List<Map<String, Long>> datas = getDataGraph(versions.iterator());
+	
+	private StringBuilder areaChart(Iterator<Map<String, Long>> dataiter,String[] allkeyArray,List<Version> versions){
 		Map<String, Long> data;
 		String key;
 		int i;
 		StringBuilder array;
 		String line;
 		long value;
-		String[] allkeyArray = getKey(datas);
-		if(allkeyArray.length==0) return "";
-		Iterator<Map<String, Long>> dataiter = datas.iterator();
 		Iterator<Version> versionsIter = versions.iterator();
 		String name;
+		StringBuilder str= new StringBuilder();
 
 		// Partie 3, création du string
 		while (versionsIter.hasNext()) {
@@ -288,10 +293,10 @@ public class Application extends Entity {
 		labels.append(key);
 
 		str.append("],   ykeys:[" + xkeys + "],labels: [" + labels + "],");
-PaprikaWebMain.LOGGER.trace(str);
-		return str.toString();
+		PaprikaWebMain.LOGGER.trace(str);
+		return str;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "[" + this.getName() + "," + this.getID() + "," + this.getNumberOfVersion() + "]";

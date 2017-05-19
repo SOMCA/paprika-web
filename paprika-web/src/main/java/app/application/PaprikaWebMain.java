@@ -24,11 +24,18 @@ import java.net.InetAddress;
 public class PaprikaWebMain {
 
 	// "bolt://localhost:7687" quand on n'utilise pas docker.
+	public static final Logger LOGGER = LogManager.getLogger();
+
 	private static  Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 			AuthTokens.basic("neo4j", "paprika"));
 	public static boolean dockerVersion;
-	public static final Logger LOGGER = LogManager.getLogger(PaprikaWebMain.class);
 
+	
+	private PaprikaWebMain() {
+
+	}
+	
+	
 	/**
 	 * Prend le nom du container neo4j-praprika et renvoie son adresse.
 	 * 
@@ -40,15 +47,12 @@ public class PaprikaWebMain {
 			PaprikaWebMain.LOGGER.trace(str);
 			return str;
 		} catch (final Exception e) {
-			LOGGER.error("Host of InetAddress 'neo4j-paprika' not found",e);
+			PaprikaWebMain.LOGGER.trace("Host of InetAddress 'neo4j-paprika' not found",e);
 			return "localhost";
 		}
 	}
 
-	
-	private PaprikaWebMain() {
 
-	}
 	public static Session getSession(){
 		Session session=null;
 

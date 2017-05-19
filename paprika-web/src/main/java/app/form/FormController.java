@@ -9,17 +9,14 @@ import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
 import app.login.LoginController;
 import app.model.Application;
-
+import app.utils.PaprikaKeyWords;
 import app.utils.PathIn;
 import app.utils.RequestUtil;
 import app.utils.ViewUtil;
 
 public class FormController {
 
-	private FormController() {
-		throw new IllegalAccessError("Controller class");
-	}
-
+	
 	public static final Route serveFormDELPage = (Request request, Response response) -> {
 		/*
 		 * Impossible d'accéder au formulaire avant d'être connecter.
@@ -40,10 +37,16 @@ public class FormController {
 		if (delete != null) {
 			PaprikaWebMain.LOGGER.trace("etape delete: " + delete);
 			deleteNotNull(request,application);
-			model.put("application", application);
+			model.put(PaprikaKeyWords.APPLICATION, application);
 		}
 		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
 	};
+	
+	private FormController() {
+		throw new IllegalAccessError("Controller class");
+	}
+
+	
 	private static void deleteNotNull(Request request,Application application) throws IOException{
 		Set<String> setQueryParams = request.queryParams();
 		Set<String> setOfIdToDelete = new HashSet<>();
