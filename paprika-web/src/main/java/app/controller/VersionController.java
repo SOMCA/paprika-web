@@ -1,4 +1,4 @@
-package app.index;
+package app.controller;
 
 import spark.*;
 
@@ -8,7 +8,6 @@ import java.util.*;
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
 import app.exception.PapWebRunTimeException;
-import app.login.LoginController;
 import app.model.Application;
 import app.model.User;
 import app.model.Version;
@@ -41,7 +40,7 @@ public class VersionController {
 
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		Version version = RequestUtil.getSessionVersion(request);
-		if (version != null && version.isAnalyzed() != 3) {
+		if (version != null && facade.getVersionAnalyzed(version) != 3) {
 			facade.reloadVersion(version);
 			model.put(PaprikaKeyWords.VERSION, version);
 		}
@@ -79,13 +78,13 @@ public class VersionController {
 		String analys = request.queryParams("analyse");
 		if (analys != null) {
 			PaprikaWebMain.LOGGER.trace("etape ANALYSE");
-			String fname = version.getName() + ".apk";
+			String fname = facade.getEntityName(version)+ ".apk";
 			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/"
-					+ application.getName() + "/" + fname;
+					+ facade.getEntityName(application)+ "/" + fname;
 			boolean flag = false;
 			flag = analyseVersion(pathstr);
 			if (flag) {
-				facade.callAnalyzeThread(version.getID(), fname, application, user, PaprikaWebMain.dockerVersion);
+				facade.callAnalyzeThread(facade.getEntityID(version), fname, application, user, PaprikaWebMain.dockerVersion);
 				facade.reloadVersion(version);
 				model.put(PaprikaKeyWords.VERSION, version);
 			}

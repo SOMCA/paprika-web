@@ -1,4 +1,4 @@
-package app.register;
+package app.controller;
 
 import spark.*;
 import java.util.*;

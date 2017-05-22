@@ -11,12 +11,12 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
-import app.form.FormController;
+import app.controller.FormController;
+import app.controller.IndexController;
+import app.controller.LoginController;
+import app.controller.SignUpController;
+import app.controller.VersionController;
 import app.functions.DescriptionFunctions;
-import app.index.IndexController;
-import app.index.VersionController;
-import app.login.LoginController;
-import app.register.SignUpController;
 import app.utils.PathIn;
 import spark.Spark;
 import java.net.InetAddress;

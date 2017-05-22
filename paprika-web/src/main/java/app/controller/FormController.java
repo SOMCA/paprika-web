@@ -1,4 +1,4 @@
-package app.form;
+package app.controller;
 
 import spark.*;
 
@@ -7,7 +7,6 @@ import java.util.*;
 
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
-import app.login.LoginController;
 import app.model.Application;
 import app.utils.PaprikaKeyWords;
 import app.utils.PathIn;

@@ -158,6 +158,30 @@ public final class PaprikaFacade {
 	}
 
 	/**
+	 * Retourne le nom de l'entitée.
+	 * @param entity
+	 * @return
+	 */
+	public String getEntityName(Entity entity) {
+		return entity.getName();
+	}
+	/**
+	 * Retourne l'id de l'entitée.
+	 * @param entity
+	 * @return
+	 */
+	public long getEntityID(Entity entity) {
+		return entity.getID();
+	}
+
+	public String getUserHash(User user){
+		return user.getHashedPassword();
+	}
+	public int getVersionAnalyzed(Version version){
+		return version.isAnalyzed();
+	}
+	
+	/**
 	 * Applique ou créer une nouvelle valeur dans le node en question. Le node
 	 * doit contenir une Id pour fonctionner.
 	 * 
@@ -240,9 +264,8 @@ public final class PaprikaFacade {
 		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
 			PaprikaWebMain.LOGGER.trace("callAnalyzeThread:");
-			String command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName()
-					+ " " + application.getName() + " " + Long.toString(application.getID()) + " "
-					+ Long.toString(idNode);
+			String command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " "
+					+ application.getName() + " " + Long.toString(application.getID()) + " " + Long.toString(idNode);
 			PaprikaWebMain.LOGGER.trace(command);
 			String pathstr = "application/" + user.getName() + "/" + application.getName() + "/" + fname;
 			this.setParameterOnNode(idNode, "PathFile", pathstr);
@@ -262,8 +285,8 @@ public final class PaprikaFacade {
 				ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
 						.image("paprika-analyze:latest")
 						// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
-						.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(),
-								application.getName(), Long.toString(application.getID()), Long.toString(idNode))
+						.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(), application.getName(),
+								Long.toString(application.getID()), Long.toString(idNode))
 						.workingDir("/dock").build();
 				ContainerCreation creation = docker.createContainer(containerConfig);
 
@@ -282,9 +305,9 @@ public final class PaprikaFacade {
 
 	public void removeContainer(String id) {
 		try {
-		RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
-		DockerClient docker;
-	
+			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
+			DockerClient docker;
+
 			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
 			docker.removeContainer(id);
 
@@ -324,7 +347,7 @@ public final class PaprikaFacade {
 					}
 					tx.run(begin + " MATCH(:" + PaprikaKeyWords.LABELUSER + ")-[r:" + PaprikaKeyWords.REL_USER_PROJECT
 							+ "]->(n) DELETE r");
-				
+
 					tx.run(begin + " MATCH (n)-[r:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) DELETE r");
 
 					tx.run(begin + " DELETE n");
@@ -333,7 +356,7 @@ public final class PaprikaFacade {
 					versionsToDelete.add(idAppli);
 
 			}
-			deleteVersionsOnDataBase(tx,versionsToDelete);
+			deleteVersionsOnDataBase(tx, versionsToDelete);
 
 			tx.success();
 		}
@@ -345,12 +368,12 @@ public final class PaprikaFacade {
 		 * non reliés(rare, mais cela existe)
 		 */
 	}
-	
-	private void deleteVersionsOnDataBase(Transaction tx,Set<String> versionsToDelete) throws IOException{
+
+	private void deleteVersionsOnDataBase(Transaction tx, Set<String> versionsToDelete) throws IOException {
 		/*
-		 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on
-		 * doit aussi modifier l'ordre de toutes les versions restantes.
-		 * Mais surtout, pas mal de transaction qui coûtent.
+		 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on doit
+		 * aussi modifier l'ordre de toutes les versions restantes. Mais
+		 * surtout, pas mal de transaction qui coûtent.
 		 */
 
 		for (String idVersion : versionsToDelete) {
@@ -371,7 +394,7 @@ public final class PaprikaFacade {
 
 			tx.run("MATCH (p:Version) WHERE ID(p)=" + idVersion + " DELETE p");
 		}
-		
+
 	}
 
 	private String getHostName() throws UnknownHostException {
@@ -384,11 +407,10 @@ public final class PaprikaFacade {
 			throw new UnknownHostException();
 		}
 	}
-	
-	
-	public void addFile(String currentUser,Application application, String fName,Part uploadedFile,String realname) throws IOException{
-		String pathstr = PaprikaKeyWords.REPERTORY + currentUser + '/'
-				+ application.getName() + '/' + fName;
+
+	public void addFile(String currentUser, Application application, String fName, Part uploadedFile, String realname)
+			throws IOException {
+		String pathstr = PaprikaKeyWords.REPERTORY + currentUser + '/' + application.getName() + '/' + fName;
 		Path out = Paths.get(pathstr);
 		File file = new File(pathstr);
 		file.mkdirs();
@@ -398,8 +420,8 @@ public final class PaprikaFacade {
 			Files.copy(in, out);
 			uploadedFile.delete();
 		}
-		
-	this.addVersion(application.getID() , realname);
+
+		this.addVersion(application.getID(), realname);
 		this.needReloadApp(application);
 	}
 

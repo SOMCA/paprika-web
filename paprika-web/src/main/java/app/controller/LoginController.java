@@ -1,4 +1,4 @@
-package app.login;
+package app.controller;
 
 import spark.*;
 import java.util.*;
@@ -80,7 +80,7 @@ public class LoginController {
 			return false;
 		}
 		String hashedPassword = BCrypt.hashpw(password, salt);
-		return hashedPassword.equals(user.getHashedPassword());
+		return hashedPassword.equals(facade.getUserHash(user));
 	}
 
 

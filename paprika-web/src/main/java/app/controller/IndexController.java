@@ -1,4 +1,4 @@
-package app.index;
+package app.controller;
 
 import spark.*;
 
