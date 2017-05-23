@@ -37,6 +37,12 @@ import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.Graph;
 import app.utils.neo4j.LowNode;
 
+/**
+ * @author guillaume
+ * PaprikaFacade is a singleton + Facade. 
+ * All controller who need use method of the Paprika-web pass per this facade.
+ * This singleton keep many problem of refactoring except the size of this class.
+ */
 public final class PaprikaFacade {
 
 	/** Constructeur privé */
@@ -53,11 +59,18 @@ public final class PaprikaFacade {
 		}
 	}
 
-	/** Point d'accès pour l'instance unique du singleton */
+	/** 
+	 * Point d'accès pour l'instance unique du singleton 
+	 * @return the class.
+	 * */
 	public static PaprikaFacade getInstance() {
 		return SingletonHolder.instance;
 	}
 
+	/**
+	 * return the salt of the Paprika-web, if do not exist, create a new salt.
+	 * @return the salt.
+	 */
 	public String salt() {
 		Graph graph = new Graph();
 		String salt = new UserFunctions().retrieveSalt();
@@ -74,17 +87,31 @@ public final class PaprikaFacade {
 		}
 		return salt;
 	}
-
+	/**
+	 * Found the User of id email
+	 * @param email the email of the user.
+	 * @return the user of the email
+	 */
 	public User user(String email) {
 		return new UserFunctions().foundUser(email);
 	}
 
+	/**
+	 * Found the Application of id project
+	 * @param application id of the project.
+	 * @return the application of the id
+	 */
 	public Application application(long application) {
 		ApplicationFunctions appFct = new ApplicationFunctions();
 
 		return new Application(appFct.receiveOf(application), application);
 	}
 
+	/**
+	 * Found the Version of id version
+	 * @param version id of the version.
+	 * @return the version of the id
+	 */
 	public Version version(long version) {
 		VersionFunctions verFct = new VersionFunctions();
 
@@ -92,10 +119,11 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Ajoute une application de nom "project"
+	 * Add a project of name project  for the user.
 	 * 
-	 * @param user
-	 * @param project
+	 * @param user CurrentUser.
+	 * @param project Name of the project
+	 * @return return the id of the project.
 	 */
 	public long addProject(User user, String project) {
 		ApplicationFunctions appFct = new ApplicationFunctions();
@@ -107,20 +135,34 @@ public final class PaprikaFacade {
 		return idProject;
 	}
 
+	/**
+	 * Put the project to need be reload.
+	 * @param application the project.
+	 */
 	public void needReloadApp(Application application) {
 		if (application != null)
 			application.needReload();
 	}
 
+	/**
+	 * Reload the version for update the page.
+	 * 
+	 * @param version
+	 *            The version to update.
+	 */
 	public void reloadVersion(Version version) {
-		version.checkAnalyzed();
+		if (version != null)
+			version.checkAnalyzed();
 	}
 
 	/**
-	 * Ajoute une version dans l'application d'id "idproject"
+	 * Add a new Version on the project of id idproject.
 	 * 
-	 * @param user
-	 * @param tab
+	 * @param idproject
+	 *            the id of the project
+	 * @param version
+	 *            the name of the new version.
+	 * 
 	 */
 	public void addVersion(long idproject, String version) {
 		VersionFunctions verFct = new VersionFunctions();
@@ -132,12 +174,15 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Retourne la valeur d'un paramètre String donné d'un node qui contient un
-	 * id.
+	 * Return the value of the properties put on parameter of the unknow node of
+	 * id idNode.
 	 * 
-	 * @param idVersion
+	 * @param idNode
+	 *            id of a node.
 	 * @param parameter
-	 * @return
+	 *            properties where you want obtain the value.
+	 * @return The value as a String
+	 * 
 	 */
 	public String getParameter(long idNode, String parameter) {
 		StatementResult result = null;
@@ -158,40 +203,58 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Retourne le nom de l'entitée.
+	 * Return the method getName of Entity
 	 * 
 	 * @param entity
-	 * @return
+	 *            Entity correctly create.
+	 * @return The name of the Entity
 	 */
 	public String getEntityName(Entity entity) {
 		return entity.getName();
 	}
 
 	/**
-	 * Retourne l'id de l'entitée.
+	 * Return the method getID of Entity
 	 * 
 	 * @param entity
-	 * @return
+	 *            Entity correctly create.
+	 * @return The id of the Entity
 	 */
 	public long getEntityID(Entity entity) {
 		return entity.getID();
 	}
 
+	/**
+	 * Return the method getHashedPassword of User
+	 * 
+	 * @param user
+	 *            User correctly create.
+	 * @return The hashedPassword
+	 */
 	public String getUserHash(User user) {
 		return user.getHashedPassword();
 	}
 
+	/**
+	 * Return the method isAnalyzed of Version.
+	 * 
+	 * @param version
+	 *            Version correctly create.
+	 * @return true if the version have be analyzed, else false.
+	 */
 	public int getVersionAnalyzed(Version version) {
 		return version.isAnalyzed();
 	}
 
 	/**
-	 * Applique ou créer une nouvelle valeur dans le node en question. Le node
-	 * doit contenir une Id pour fonctionner.
+	 * Create or set a property with the value on the node of idnode.
 	 * 
-	 * @param nodeVer
+	 * @param idnode
+	 *            id of the node.
 	 * @param parameter
-	 * @param key
+	 *            properties.
+	 * @param attribute
+	 *            value of properties.
 	 */
 	public void setParameterOnNode(long idnode, String parameter, String attribute) {
 		if (idnode == -1) {
@@ -205,10 +268,12 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Retire une propriété du node.
+	 * Retire a property of the id Node.
 	 * 
 	 * @param idnode
+	 *            the id of the node
 	 * @param parameter
+	 *            the property to delete.
 	 */
 	public void removeParameterOnNode(long idnode, String parameter) {
 		if (idnode == -1) {
@@ -221,10 +286,18 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Renvoie sous forme de liste, les fils d'un noeud à l'aide de son lownode
-	 * et de la relation qui lie le noeud et ces fils de tels labels
+	 * Return a Record list of each children of the node find per lownode who
+	 * have the param relation and the label.
 	 * 
-	 * @param email
+	 * @param lownode
+	 *            custom node for found the node.
+	 * @param relation
+	 *            used for take only children than you want, who have the
+	 *            relation with the node. Can be null.
+	 * @param childrenLabel
+	 *            used for take only children who have the same label. Can be
+	 *            null.
+	 * @return k
 	 */
 	public List<Record> loadChildrenOfNode(LowNode lownode, String relation, String childrenLabel) {
 		StatementResult result;
@@ -238,13 +311,14 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * signUp vérifie si l'utilisateur n'existe pas avant, puis signUp prend la
-	 * clé de neo4J , créer le hashcode du mot de passe et ensuite créer le
-	 * nouveau utilisateur.
+	 * signUp create a new User with the email and the password, except if the
+	 * email is already used.
 	 * 
 	 * @param email
+	 *            the email put per the new User.
 	 * @param password
-	 * @return
+	 *            a password.
+	 * @return true if success else false;
 	 */
 	public boolean signUp(String email, String password) {
 		UserFunctions usrFct = new UserFunctions();
@@ -262,8 +336,21 @@ public final class PaprikaFacade {
 		return true;
 	}
 
-	public void callAnalyzeThread(long idNode, String fname, Application application, User user,
-			boolean dockerContainer) {
+	/**
+	 * Create the Paprika-Analyze container and launch with a java command. They
+	 * use a paprika-analyse image already put on the same docker than
+	 * paprika-web
+	 * 
+	 * @param idNode
+	 *            Id of the version than you want analyze
+	 * @param fname
+	 *            The name of the version.
+	 * @param application
+	 *            The name of the project of the version.
+	 * @param user
+	 *            The current user who request the analyse.
+	 */
+	public void callAnalyzeThread(long idNode, String fname, Application application, User user) {
 		this.setParameterOnNode(idNode, PaprikaKeyWords.CODEA, "loading");
 		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
@@ -273,40 +360,43 @@ public final class PaprikaFacade {
 			PaprikaWebMain.LOGGER.trace(command);
 			String pathstr = "application/" + user.getName() + "/" + application.getName() + "/" + fname;
 			this.setParameterOnNode(idNode, "PathFile", pathstr);
-			if (!dockerContainer) {
-				Runtime.getRuntime().exec(command);
-				PaprikaWebMain.LOGGER.trace("Processus created");
-			} else {
-				RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
-				DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth)
-						.build();
+			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
+			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
 
-				final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
-						.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro")
-						//
-						// .volumesFrom("web-paprika")
-						.build();
-				ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
-						.image("paprika-analyze:latest")
-						// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
-						.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(), application.getName(),
-								Long.toString(application.getID()), Long.toString(idNode))
-						.workingDir("/dock").build();
-				ContainerCreation creation = docker.createContainer(containerConfig);
+			final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
+					.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro")
+					//
+					// .volumesFrom("web-paprika")
+					.build();
+			ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
+					.image("paprika-analyze:latest")
+					// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
+					.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(), application.getName(),
+							Long.toString(application.getID()), Long.toString(idNode))
+					.workingDir("/dock").build();
+			ContainerCreation creation = docker.createContainer(containerConfig);
 
-				String id = creation.id();
-				docker.startContainer(id);
+			String id = creation.id();
+			docker.startContainer(id);
 
-				docker.close();
-				PaprikaWebMain.LOGGER.trace("container create and start success");
-				this.setParameterOnNode(idNode, "idContainer", id);
-			}
+			docker.close();
+			PaprikaWebMain.LOGGER.trace("container create and start success");
+			this.setParameterOnNode(idNode, "idContainer", id);
+
 		} catch (Exception e) {
 			PaprikaWebMain.LOGGER.error(e.getMessage(), e);
 			throw new PapWebRunTimeException(e.getMessage());
 		}
 	}
 
+	/**
+	 * Remove the finished container on Docker ( shell: docker ps -a, for see
+	 * the id, then docker rm id)
+	 * 
+	 * @param id
+	 *            id of the container to delete, found on the version node of
+	 *            Neo4J
+	 */
 	public void removeContainer(String id) {
 		try {
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
@@ -322,6 +412,14 @@ public final class PaprikaFacade {
 		PaprikaWebMain.LOGGER.trace("Work?");
 	}
 
+	/**
+	 * Delete versions/project nodes of the neo4j database
+	 * 
+	 * @param setOfId
+	 *            set who contains all ID of unknow node than user want delete
+	 * @throws IOException
+	 *             If a problem with File system.
+	 */
 	public void deleteOnDataBase(Set<String> setOfId) throws IOException {
 		Set<String> versionsToDelete = new HashSet<>();
 
@@ -333,20 +431,26 @@ public final class PaprikaFacade {
 
 			tx.success();
 		}
-		/*
-		 * On sépare application et versions, On ajoute les versions de
-		 * l'application dans le set des versions et supprime l'application.
-		 * puis on supprime les versions avec aussi leur
-		 * clé(ex:app_key:idVersion), si elle existe. pour supprimer les classes
-		 * non reliés(rare, mais cela existe)
-		 */
 	}
 
-	private Set<String> deleteAppliOnDataBase(Transaction tx, String idproject, Set<String> versionsToDelete) {
+	/**
+	 * Delete the project node of the idproject and put all versions of the
+	 * project on the set If the node is not a project node, so he put the node
+	 * on the set
+	 * 
+	 * @param tx
+	 *            transaction of session of neo4j
+	 * @param id
+	 *            the id of a node
+	 * @param versionsToDelete
+	 *            set of ids to delete
+	 * @return the versionsToDelete with more id of version nodes
+	 */
+	private Set<String> deleteAppliOnDataBase(Transaction tx, String id, Set<String> versionsToDelete) {
 		StatementResult result;
 		Record record;
 		String begin;
-		begin = "MATCH (n:Project) WHERE ID(n) = " + idproject;
+		begin = "MATCH (n:Project) WHERE ID(n) = " + id;
 		result = tx.run(begin + " RETURN n");
 		if (result.hasNext()) {
 			result = tx.run(begin + " MATCH (n)-[:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v) RETURN v");
@@ -368,25 +472,23 @@ public final class PaprikaFacade {
 
 			tx.run(begin + " DELETE n");
 		} else
-			versionsToDelete.add(idproject);
+			versionsToDelete.add(id);
 
 		return versionsToDelete;
 	}
 
 	/**
-	 * Supprime toutes les versions du set dans neo4J et tous leurs sous-fils.
+	 * Delete all versions nodes and all childrens/external children of the id
+	 * set
 	 * 
 	 * @param tx
+	 *            transaction of session of neo4j
 	 * @param versionsToDelete
+	 *            set of ids to delete
 	 * @throws IOException
+	 *             If a problem with File system.
 	 */
 	private void deleteVersionsOnDataBase(Transaction tx, Set<String> versionsToDelete) throws IOException {
-		/*
-		 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on doit
-		 * aussi modifier l'ordre de toutes les versions restantes. Mais
-		 * surtout, pas mal de transaction qui coûtent.
-		 */
-
 		for (String idVersion : versionsToDelete) {
 			String path = this.getParameter(Long.parseLong(idVersion), "PathFile");
 			if (path != null) {
@@ -408,6 +510,13 @@ public final class PaprikaFacade {
 
 	}
 
+	/**
+	 * Get the host container of web-paprika.
+	 * 
+	 * @return the ID of the host of container.
+	 * @throws UnknownHostException
+	 *             If the host of the container is not found.
+	 */
 	private String getHostName() throws UnknownHostException {
 		try {
 			String str = InetAddress.getByName("web-paprika").getHostAddress();
@@ -419,6 +528,24 @@ public final class PaprikaFacade {
 		}
 	}
 
+	/**
+	 * Add a new file on the container. param is here for the unique pathname of
+	 * the file
+	 * 
+	 * @param currentUser
+	 *            E-mail of the currentUser (Unique)
+	 * @param application
+	 *            name of the project where you put the file(unique for each
+	 *            user)
+	 * @param fName
+	 *            name of the file.
+	 * @param uploadedFile
+	 *            The file.
+	 * @param realname
+	 *            the name without the format.
+	 * @throws IOException
+	 *             If the file system have a problem
+	 */
 	public void addFile(String currentUser, Application application, String fName, Part uploadedFile, String realname)
 			throws IOException {
 		String pathstr = PaprikaKeyWords.REPERTORY + currentUser + '/' + application.getName() + '/' + fName;

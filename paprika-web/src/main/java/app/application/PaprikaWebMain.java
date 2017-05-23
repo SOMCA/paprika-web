@@ -33,9 +33,7 @@ public class PaprikaWebMain {
 	 */
 	private static  Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 			AuthTokens.basic("neo4j", "paprika"));
-	public static boolean dockerVersion;
 
-	
 	private PaprikaWebMain() {
 
 	}
@@ -79,10 +77,7 @@ public class PaprikaWebMain {
 		return session;
 	}
 	public static void main(String[] args) {
-		PaprikaWebMain.dockerVersion=false;
-		if(args.length!=0 && "-d".equals(args[0])){
-			PaprikaWebMain.dockerVersion=true;
-			}
+
 		
 		new DescriptionFunctions().addAllClassicDescription();
 		

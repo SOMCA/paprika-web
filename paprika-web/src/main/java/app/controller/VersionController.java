@@ -88,7 +88,7 @@ public class VersionController {
 			boolean flag = false;
 			flag = analyseVersion(pathstr);
 			if (flag) {
-				facade.callAnalyzeThread(facade.getEntityID(version), fname, application, user, PaprikaWebMain.dockerVersion);
+				facade.callAnalyzeThread(facade.getEntityID(version), fname, application, user);
 				facade.reloadVersion(version);
 				model.put(PaprikaKeyWords.VERSION, version);
 			}

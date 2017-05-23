@@ -73,10 +73,8 @@ public class IndexController {
 	  
 	 private static boolean addFile(Request request,Application application,PaprikaFacade facade) throws IOException, ServletException{
 			
-			String location = "../application";
-			if(PaprikaWebMain.dockerVersion){
-				location="/application";
-			}
+			String location="/application";
+			
 			long maxFileSize = 100000000;
 			long maxRequestSize = 100000000;
 			int fileSizeThreshold = 1024;

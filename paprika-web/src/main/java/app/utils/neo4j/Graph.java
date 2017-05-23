@@ -56,6 +56,7 @@ public class Graph {
 	 */
 	
 	public String relation(LowNode lowNode, LowNode lowNodeTarget, String relationLabel) {
+		if(relationLabel==null) relationLabel="*";
 		return matchPrefabs("it", lowNode) + matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNodeTarget) + Graph.CREATEIT
 				+ relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ")";
 	}
@@ -69,6 +70,7 @@ public class Graph {
 	 * @return
 	 */
 	public String relationcreateRight(LowNode lowNode, LowNode lowNodeTarget, String relationLabel) {
+		if(relationLabel==null) relationLabel="*";
 		return matchPrefabs("it", lowNode) + Graph.CREATEIT + relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ":"
 				+ lowNodeTarget.getLabel() + lowNodeTarget.parametertoData() + ")";
 	}
@@ -84,6 +86,10 @@ public class Graph {
 	 */
 
 	public String matchPrefabs(String labelname, LowNode lowNode) {
+		if(lowNode.getLabel()==null){
+			return " MATCH (" + labelname + lowNode.parametertoData() + ") "
+					+ lowNode.idfocus(labelname);
+		}
 		return " MATCH (" + labelname + ":" + lowNode.getLabel() + lowNode.parametertoData() + ") "
 				+ lowNode.idfocus(labelname);
 	}
@@ -111,6 +117,7 @@ public class Graph {
 	 * @return
 	 */
 	public String matchSee(LowNode lowNode, LowNode lowNodeTarget, String relationLabel) {
+		if(relationLabel==null) relationLabel="*";
 		return matchPrefabs("a", lowNode) + matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNodeTarget) + " MATCH (a)-[:"
 				+ relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ")" + Graph.RETURN + PaprikaKeyWords.NAMELABEL;
 	}
