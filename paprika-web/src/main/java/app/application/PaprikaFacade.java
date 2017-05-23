@@ -159,14 +159,17 @@ public final class PaprikaFacade {
 
 	/**
 	 * Retourne le nom de l'entitée.
+	 * 
 	 * @param entity
 	 * @return
 	 */
 	public String getEntityName(Entity entity) {
 		return entity.getName();
 	}
+
 	/**
 	 * Retourne l'id de l'entitée.
+	 * 
 	 * @param entity
 	 * @return
 	 */
@@ -174,13 +177,14 @@ public final class PaprikaFacade {
 		return entity.getID();
 	}
 
-	public String getUserHash(User user){
+	public String getUserHash(User user) {
 		return user.getHashedPassword();
 	}
-	public int getVersionAnalyzed(Version version){
+
+	public int getVersionAnalyzed(Version version) {
 		return version.isAnalyzed();
 	}
-	
+
 	/**
 	 * Applique ou créer une nouvelle valeur dans le node en question. Le node
 	 * doit contenir une Id pour fonctionner.
@@ -320,41 +324,10 @@ public final class PaprikaFacade {
 
 	public void deleteOnDataBase(Set<String> setOfId) throws IOException {
 		Set<String> versionsToDelete = new HashSet<>();
-		StatementResult result;
-		Record record;
-		String begin;
-		String print;
 
 		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
 			for (String idAppli : setOfId) {
-				begin = "MATCH (n:Project) WHERE ID(n) = " + idAppli;
-				result = tx.run(begin + " RETURN n");
-				if (result.hasNext()) {
-					// Implique que l'id provient d'un projet
-					print = begin + " MATCH (n)-[:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v) RETURN v";
-					PaprikaWebMain.LOGGER.trace(print);
-					result = tx.run(print);
-
-					while (result.hasNext()) {
-						record = result.next();
-						Value value = record.get("v");
-
-						if (!value.isNull()) {
-							String idv = Long.toString(value.asNode().id());
-							PaprikaWebMain.LOGGER.trace(idv);
-							versionsToDelete.add(idv);
-						}
-					}
-					tx.run(begin + " MATCH(:" + PaprikaKeyWords.LABELUSER + ")-[r:" + PaprikaKeyWords.REL_USER_PROJECT
-							+ "]->(n) DELETE r");
-
-					tx.run(begin + " MATCH (n)-[r:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) DELETE r");
-
-					tx.run(begin + " DELETE n");
-
-				} else
-					versionsToDelete.add(idAppli);
-
+				versionsToDelete = deleteAppliOnDataBase(tx, idAppli, versionsToDelete);
 			}
 			deleteVersionsOnDataBase(tx, versionsToDelete);
 
@@ -369,6 +342,44 @@ public final class PaprikaFacade {
 		 */
 	}
 
+	private Set<String> deleteAppliOnDataBase(Transaction tx, String idproject, Set<String> versionsToDelete) {
+		StatementResult result;
+		Record record;
+		String begin;
+		begin = "MATCH (n:Project) WHERE ID(n) = " + idproject;
+		result = tx.run(begin + " RETURN n");
+		if (result.hasNext()) {
+			result = tx.run(begin + " MATCH (n)-[:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v) RETURN v");
+
+			while (result.hasNext()) {
+				record = result.next();
+				Value value = record.get("v");
+
+				if (!value.isNull()) {
+					String idv = Long.toString(value.asNode().id());
+					PaprikaWebMain.LOGGER.trace(idv);
+					versionsToDelete.add(idv);
+				}
+			}
+			tx.run(begin + " MATCH(:" + PaprikaKeyWords.LABELUSER + ")-[r:" + PaprikaKeyWords.REL_USER_PROJECT
+					+ "]->(n) DELETE r");
+
+			tx.run(begin + " MATCH (n)-[r:" + PaprikaKeyWords.REL_PROJECT_VERSION + "]->(v:Version) DELETE r");
+
+			tx.run(begin + " DELETE n");
+		} else
+			versionsToDelete.add(idproject);
+
+		return versionsToDelete;
+	}
+
+	/**
+	 * Supprime toutes les versions du set dans neo4J et tous leurs sous-fils.
+	 * 
+	 * @param tx
+	 * @param versionsToDelete
+	 * @throws IOException
+	 */
 	private void deleteVersionsOnDataBase(Transaction tx, Set<String> versionsToDelete) throws IOException {
 		/*
 		 * Dû au fait qu'on ne change pas le "nb_ver" est normal, sinon on doit

@@ -18,10 +18,6 @@ import app.utils.ViewUtil;
 
 public class VersionController {
 
-	public static final String renderVersion(Request request, Map<String, Object> model, String templatePath) {
-
-		return ViewUtil.render(request, model, templatePath);
-	}
 
 	public static final Route serveVersionPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
@@ -60,6 +56,9 @@ public class VersionController {
 		User user = RequestUtil.getSessionUser(request);
 
 		PaprikaWebMain.LOGGER.trace("-------handleVersionPost--------");
+		
+		
+		
 		String menu = RequestUtil.getQueryVersion(request);
 		if (menu != null) {
 			PaprikaWebMain.LOGGER.trace("etape menu: " + menu);
@@ -67,6 +66,8 @@ public class VersionController {
 		}
 		Application application = RequestUtil.getSessionApplication(request);
 
+		
+		
 		// Formulaire quand on choisit la version dans la page layout.
 		String menuVer = RequestUtil.getParamMenuVersion(request);
 		if (menuVer != null) {
@@ -75,6 +76,9 @@ public class VersionController {
 		}
 		Version version = RequestUtil.getSessionVersion(request);
 		// Formulaire quand on choisit d'ANALYSEr dans la page version.
+		
+		
+		
 		String analys = request.queryParams("analyse");
 		if (analys != null) {
 			PaprikaWebMain.LOGGER.trace("etape ANALYSE");
@@ -105,6 +109,11 @@ public class VersionController {
 			PaprikaWebMain.LOGGER.error("The path for the file is null", e);
 			throw new PapWebRunTimeException(e.getMessage());
 		}
+	}
+
+	public static final String renderVersion(Request request, Map<String, Object> model, String templatePath) {
+
+		return ViewUtil.render(request, model, templatePath);
 	}
 
 }

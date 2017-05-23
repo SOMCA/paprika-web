@@ -44,8 +44,6 @@ public class IndexController {
 		Map<String, Object> model = new HashMap<>();
 		PaprikaFacade facade= PaprikaFacade.getInstance();
 		Application application=RequestUtil.getSessionApplication(request);
-		
-		
 		// Formulaire quand on ajoute un project.
 		String project = request.queryParams("project");
 		String menu = RequestUtil.getParamMenu(request);
@@ -58,7 +56,7 @@ public class IndexController {
 		else if (menu != null) {
 			request.session().attribute(PaprikaKeyWords.APPLICATION,facade.application(Long.parseLong(menu)));
 		}
-		// Formulaire quand on upload un fichier ET analyse.
+		// Formulaire quand on upload un fichier.
 		else if (menu == null && project == null) {
 			boolean fileadded=addFile(request,application,facade);
 			if(fileadded)	{
@@ -88,21 +86,22 @@ public class IndexController {
 			Part uploadedFile = request.raw().getPart("appAndroid");
 			if (uploadedFile != null) {
 				String fName = request.raw().getPart("appAndroid").getSubmittedFileName();
-
-				String realname = fName.substring(0, fName.lastIndexOf('.'));
-				String format = fName.substring(fName.lastIndexOf('.'), fName.length());
-				if (!".apk".equals(format)) {
-					PaprikaWebMain.LOGGER.trace("The file is not a .apk file! We have: "+format);
+				int lastindex=fName.lastIndexOf('.');
+				if(lastindex == -1) {
+					PaprikaWebMain.LOGGER.error("The file have not format!");
+					return false;
 				}
-				else if(realname.length() > 50){
-					PaprikaWebMain.LOGGER.trace("The name of the file is too long, maximal size: 21");
+				
+				String realname = fName.substring(0, lastindex);
+				String format = fName.substring(lastindex, fName.length());
+				if (!".apk".equals(format)) {
+					PaprikaWebMain.LOGGER.error("The file is not a .apk file! We have: "+format);
 				}
 				else {
-
+					
 					PaprikaWebMain.LOGGER.trace(realname);
 					facade.addFile( RequestUtil.getSessionCurrentUser(request),application,fName,uploadedFile,realname);
-				/*	multipartConfigElement = null;
-					uploadedFile = null;*/
+
 					return true;
 				}
 			}

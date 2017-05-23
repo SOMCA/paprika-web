@@ -26,6 +26,11 @@ public class PaprikaWebMain {
 	// "bolt://localhost:7687" quand on n'utilise pas docker.
 	public static final Logger LOGGER = LogManager.getLogger();
 
+	/**
+	 * Pour se connecter à neo4J, on utilise une authentification en dur, 
+	 * utilisateur: neo4j
+	 * pass: paprika
+	 */
 	private static  Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 			AuthTokens.basic("neo4j", "paprika"));
 	public static boolean dockerVersion;
@@ -53,6 +58,10 @@ public class PaprikaWebMain {
 	}
 
 
+	/**
+	 * Créer une nouvelle session ou si le driver est fermé, réouvre le driver avant.
+	 * @return
+	 */
 	public static Session getSession(){
 		Session session=null;
 

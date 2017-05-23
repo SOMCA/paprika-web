@@ -111,8 +111,7 @@ public class CodeSmellsFunctions extends Functions {
 			break;
 		}
 
-		String[] strs = { search, command };
-		return strs;
+		return new String[]{search, command};
 	}
 
 	public StatementResult getPreciseDataForEachCodeSmells(String command) {
