@@ -21,9 +21,14 @@ import app.utils.PathIn;
 import spark.Spark;
 import java.net.InetAddress;
 
+/**
+ * @author guillaume
+ *PaprikaWebMain is the main class of paprika-web
+ */
 public class PaprikaWebMain {
-
-	// "bolt://localhost:7687" quand on n'utilise pas docker.
+	/**
+	 * The logger of Paprika-web
+	 */
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	/**
@@ -57,8 +62,8 @@ public class PaprikaWebMain {
 
 
 	/**
-	 * Créer une nouvelle session ou si le driver est fermé, réouvre le driver avant.
-	 * @return
+	 * Create a new session, if the driver is closed, he re-open the driver.
+	 * @return a new Session.
 	 */
 	public static Session getSession(){
 		Session session=null;
@@ -76,21 +81,18 @@ public class PaprikaWebMain {
 		}
 		return session;
 	}
+	/**
+	 * The main who launch all methods spark.
+	 * @param args this main do not have argument
+	 */
 	public static void main(String[] args) {
 
 		
 		new DescriptionFunctions().addAllClassicDescription();
 		
-
-		// Open the port 4567 for create a localhost server.
+		
 		port(4567);
-
-		// Enable the debugscreen for know why we have this error, need be
-		// optional on the futur
 		enableDebugScreen();
-
-		// Request of Spark for know where are the css or img in the ressources
-		// of the project
 		Spark.staticFileLocation("/public");
 
 		// La page d'index.

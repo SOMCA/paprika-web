@@ -9,18 +9,27 @@ import app.application.PaprikaFacade;
 import app.model.*;
 import app.utils.*;
 
+/**
+ * @author guillaume
+ *Controller of Login page.
+ */
 public class LoginController {
 	
 
 	private static final String CURRENTUSER="currentUser";
 
+	/**
+	 * Login page per default.
+	 */
 	public static final Route serveLoginPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		model.put("loggedOut", RequestUtil.removeSessionAttrLoggedOut(request));
 		model.put("loginRedirect", RequestUtil.removeSessionAttrLoginRedirect(request));
 		return ViewUtil.render(request, model, PathIn.Template.LOGIN);
 	};
-
+	/**
+	 * Request when user try to login
+	 */
 	public static final Route handleLoginPost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		if (!authenticate(RequestUtil.getQueryUsername(request), RequestUtil.getQueryPassword(request))) {
@@ -38,6 +47,9 @@ public class LoginController {
 		return ViewUtil.render(request, model, PathIn.Template.INDEX);
 	};
 
+	/**
+	 * Request when user try to logout.
+	 */
 	public static final Route handleLogoutPost = (Request request, Response response) -> {
 		request.session().removeAttribute(CURRENTUSER);
 		request.session().removeAttribute("user");
@@ -52,8 +64,12 @@ public class LoginController {
 		    throw new IllegalAccessError("Controller class");
 		  }
 	
-	// The origin of the request (request.pathInfo()) is saved in the session so
-	// the user can be redirected back after login
+
+	/**
+	 * Ensure than the user is logged.
+	 * @param request
+	 * @param response
+	 */
 	public static final void ensureUserIsLoggedIn(Request request, Response response) {
 		if (request.session().attribute(CURRENTUSER) == null) {
 			request.session().attribute("loginRedirect", request.pathInfo());
@@ -61,10 +77,13 @@ public class LoginController {
 		}
 	}
 
-	// Authenticate the user by hashing the inputted password using the stored
-	// salt,
-	// then comparing the generated hashed password to the stored hashed
-	// password
+
+	/**
+	 * Authenticate the User with the email and password
+	 * @param email the email of user
+	 * @param password the password of user
+	 * @return true if the email and password are good, else false.
+	 */
 	public static final boolean authenticate(String email, String password) {
 		if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
 			return false;

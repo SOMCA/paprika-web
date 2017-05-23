@@ -5,15 +5,24 @@ import java.util.*;
 import app.application.PaprikaFacade;
 import app.utils.*;
 
+/**
+ * @author guillaume
+ * Controller for the signup page.
+ */
 public class SignUpController {
 
 
 	
+	/**
+	 * Sign up page per default.
+	 */
 	public static final Route serveSignUpPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
 	};
-
+	/**
+	 * Sign up page when user send a form.
+	 */
 	public static final Route handleSignUpPost = (Request request, Response response) -> {
 		
 		Map<String, Object> model = new HashMap<>();

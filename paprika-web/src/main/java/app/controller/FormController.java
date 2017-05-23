@@ -13,9 +13,17 @@ import app.utils.PathIn;
 import app.utils.RequestUtil;
 import app.utils.ViewUtil;
 
+/**
+ * @author guillaume
+ * Controller for the settings.
+ */
 public class FormController {
 
 	
+	/**
+	 * If a user try to go on the page without be logged. Go on Login page.
+	 * Else, nothing.
+	 */
 	public static final Route serveFormDELPage = (Request request, Response response) -> {
 		/*
 		 * Impossible d'accéder au formulaire avant d'être connecter.
@@ -27,6 +35,10 @@ public class FormController {
 		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
 	};
 
+	/**
+	 * Active when user give a form to the delete page.
+	 * he launch the delete of a the value of the form.
+	 */
 	public static final Route handleFormDeletePost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		

@@ -16,9 +16,16 @@ import app.utils.PathIn;
 import app.utils.RequestUtil;
 import app.utils.ViewUtil;
 
+/**
+ * @author guillaume
+ * Controller for the version page.
+ */
 public class VersionController {
 
 
+	/**
+	 * Version page per default.
+	 */
 	public static final Route serveVersionPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 
@@ -41,9 +48,14 @@ public class VersionController {
 			model.put(PaprikaKeyWords.VERSION, version);
 		}
 
-		return VersionController.renderVersion(request, model, PathIn.Template.VERSION);
+		return ViewUtil.render(request, model,PathIn.Template.VERSION);
 	};
 
+	/**
+	 * Version page who take multiple forms:
+	 * -Focus of the Version of a project.
+	 * -Analyze the version.
+	 */
 	public static final Route handleVersionPost = (Request request, Response response) -> {
 		/*
 		 * Impossible d'accéder à cette page avant d'être connecter.
@@ -94,7 +106,7 @@ public class VersionController {
 			}
 		}
 
-		return VersionController.renderVersion(request, model, PathIn.Template.VERSION);
+		return ViewUtil.render(request, model, PathIn.Template.VERSION);
 	};
 
 	private VersionController() {
@@ -111,9 +123,5 @@ public class VersionController {
 		}
 	}
 
-	public static final String renderVersion(Request request, Map<String, Object> model, String templatePath) {
-
-		return ViewUtil.render(request, model, templatePath);
-	}
 
 }

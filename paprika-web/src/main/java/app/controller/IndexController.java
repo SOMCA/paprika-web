@@ -20,11 +20,15 @@ import app.utils.RequestUtil;
 import app.utils.ViewUtil;
 
 
+/**
+ * @author guillaume
+ * The controller is used per the index page.
+ */
 public class IndexController {
 
 
 	/**
-	 * First index, who have the form.
+	 * Index where you go per default.
 	 */
 	public static final Route serveIndexPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
@@ -32,13 +36,10 @@ public class IndexController {
 	};
 
 	/**
-	 * Cette fonction récupère les informations de deux formulaires, le menu des
-	 * applications et l'upload de versions. Le formulaire qui s'occupe des
-	 * paramètres des versions ne se trouvent pas dans l'index, le reste des
-	 * paramètres sera déduit de la version.
-	 * 
-	 * le second formulaire, pour l'instant, prend le nom du fichier et vire le
-	 * .apk de fin
+	 * Index page who take multiple form:
+	 * -Add a project
+	 * -Add a version
+	 * -Change the focus of Project.
 	 */
 	public static final Route handleIndexaddApp = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
@@ -70,7 +71,15 @@ public class IndexController {
 		    throw new IllegalAccessError("Controller class");
 		  }
 
-	  
+	 /**
+	  * Add a file
+	  * @param request
+	  * @param application
+	  * @param facade
+	  * @return
+	  * @throws IOException
+	  * @throws ServletException
+	  */
 	 private static boolean addFile(Request request,Application application,PaprikaFacade facade) throws IOException, ServletException{
 			
 			String location="/application";
