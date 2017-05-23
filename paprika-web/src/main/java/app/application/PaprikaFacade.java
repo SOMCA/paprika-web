@@ -38,10 +38,12 @@ import app.utils.neo4j.Graph;
 import app.utils.neo4j.LowNode;
 
 /**
+ * PaprikaFacade is a singleton + Facade. All controller who need use method of
+ * the Paprika-web pass per this facade. This singleton keep many problem of
+ * refactoring except the size of this class.
+ * 
  * @author guillaume
- * PaprikaFacade is a singleton + Facade. 
- * All controller who need use method of the Paprika-web pass per this facade.
- * This singleton keep many problem of refactoring except the size of this class.
+ * 
  */
 public final class PaprikaFacade {
 
@@ -59,16 +61,18 @@ public final class PaprikaFacade {
 		}
 	}
 
-	/** 
-	 * Point d'accès pour l'instance unique du singleton 
+	/**
+	 * Point d'accès pour l'instance unique du singleton
+	 * 
 	 * @return the class.
-	 * */
+	 */
 	public static PaprikaFacade getInstance() {
 		return SingletonHolder.instance;
 	}
 
 	/**
 	 * return the salt of the Paprika-web, if do not exist, create a new salt.
+	 * 
 	 * @return the salt.
 	 */
 	public String salt() {
@@ -87,9 +91,12 @@ public final class PaprikaFacade {
 		}
 		return salt;
 	}
+
 	/**
 	 * Found the User of id email
-	 * @param email the email of the user.
+	 * 
+	 * @param email
+	 *            the email of the user.
 	 * @return the user of the email
 	 */
 	public User user(String email) {
@@ -98,7 +105,9 @@ public final class PaprikaFacade {
 
 	/**
 	 * Found the Application of id project
-	 * @param application id of the project.
+	 * 
+	 * @param application
+	 *            id of the project.
 	 * @return the application of the id
 	 */
 	public Application application(long application) {
@@ -109,7 +118,9 @@ public final class PaprikaFacade {
 
 	/**
 	 * Found the Version of id version
-	 * @param version id of the version.
+	 * 
+	 * @param version
+	 *            id of the version.
 	 * @return the version of the id
 	 */
 	public Version version(long version) {
@@ -119,10 +130,12 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Add a project of name project  for the user.
+	 * Add a project of name project for the user.
 	 * 
-	 * @param user CurrentUser.
-	 * @param project Name of the project
+	 * @param user
+	 *            CurrentUser.
+	 * @param project
+	 *            Name of the project
 	 * @return return the id of the project.
 	 */
 	public long addProject(User user, String project) {
@@ -137,7 +150,9 @@ public final class PaprikaFacade {
 
 	/**
 	 * Put the project to need be reload.
-	 * @param application the project.
+	 * 
+	 * @param application
+	 *            the project.
 	 */
 	public void needReloadApp(Application application) {
 		if (application != null)

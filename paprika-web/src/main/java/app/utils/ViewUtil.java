@@ -27,7 +27,7 @@ public class ViewUtil {
 	 * @param request
 	 * @param model
 	 * @param templatePath
-	 * @return
+	 * @return //
 	 */
 	public static String render(Request request, Map<String, Object> model, String templatePath) {
 		model.put("msg", new MessageBundle(RequestUtil.getSessionLocale(request)));

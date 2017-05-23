@@ -22,8 +22,10 @@ import spark.Spark;
 import java.net.InetAddress;
 
 /**
+ * PaprikaWebMain is the main class of paprika-web
+ * 
  * @author guillaume
- *PaprikaWebMain is the main class of paprika-web
+ * 
  */
 public class PaprikaWebMain {
 	/**
@@ -32,18 +34,16 @@ public class PaprikaWebMain {
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	/**
-	 * Pour se connecter à neo4J, on utilise une authentification en dur, 
-	 * utilisateur: neo4j
-	 * pass: paprika
+	 * Pour se connecter à neo4J, on utilise une authentification en dur,
+	 * utilisateur: neo4j pass: paprika
 	 */
-	private static  Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
+	private static Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
 			AuthTokens.basic("neo4j", "paprika"));
 
 	private PaprikaWebMain() {
 
 	}
-	
-	
+
 	/**
 	 * Prend le nom du container neo4j-praprika et renvoie son adresse.
 	 * 
@@ -51,46 +51,45 @@ public class PaprikaWebMain {
 	 */
 	private static String getHostName() {
 		try {
-			String str= InetAddress.getByName("neo4j-paprika").getHostAddress();
+			String str = InetAddress.getByName("neo4j-paprika").getHostAddress();
 			PaprikaWebMain.LOGGER.trace(str);
 			return str;
 		} catch (final Exception e) {
-			PaprikaWebMain.LOGGER.trace("Host of InetAddress 'neo4j-paprika' not found",e);
+			PaprikaWebMain.LOGGER.trace("Host of InetAddress 'neo4j-paprika' not found", e);
 			return "localhost";
 		}
 	}
 
-
 	/**
 	 * Create a new session, if the driver is closed, he re-open the driver.
+	 * 
 	 * @return a new Session.
 	 */
-	public static Session getSession(){
-		Session session=null;
+	public static Session getSession() {
+		Session session = null;
 
-		try{
-		 session =driver.session();
-		 LOGGER.trace("Open a new session.");
-		}
-		catch(ServiceUnavailableException e){
-			LOGGER.error("Driver problem, we re-open a driver.",e);
+		try {
+			session = driver.session();
+			LOGGER.trace("Open a new session.");
+		} catch (ServiceUnavailableException e) {
+			LOGGER.error("Driver problem, we re-open a driver.", e);
 			driver.close();
-			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
-					AuthTokens.basic("neo4j", "paprika"));
-			 session =driver.session();
+			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687", AuthTokens.basic("neo4j", "paprika"));
+			session = driver.session();
 		}
 		return session;
 	}
+
 	/**
 	 * The main who launch all methods spark.
-	 * @param args this main do not have argument
+	 * 
+	 * @param args
+	 *            this main do not have argument
 	 */
 	public static void main(String[] args) {
 
-		
 		new DescriptionFunctions().addAllClassicDescription();
-		
-		
+
 		port(4567);
 		enableDebugScreen();
 		Spark.staticFileLocation("/public");

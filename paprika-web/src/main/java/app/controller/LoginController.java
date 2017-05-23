@@ -10,13 +10,14 @@ import app.model.*;
 import app.utils.*;
 
 /**
+ * Controller of Login page.
+ * 
  * @author guillaume
- *Controller of Login page.
+ * 
  */
 public class LoginController {
-	
 
-	private static final String CURRENTUSER="currentUser";
+	private static final String CURRENTUSER = "currentUser";
 
 	/**
 	 * Login page per default.
@@ -36,11 +37,10 @@ public class LoginController {
 			model.put("authenticationFailed", true);
 			return ViewUtil.render(request, model, PathIn.Template.LOGIN);
 		}
-		
+
 		model.put("authenticationSucceeded", true);
 		request.session().attribute(CURRENTUSER, RequestUtil.getQueryUsername(request));
-		request.session().attribute("user", 
-				PaprikaFacade.getInstance().user(RequestUtil.getQueryUsername(request)));
+		request.session().attribute("user", PaprikaFacade.getInstance().user(RequestUtil.getQueryUsername(request)));
 		if (RequestUtil.getQueryLoginRedirect(request) != null) {
 			response.redirect(RequestUtil.getQueryLoginRedirect(request));
 		}
@@ -60,13 +60,13 @@ public class LoginController {
 		return null;
 	};
 
-	  private LoginController() {
-		    throw new IllegalAccessError("Controller class");
-		  }
-	
+	private LoginController() {
+		throw new IllegalAccessError("Controller class");
+	}
 
 	/**
 	 * Ensure than the user is logged.
+	 * 
 	 * @param request
 	 * @param response
 	 */
@@ -77,19 +77,21 @@ public class LoginController {
 		}
 	}
 
-
 	/**
 	 * Authenticate the User with the email and password
-	 * @param email the email of user
-	 * @param password the password of user
+	 * 
+	 * @param email
+	 *            the email of user
+	 * @param password
+	 *            the password of user
 	 * @return true if the email and password are good, else false.
 	 */
 	public static final boolean authenticate(String email, String password) {
 		if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
 			return false;
 		}
-		PaprikaFacade facade=PaprikaFacade.getInstance();
-		
+		PaprikaFacade facade = PaprikaFacade.getInstance();
+
 		User user = facade.user(email);
 		if (user == null) {
 			return false;
@@ -101,7 +103,5 @@ public class LoginController {
 		String hashedPassword = BCrypt.hashpw(password, salt);
 		return hashedPassword.equals(facade.getUserHash(user));
 	}
-
-
 
 }

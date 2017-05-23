@@ -13,6 +13,12 @@ public class PathIn {
 		    throw new IllegalAccessError("Utility class");
 		  }
 	
+    /**
+     * Used per velocity and the Main
+     * 
+     * @author guillaume
+     *
+     */
     public static class Web {
   
          public static final String INDEX = "/index/";
@@ -27,6 +33,12 @@ public class PathIn {
     	}
     }
 
+    /**
+     * Used per the Main
+     * 
+     * @author guillaume
+     *
+     */
     public static class Template {
    
         public static final String INDEX = "/velocity/pages/index.vm";

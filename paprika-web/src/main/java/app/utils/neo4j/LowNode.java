@@ -1,20 +1,12 @@
 package app.utils.neo4j;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
-
-
 /**
- * Celle classe contient une Arraymap et un label et l'id.
+ * LowNode is a custom Node who contain a label, can contain a id and can
+ * contains many properties
  * 
- * L'id par défaut est -1, la method idfocus étant utilisé dans la fonction qui
- * crée les matchs, permet de cibler un node, si non -1
- * 
- * LowNode ne contient pas de relation ou autre, il est juste un petit node
- * contenant le minimum d'informations. D'ailleurs, il ne peut avoir qu'un seul
- * label
- * 
-
  * @author guillaume
  *
  */
@@ -23,6 +15,13 @@ public class LowNode {
 	private HashMap<String, String> map;
 	private long id;
 
+	/**
+	 * LowNode is a custom Node who contain a label, can contain a id and can
+	 * contains many properties
+	 * 
+	 * @param label
+	 *            the label of the node.
+	 */
 	public LowNode(String label) {
 		this.label = label;
 		this.map = new HashMap<>();
@@ -30,59 +29,108 @@ public class LowNode {
 
 	}
 
+	/**
+	 * get the Label of the node.
+	 * 
+	 * @return the label
+	 */
 	public String getLabel() {
 		return this.label;
 	}
-	public long getID(){
+
+	/**
+	 * get the id of the node
+	 * 
+	 * @return the id
+	 */
+	public long getID() {
 		return this.id;
 	}
 
+	/**
+	 * Put the propertie with a string value who need be overloap per two ""
+	 * 
+	 * @param attributeName
+	 * @param value
+	 */
 	public void addParameter(String attributeName, String value) {
 		this.map.put(attributeName, overString(value));
 	}
+
+	/**
+	 * Put the propertie with a Object value where we call the toString()
+	 * 
+	 * @param attributeName
+	 * @param value
+	 */
 	public void addParameter(String attributeName, Object value) {
 		this.map.put(attributeName, value.toString());
 	}
+
+	/**
+	 * Put the propertie with a int value where we call the toString() of
+	 * Integer
+	 * 
+	 * @param attributeName
+	 * @param value
+	 */
 	public void addParameter(String attributeName, int value) {
 		this.map.put(attributeName, Integer.toString(value));
 	}
+
+	/**
+	 * Put the propertie with a int value where we call the toString() of Long
+	 * 
+	 * @param attributeName
+	 * @param value
+	 */
 	public void addParameter(String attributeName, long value) {
 		this.map.put(attributeName, Long.toString(value));
 
 	}
+
+	/**
+	 * Put the propertie with a int value where we call the toString() of Double
+	 * 
+	 * @param attributeName
+	 * @param value
+	 */
 	public void addParameter(String attributeName, double value) {
 		this.map.put(attributeName, Double.toString(value));
 	}
-	public String getParameter(String attributeName){
+
+	/**
+	 * get the propertie of name attributeName
+	 * 
+	 * @param attributeName
+	 * @return a string value
+	 */
+	public String getParameter(String attributeName) {
 		return this.map.get(attributeName);
 	}
-	
+
 	private String overString(String string) {
 		return "\"" + string + "\"";
 	}
 
 	/**
-	 * Retourne le where d'une commande cypher de neo4J qui contient la
-	 * comparaison id .
+	 * set a new ID for the node.
 	 * 
-	 * @param labelname
-	 * @return
+	 * @param id
+	 *            id of a node.
 	 */
-	public String idfocus(String labelname) {
-		if (this.id == -1)
-			return "";
-		return "WHERE ID(" + labelname + ") = " + this.id;
-	}
-
 	public void setId(long id) {
 		this.id = id;
 	}
 
 	/**
-	 * Equivalent à un tostring d'unemap, mais au lieu de =, on a des :, ex:
-	 * "{name : guillaume }"
+	 * Render a StringBuilder who contain a neo4j cypher data ex: "{name :
+	 * guillaume }"
 	 * 
-	 * Attention, l'ordre n'est pas ordonné, même si cela n'a pas d'importance.
+	 * Warning, the order is not sort, same if this is not important for what it
+	 * is used.
+	 * 
+	 * @return return a data for neo4j cypher
 	 */
 	public StringBuilder parametertoData() {
 		if (this.map.size() == 0)

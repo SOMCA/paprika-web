@@ -17,11 +17,12 @@ import app.utils.RequestUtil;
 import app.utils.ViewUtil;
 
 /**
- * @author guillaume
  * Controller for the version page.
+ * 
+ * @author guillaume
+ * 
  */
 public class VersionController {
-
 
 	/**
 	 * Version page per default.
@@ -48,12 +49,11 @@ public class VersionController {
 			model.put(PaprikaKeyWords.VERSION, version);
 		}
 
-		return ViewUtil.render(request, model,PathIn.Template.VERSION);
+		return ViewUtil.render(request, model, PathIn.Template.VERSION);
 	};
 
 	/**
-	 * Version page who take multiple forms:
-	 * -Focus of the Version of a project.
+	 * Version page who take multiple forms: -Focus of the Version of a project.
 	 * -Analyze the version.
 	 */
 	public static final Route handleVersionPost = (Request request, Response response) -> {
@@ -68,9 +68,7 @@ public class VersionController {
 		User user = RequestUtil.getSessionUser(request);
 
 		PaprikaWebMain.LOGGER.trace("-------handleVersionPost--------");
-		
-		
-		
+
 		String menu = RequestUtil.getQueryVersion(request);
 		if (menu != null) {
 			PaprikaWebMain.LOGGER.trace("etape menu: " + menu);
@@ -78,8 +76,6 @@ public class VersionController {
 		}
 		Application application = RequestUtil.getSessionApplication(request);
 
-		
-		
 		// Formulaire quand on choisit la version dans la page layout.
 		String menuVer = RequestUtil.getParamMenuVersion(request);
 		if (menuVer != null) {
@@ -88,15 +84,13 @@ public class VersionController {
 		}
 		Version version = RequestUtil.getSessionVersion(request);
 		// Formulaire quand on choisit d'ANALYSEr dans la page version.
-		
-		
-		
+
 		String analys = request.queryParams("analyse");
 		if (analys != null) {
 			PaprikaWebMain.LOGGER.trace("etape ANALYSE");
-			String fname = facade.getEntityName(version)+ ".apk";
+			String fname = facade.getEntityName(version) + ".apk";
 			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/"
-					+ facade.getEntityName(application)+ "/" + fname;
+					+ facade.getEntityName(application) + "/" + fname;
 			boolean flag = false;
 			flag = analyseVersion(pathstr);
 			if (flag) {
@@ -122,6 +116,5 @@ public class VersionController {
 			throw new PapWebRunTimeException(e.getMessage());
 		}
 	}
-
 
 }

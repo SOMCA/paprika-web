@@ -6,9 +6,9 @@ import org.neo4j.driver.v1.types.Node;
 import app.utils.PaprikaKeyWords;
 
 /**
- * 
- * @author guillaume willefert Graph is a class who contains many method for
- *         create a correct command String
+ * Graph is a class who contains many method for create a correct command String
+ *
+ * @author guillaume
  * 
  */
 public class Graph {
@@ -17,10 +17,10 @@ public class Graph {
 	private static final String RETURN = " RETURN ";
 
 	/**
-	 * Create a node with the label and with this parameter
+	 * Create a node with a custom lowNode
 	 * 
 	 * @param lowNode
-	 * @return
+	 * @return a command String for Neo4j Cypher
 	 */
 	public String create(LowNode lowNode) {
 		/* créer une donnée */
@@ -29,13 +29,15 @@ public class Graph {
 	}
 
 	/**
-	 * Récupère l'id du node du premier record
+	 * Found the first id node of the list received per Neo4j with the labelNode
 	 * 
 	 * @param result
-	 * @return
+	 * @param labelNode
+	 *            the label node when you search
+	 * @return the id of the first node encounter
 	 */
 	public long getID(StatementResult result, String labelNode) {
-		if (result!=null && result.hasNext() && labelNode!=null) {
+		if (result != null && result.hasNext() && labelNode != null) {
 			Record record = result.next();
 			Node node = record.get(labelNode).asNode();
 			if (node != null) {
@@ -52,14 +54,16 @@ public class Graph {
 	 * @param lowNode
 	 * @param lowNodeTarget
 	 * @param relationLabel
-	 * @return
+	 * @return a command String for Neo4j Cypher
 	 */
-	
+
 	public String relation(LowNode lowNode, LowNode lowNodeTarget, String relationLabel) {
-		if(relationLabel==null) relationLabel="*";
+		if (relationLabel == null)
+			relationLabel = "*";
 		return matchPrefabs("it", lowNode) + matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNodeTarget) + Graph.CREATEIT
 				+ relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ")";
 	}
+
 	/**
 	 * Return a command who Create a relation between two nodes, where the left
 	 * node already exist
@@ -67,40 +71,37 @@ public class Graph {
 	 * @param lowNode
 	 * @param lowNodeTarget
 	 * @param relationLabel
-	 * @return
+	 * @return a command String for Neo4j Cypher
 	 */
 	public String relationcreateRight(LowNode lowNode, LowNode lowNodeTarget, String relationLabel) {
-		if(relationLabel==null) relationLabel="*";
+		if (relationLabel == null)
+			relationLabel = "*";
 		return matchPrefabs("it", lowNode) + Graph.CREATEIT + relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ":"
 				+ lowNodeTarget.getLabel() + lowNodeTarget.parametertoData() + ")";
 	}
 
 	/**
-	 * Utilisez pour toutes les fonctions, si le premier paramètre est labelID
-	 * alors il n'y a pas d'autres paramètres à part l'id et on renvoie un match
-	 * where id. Sinon, on applique un match avec l'ensemble des paramètres.
+	 * Transform a LowNode with a labelname on MATCH String.
 	 * 
 	 * @param labelname
 	 * @param lowNode
-	 * @return
+	 * @return a command String for Neo4j Cypher
 	 */
 
 	public String matchPrefabs(String labelname, LowNode lowNode) {
-		if(lowNode.getLabel()==null){
-			return " MATCH (" + labelname + lowNode.parametertoData() + ") "
-					+ lowNode.idfocus(labelname);
+		String after = lowNode.parametertoData() + ") WHERE ID(" + labelname + ") = " + Long.toString(lowNode.getID());
+		String before = " MATCH (" + labelname;
+		if (lowNode.getLabel() == null) {
+			return before + after;
 		}
-		return " MATCH (" + labelname + ":" + lowNode.getLabel() + lowNode.parametertoData() + ") "
-				+ lowNode.idfocus(labelname);
+		return before + ":" + lowNode.getLabel() + after;
 	}
 
-
 	/**
-	 * renvoie une commande qui retourne les nodes d'un label avec pour
-	 * conditions, parameter.
+	 * return the match of the lownode.
 	 * 
 	 * @param lowNode
-	 * @return
+	 * @return a command String for Neo4j Cypher
 	 */
 
 	public String matchSee(LowNode lowNode) {
@@ -108,27 +109,28 @@ public class Graph {
 	}
 
 	/**
-	 * Retourne une commande qui retourne tous les nodes du node donné en
-	 * paramètre lié à leur labelRelation.
+	 * Return the match who contains all childrens of the first node, linked to
+	 * the relation.
 	 * 
 	 * @param lowNode
 	 * @param lowNodeTarget
 	 * @param relationLabel
-	 * @return
+	 * @return a command String for Neo4j Cypher
 	 */
 	public String matchSee(LowNode lowNode, LowNode lowNodeTarget, String relationLabel) {
-		if(relationLabel==null) relationLabel="*";
+		if (relationLabel == null)
+			relationLabel = "*";
 		return matchPrefabs("a", lowNode) + matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNodeTarget) + " MATCH (a)-[:"
 				+ relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ")" + Graph.RETURN + PaprikaKeyWords.NAMELABEL;
 	}
 
 	/**
-	 * parameter doit contenir toujours id, pour que set fonctionne, set
-	 * applique ensuite le reste des paramètres au node.
+	 * 
+	 * Set apply the parameter of the second LowNode on the first.
 	 * 
 	 * @param lowNode
 	 * @param newAttributsNode
-	 * @return
+	 * @return a command String for Neo4j Cypher
 	 */
 	public String set(LowNode lowNode, LowNode newAttributsNode) {
 		String result = this.matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNode);
@@ -138,17 +140,6 @@ public class Graph {
 		}
 		result += Graph.RETURN + PaprikaKeyWords.NAMELABEL;
 		return result;
-	}
-
-	/**
-	 * Supprime une donnée de la base de donnée et tous ces enfants et petits
-	 * enfants.
-	 * 
-	 * @param id String car récupérer sous forme de string à la base.
-	 * @return
-	 */
-	public String deleteDataAndAllChildrens(String id) {
-		return "MATCH(n) WHERE id(n)= "+id+" MATCH (n)-[*]->(a)" + " DETACH DELETE n,a";
 	}
 
 }
