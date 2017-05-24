@@ -47,14 +47,14 @@ import app.utils.neo4j.LowNode;
  */
 public final class PaprikaFacade {
 
-	/** Constructeur privé */
+	/** Private constructor*/
 	private PaprikaFacade() {
 	}
 
 	/** Holder */
 	private static class SingletonHolder {
 
-		/** Instance unique non préinitialisée */
+		/** Unique instance no pre-initialized */
 		private static final PaprikaFacade instance = new PaprikaFacade();
 
 		private SingletonHolder() {
@@ -62,8 +62,7 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Point d'accès pour l'instance unique du singleton
-	 * 
+	 * Access point to the unique instance of this singleton
 	 * @return the class.
 	 */
 	public static PaprikaFacade getInstance() {

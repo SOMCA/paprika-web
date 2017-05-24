@@ -90,7 +90,7 @@ public class PaprikaWebMain {
 
 		new DescriptionFunctions().addAllClassicDescription();
 
-		port(4567);
+		port(80);
 		enableDebugScreen();
 		Spark.staticFileLocation("/public");
 

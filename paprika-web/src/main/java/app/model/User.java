@@ -13,9 +13,20 @@ import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
+/**
+ * User is the current User connected, who contains many methods used on velocity
+ * @author guillaume
+ *
+ */
 public class User extends Entity{
 	protected final String hashedPassword;
 
+	/**
+	 * 
+	 * @param email name of the User
+	 * @param id id of the User
+	 * @param hashedPassword hidden password of the User
+	 */
 	public User(String email,long id, String hashedPassword) {
 		super(email,id);
 		this.hashedPassword = hashedPassword;
@@ -33,11 +44,19 @@ public class User extends Entity{
 		}
 	}
 
+	/**
+	 * Return the hashed password
+	 * @return the hashed password
+	 */
 	public String getHashedPassword() {
 		return this.hashedPassword;
 	}
 
 
+	/**
+	 * Return the name of the email without string after '@'
+	 * @return the first subpart of the email
+	 */
 	public String getUsername() {
 		return this.getName().split("@")[0];
 	}
@@ -45,6 +64,11 @@ public class User extends Entity{
 	
 	
 	
+	/**
+	 * Return the iterator of the project list of the User
+	 * 
+	 * @return all project of the user
+	 */
 	public Iterator<Application> getDataApplications() {
 		List<Application> applications = new ArrayList<>();
 		Record record;

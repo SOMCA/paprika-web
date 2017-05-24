@@ -11,7 +11,7 @@ services:
       - $HOME/neo4j/logs:/logs
   web:
     ports:
-      - "4567:4567"
+      - "80:80"
     image: paprika-web:latest
     container_name: web-paprika
     command: java -jar Paprika-web.jar -d

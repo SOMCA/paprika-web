@@ -134,7 +134,7 @@ public class LowNode {
 	 */
 	public StringBuilder parametertoData() {
 		if (this.map.size() == 0)
-			return new StringBuilder("");
+			return new StringBuilder(" ");
 		String begin;
 		String end;
 		begin = " {";

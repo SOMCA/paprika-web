@@ -89,8 +89,12 @@ public class Graph {
 	 */
 
 	public String matchPrefabs(String labelname, LowNode lowNode) {
-		String after = lowNode.parametertoData() + ") WHERE ID(" + labelname + ") = " + Long.toString(lowNode.getID());
 		String before = " MATCH (" + labelname;
+		String after = lowNode.parametertoData() + ") ";
+		if(lowNode.getID()!=-1){
+			after+=" WHERE ID(" + labelname + ") = " + Long.toString(lowNode.getID());
+		}
+		
 		if (lowNode.getLabel() == null) {
 			return before + after;
 		}

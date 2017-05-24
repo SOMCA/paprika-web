@@ -17,15 +17,35 @@ import app.application.PaprikaWebMain;
 import app.functions.VersionFunctions;
 import app.utils.PaprikaKeyWords;
 
+/**
+ * Version is a version of the Project of a User
+ * 
+ * @author guillaume
+ *
+ */
 public class Version extends Entity {
 
+	/**
+	 * analyzed is a int flag, used for know if the version is not analyzed,
+	 * loading, processing or analyzed.
+	 */
 	private int analyzed;
 
+	/**
+	 * @param name
+	 *            name of the version
+	 * @param id
+	 *            id of the version
+	 */
 	public Version(String name, long id) {
 		super(name, id);
 		this.checkAnalyzed();
 	}
 
+	/**
+	 * return the number of codesmells of the version. This method on velocity only when the version is analyzed
+	 * @return a number of code smells
+	 */
 	public long getNumberCodeSmells() {
 		VersionFunctions verfct = new VersionFunctions();
 		long number = verfct.getNumberOfSmells(this.getID());
@@ -40,6 +60,11 @@ public class Version extends Entity {
 		return number;
 	}
 
+	/**
+	 * Check the Version node and update the parameter analyzed.
+	 * If analyzed, the method delete the android application, useless stuff and the container.
+	 * @return the analyzed parameter
+	 */
 	public int checkAnalyzed() {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		String ana = facade.getParameter(getID(), PaprikaKeyWords.CODEA);
@@ -83,6 +108,9 @@ public class Version extends Entity {
 		return this.analyzed;
 	}
 
+	/**
+	 * Remove many properties on the node and remove the container of the id container
+	 */
 	private void removeUseless() {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 
@@ -92,19 +120,35 @@ public class Version extends Entity {
 		facade.removeParameterOnNode(getID(), "idContainer");
 	}
 
+	/**
+	 * 
+	 * @return the analyzed parameter
+	 */
 	public int isAnalyzed() {
 		return this.analyzed;
 	}
 
+	/**
+	 * When the analyze is running, velocity call this method for know where are the analyze on the processus.
+	 * @return the percent of the analyze.
+	 */
 	public String getAnalyseInLoading() {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		return facade.getParameter(getID(), "analyseInLoading");
 	}
 
+	/**
+	 * return the numero order of the Version for sort versions lists of project
+	 * @return a value of properties on a Version node
+	 */
 	public long getOrder() {
 		return new VersionFunctions().getOrder(this.getID());
 	}
 
+	/**
+	 * Return all codesSmells of the Version
+	 * @return iterator of all code smells
+	 */
 	public Iterator<CodeSmells> getAllCodeSmells() {
 
 		List<CodeSmells> listNode = new ArrayList<>();

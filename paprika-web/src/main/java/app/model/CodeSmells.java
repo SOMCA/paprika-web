@@ -8,6 +8,12 @@ import org.neo4j.driver.v1.types.Node;
 
 import app.functions.CodeSmellsFunctions;
 
+/**
+ * a CodeSmells of a version.
+ * 
+ * @author guillaume
+ *
+ */
 public class CodeSmells extends Entity {
 
 	private long numberOfSmells;
@@ -16,6 +22,12 @@ public class CodeSmells extends Entity {
 	
 	private static final String[] arrayHtml= {"<tr>","</tr>","<td>","</td>","<th>","</th>"};
 
+	/**
+	 * 
+	 * @param name name of the Code Smell
+	 * @param id id of the Node of the CodeSmell
+	 * @param numberOfSmells the number of Code smells found.
+	 */
 	public CodeSmells(String name, long id, long numberOfSmells) {
 		super(name, id);
 		this.numberOfSmells = numberOfSmells;
@@ -30,22 +42,34 @@ public class CodeSmells extends Entity {
 
 	}
 
+	/**
+	 * return the number of codesmells found.
+	 * @return the number of codesmells.
+	 */
 	public long getNumberOfSmells() {
 		return this.numberOfSmells;
 	}
 
+	/**
+	 * Return a pre-build description.
+	 * @return the code smell description.
+	 */
 	public String getDescription() {
 		return this.description;
 	}
 
+	/**
+	 * Return the longName of a code smell( LM: Long Method)
+	 * @return the long name of a code smell
+	 */
 	public String getLongName() {
 		return this.longName;
 	}
 
 	/**
-	 * LM seulement, pour le moment
+	 * Return a array string on table html form, who take all informations of each relation.
 	 * 
-	 * @return
+	 * @return a string who is a table html form string
 	 */
 	public String getLineList() {
 		StringBuilder arrayData = new StringBuilder("");
@@ -96,6 +120,11 @@ public class CodeSmells extends Entity {
 		return line;
 	}
 
+	/**
+	 * If the node where the codesmell focus is a method, he call that.
+	 * @param record
+	 * @return
+	 */
 	private StringBuilder getLineMethod(Record record) {
 		StringBuilder line = new StringBuilder(arrayHtml[0]);
 		Iterator<Value> recordIter = record.values().iterator();
@@ -129,7 +158,12 @@ public class CodeSmells extends Entity {
 		line.append(arrayHtml[1]);
 		return line;
 	}
-	
+
+	/**
+	 * If the node where the codesmell focus is a class, he call that.
+	 * @param record
+	 * @return
+	 */
 	private StringBuilder getLineClass(Record record) {
 		StringBuilder line = new StringBuilder(arrayHtml[0]);
 		Iterator<Value> recordIter = record.values().iterator();

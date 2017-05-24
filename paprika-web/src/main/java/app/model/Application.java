@@ -16,6 +16,12 @@ import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
+/**
+ * Application is a project of User, who contains many methods used on velocity
+ * 
+ * @author guillaume
+ *
+ */
 public class Application extends Entity {
 
 	/*
@@ -31,6 +37,13 @@ public class Application extends Entity {
 	 */
 	private boolean reload;
 
+	/**
+	 * 
+	 * @param name
+	 *            The name of the project.
+	 * @param id
+	 *            The id of the project.
+	 */
 	public Application(String name, long id) {
 		super(name, id);
 		this.reload = false;
@@ -38,41 +51,36 @@ public class Application extends Entity {
 	}
 
 	/**
-	 * Transforme juste en string le nombre.
+	 * Get the number of version on string.
 	 * 
-	 * @return
+	 * @return number of version
 	 */
 	public String getNumberOfVersion() {
 		return Integer.toString(this.getNumberOfVersionReal());
 	}
 
 	/**
-	 * Renvoie la taille de la liste de versions, comme celle ci peut être
-	 * nulle, si nulle, il renvoie 0
+	 * Return the number of version. This is the size of real number of version,
+	 * not the number of version on neo4J who is used for the order.
 	 * 
-	 * On n'utilise pas le nombre de Version du node application, car sinon, si
-	 * on supprime des versions on devra changer leur ordre à chacun ce qui sera
-	 * long, alors le nombre de versions ne fait que grossir dans l'application
-	 * 
-	 * @return
+	 * @return the number of version
 	 */
 	public int getNumberOfVersionReal() {
-		if (reload) {
-			return this.listofVersion.size();
-		} else {
-			return this.getListVersionApplications().size();
-		}
+		return this.getListVersionApplications().size();
 	}
 
+	/**
+	 * Put the reload to false, for than the next time a function call this
+	 * flag, he reload the list.
+	 */
 	public void needReload() {
 		this.reload = false;
 	}
 
 	/**
-	 * Renvoie la liste des versions de l'applications
+	 * Return the versions list of the current project.
 	 * 
-	 * @param application
-	 * @return
+	 * @return a list of Version
 	 */
 	public List<Version> getListVersionApplications() {
 		if (!this.reload) {
@@ -107,20 +115,20 @@ public class Application extends Entity {
 	}
 
 	/**
-	 * Retourne X versions
+	 * Return number version of the list on a new list.
 	 * 
 	 * @param number
-	 * @return
+	 *            the number of Version than you want.
+	 * @return a subpart of the parameter list
 	 */
 	public List<Version> getLastXVersion(int number) {
 		Iterator<Version> versions = getListVersionApplications().iterator();
 		List<Version> lastVersion = new ArrayList<>();
 		int numberVersion = this.getNumberOfVersionReal();
-		
-		// si le nombre de version disponible est plus grand que le nombre voulu, on lui dit d'ajouter que le minimum qu'on veut
+
 		// number cannot be lower than 1
-		if(number>0 && number<numberVersion){
-			numberVersion=number;
+		if (number > 0 && number < numberVersion) {
+			numberVersion = number;
 		}
 		Version version;
 
@@ -136,13 +144,21 @@ public class Application extends Entity {
 		return lastVersion;
 	}
 
+	/**
+	 * Return the iterator of the list of versions
+	 * 
+	 * @return the iterator of the parameter listversion.
+	 */
 	public Iterator<Version> getVersions() {
-		if (reload)
-			return listofVersion.iterator();
-		else
-			return this.getListVersionApplications().iterator();
+		return this.getListVersionApplications().iterator();
 	}
 
+	/**
+	 * Return the number of versions who have be analyzed on the versions list
+	 * if reload is false, return 0;
+	 * 
+	 * @return the number of versions who have be analyzed
+	 */
 	public int getNumberOfAnalysedVersion() {
 		int i = 0;
 		if (!reload) {
@@ -157,13 +173,19 @@ public class Application extends Entity {
 		return i;
 	}
 
+	/**
+	 * Put all codesmells who do not have a value to 0 on a Map for each versions.
+	 * 
+	 * @param versions list of analyzed versions
+	 * @return a list who contains a map for each version and who contains key
+	 *         for each codesmells
+	 */
 	private List<Map<String, Long>> getDataGraph(Iterator<Version> versions) {
 
 		Version version;
 		List<Map<String, Long>> datas = new ArrayList<>();
 		Map<String, Long> data;
 
-		// Partie 1, je récupère toutes les données dans une map.
 		while (versions.hasNext()) {
 			version = versions.next();
 			Iterator<CodeSmells> css = version.getAllCodeSmells();
@@ -181,24 +203,29 @@ public class Application extends Entity {
 	}
 
 	/**
-	 * Retourne uniquement l'ensemble des clés code smells qui existe de la
-	 * donnée passé
-	 * 
-	 * @return
+	 * Return a key's arrays who contains all code smells on each Map of the List
+	 * @param datas the data
+	 * @return a array who contains key code smells.
 	 */
 	private String[] getKey(List<Map<String, Long>> datas) {
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
 		Set<String> allkey = new HashSet<>();
 
-		// Partie 2, où je prends l'ensemble des clés qui existe.
 		while (dataiter.hasNext()) {
 			allkey.addAll(dataiter.next().keySet());
 
 		}
-		// Puis transforme le tout en tableau
 		return allkey.toArray(new String[allkey.size()]);
 	}
 
+	/**
+	 * getGraph is a method used per velocity who take a string for know what he need to render and a int for know how many versions it needed.
+	 * And return a special string for the "renderGraph"
+	 * 
+	 * @param renderGraph a string like "area" or "radar"
+	 * @param numberVersion the number of version to put on the return.
+	 * @return special string very huge.
+	 */
 	public String getGraph(String renderGraph, int numberVersion) {
 		List<Version> versions = getLastXVersion(numberVersion);
 		List<Map<String, Long>> datas = getDataGraph(versions.iterator());
@@ -293,6 +320,9 @@ public class Application extends Entity {
 		return str;
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "[" + this.getName() + "," + this.getID() + "," + this.getNumberOfVersion() + "]";
