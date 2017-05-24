@@ -7,12 +7,16 @@ import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.types.Node;
 
-
+import app.application.PaprikaFacade;
 import app.model.Version;
 import app.utils.PaprikaKeyWords;
 
 import app.utils.neo4j.LowNode;
-
+/**
+ * VersionFunctions is a utils class linked to Version class but use neo4j
+ * @author guillaume
+ *
+ */
 public class VersionFunctions extends Functions {
 
 
@@ -180,7 +184,7 @@ public class VersionFunctions extends Functions {
 	}
 
 	public String receiveOf(long idnode) {
-		return this.receiveNameOf(idnode, PaprikaKeyWords.NAMEATTRIBUTE);
+		return PaprikaFacade.getInstance().getParameter(idnode, PaprikaKeyWords.NAMEATTRIBUTE);
 	}
 
 }

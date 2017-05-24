@@ -5,10 +5,16 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.types.Node;
 
+import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
+/**
+ * ApplicationsFunctions is a utils class linked to Application class but use neo4j
+ * @author guillaume
+ *
+ */
 public class ApplicationFunctions extends Functions {
 
 
@@ -100,6 +106,6 @@ public class ApplicationFunctions extends Functions {
 	}
 
 	public String receiveOf(long idnode) {
-		return this.receiveNameOf(idnode, PaprikaKeyWords.NAMEATTRIBUTE);
+		return PaprikaFacade.getInstance().getParameter(idnode, PaprikaKeyWords.NAMEATTRIBUTE);
 	}
 }

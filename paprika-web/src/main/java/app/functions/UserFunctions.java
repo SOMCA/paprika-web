@@ -12,15 +12,17 @@ import app.model.User;
 import app.utils.PaprikaKeyWords;
 
 import app.utils.neo4j.LowNode;
-
+/**
+ * UserFunctions is a utils class linked to User class but use neo4j
+ * @author guillaume
+ *
+ */
 public class UserFunctions extends Functions {
 	private static final String ATTRIBUTE_KEY = "hashpwd";
 		/**
 	 * Return the salt of the first node of label "key" If not found, return
 	 * null
-	 * 
-	 * @param user
-	 * @return
+	 * @return a salt code
 	 */
 	public String retrieveSalt() {
 
@@ -42,15 +44,11 @@ public class UserFunctions extends Functions {
 	}
 
 	/**
-	 * readData prend un string email et regarde si il y a un utilisateur ayant
-	 * le même email, il regarde d'abord la clé et regarde si cette utilisateur
-	 * existe et est lié à la clé. Sinon, readData renvoie null ce qui inclut
-	 * donc qu'aucun utilisateur de cette email existe, sinon, il renvoit un
-	 * User qui contient l'email, le hashcode du mot de passe et le hashcode de
-	 * la clé.
+	 * Return a User if the email(who is unique) correspond to a email on the neo4j database.
+	 * Else null.
 	 * 
-	 * @param email
-	 * @return
+	 * @param email email of a user.
+	 * @return a User of the email
 	 */
 	public User foundUser(String email) {
 		StatementResult result;
@@ -84,9 +82,7 @@ public class UserFunctions extends Functions {
 	}
 
 	/**
-	 * Writedata prend l'email et le newhashedpassword et crée l'utilisateur en
-	 * plus d'être relié à une tel clé. Il inclut aussi le nombre d'application
-	 * qui commence donc par 0.
+	 * Create a new User with the email and the hashed password
 	 * 
 	 * @param email
 	 * @param newHashedPassword

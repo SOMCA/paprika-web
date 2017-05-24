@@ -6,9 +6,18 @@ import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaWebMain;
-
+/**
+ * CodeSmellsFunctions is a utils class linked to CodeSmells class but use neo4j
+ * @author guillaume
+ *
+ */
 public class CodeSmellsFunctions extends Functions {
 
+	/**
+	 * Return the Description node of the codesmells
+	 * @param labelname short name of the code smell.
+	 * @return return a description node.
+	 */
 	public Node getNode(String labelname) {
 		String label = labelname;
 		String fuzzy = "_NO_FUZZY";
@@ -29,13 +38,11 @@ public class CodeSmellsFunctions extends Functions {
 	}
 
 	/**
-	 * Renvoie la commande lié au codesmell pour obtenir les résultats du graph,
-	 * mais aussi "search" pour savoir si on aura des classes,methodes ou
-	 * autres.
-	 * 
-	 * @param nameLabel
-	 * @param id
-	 * @return
+	 * Return a class command or a method command for obtain without problem data on neo4J.
+	 * Class or method are stocked on the first index and the command on the second.
+	 * @param nameLabel shortname of the code smells
+	 * @param id id of the Code smell node.
+	 * @return a string[] where index=0 contains class or method, and index=1, contains long command.
 	 */
 	public String[] getToSearch(String nameLabel, long id) {
 
@@ -114,6 +121,11 @@ public class CodeSmellsFunctions extends Functions {
 		return new String[]{search, command};
 	}
 
+	/**
+	 * Obtain many values data on the code smell with the command.
+	 * @param command a command of getToSearch method
+	 * @return a result who contains a array map of data
+	 */
 	public StatementResult getPreciseDataForEachCodeSmells(String command) {
 		StatementResult result = null;
 		if (command != null)

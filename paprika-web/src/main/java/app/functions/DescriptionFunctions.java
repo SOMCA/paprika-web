@@ -8,9 +8,16 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
 import app.utils.neo4j.LowNode;
-
+/**
+ * DescriptionFunctions is a util class, used for build node of description.
+ * @author guillaume
+ *
+ */
 public class DescriptionFunctions extends Functions {
 
+	/**
+	 * Add all description of the list of dataDescription on multiple node.
+	 */
 	public void addAllClassicDescription() {
 
 		StatementResult result;
@@ -33,6 +40,13 @@ public class DescriptionFunctions extends Functions {
 
 	}
 
+	/**
+	 * Not used, but already created, this method is use for create a new description.
+	 * Need to be deleted, if you do not think add a function on velocity for add description.
+	 * @param labelName the shortname of the code smell
+	 * @param description the description of the code smell
+	 * @param longName the longname of the code smell
+	 */
 	public void addDescription(String labelName, String description, String longName) {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
@@ -51,10 +65,8 @@ public class DescriptionFunctions extends Functions {
 
 
 	/**
-	 * Method qui envoie des données basiques des differents code_smells de
-	 * bases
-	 * 
-	 * @return
+	 * Util Method who return a data list of lowNode
+	 * @return list of lowNode
 	 */
 	public List<LowNode> dataDescription() {
 		List<LowNode> desclist = new ArrayList<>();
@@ -154,7 +166,14 @@ public class DescriptionFunctions extends Functions {
 
 	}
 
-	public LowNode getNodeDescription(String labelname, String name, String info) {
+	/**
+	 * Create a lowNode with the shortName, LongName and the description.
+	 * @param labelname The short Name of the code smell.
+	 * @param name The long Name of the code smell.
+	 * @param info The description.
+	 * @return
+	 */
+	private LowNode getNodeDescription(String labelname, String name, String info) {
 		LowNode node = new LowNode(labelname);
 		node.addParameter("name", name);
 		node.addParameter("info", info);
