@@ -140,8 +140,8 @@ public final class PaprikaFacade {
 	public long addProject(User user, String project) {
 		ApplicationFunctions appFct = new ApplicationFunctions();
 		long idProject = -1;
-		if (project != null && appFct.receiveIDOfApplication(user.getName(), project) == -1) {
-			idProject = appFct.writeApplicationOnUser(user.getName(), project);
+		if (project != null && appFct.receiveIDOfProject(user.getName(), project) == -1) {
+			idProject = appFct.writeProjectOnUser(user.getName(), project);
 		}
 
 		return idProject;

@@ -20,19 +20,19 @@ public class ApplicationFunctions extends Functions {
 
 	
 	/**
-	 * Retrouve l'id de l'application ciblé
+	 * Return the id of the project of the user
 	 * 
-	 * @param email
-	 * @param application
-	 * @return
+	 * @param email the email of the user
+	 * @param project the name of the project
+	 * @return the id of the project, if he exist, else -1
 	 */
 	
-	public long receiveIDOfApplication(String email, String application) {
+	public long receiveIDOfProject(String email, String project) {
 		LowNode nodeUser = new LowNode(PaprikaKeyWords.LABELUSER);
 		nodeUser.addParameter(PaprikaKeyWords.ATTRIBUTE_EMAIL, email);
 
 		LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
-		nodeApp.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, application);
+		nodeApp.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, project);
 
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
@@ -46,11 +46,11 @@ public class ApplicationFunctions extends Functions {
 
 
 	/**
-	 * Prend un node application ou version, et incrémente de 1 à l'attribut en
-	 * prenant en compte qu'il s'agit d'un long
-	 * 
-	 * @param label
-	 * @param parameter
+	 * Add 1 to a property on the User of the project
+	 * @param lowNode
+	 * @param attribute
+	 * @param value
+	 * @param tx
 	 * @return
 	 */
 	private String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
@@ -65,12 +65,13 @@ public class ApplicationFunctions extends Functions {
 	}
 
 	/**
-	 * Enregistre une application dans l'utilisateur ciblé.
+	 * Add a new Project on the User node.
 	 * 
-	 * @param email
-	 * @param application
+	 * @param email email of the User.
+	 * @param project name of the project
+	 * @return the id of the new Project
 	 */
-	public long writeApplicationOnUser(String email, String application) {
+	public long writeProjectOnUser(String email, String project) {
 
 		StatementResult result;
 		Record record;
@@ -87,7 +88,7 @@ public class ApplicationFunctions extends Functions {
 			node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
 			PaprikaWebMain.LOGGER.trace(node.get(PaprikaKeyWords.ATTRIBUTE_NB_APP));
 			LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
-			nodeApp.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, application);
+			nodeApp.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, project);
 			nodeApp.addParameter(PaprikaKeyWords.ATTRIBUTE_NB_VERSION, 0);
 			String incr = this.increment(nodeUser, PaprikaKeyWords.ATTRIBUTE_NB_APP,
 					node.get(PaprikaKeyWords.ATTRIBUTE_NB_APP).asLong(), tx);
@@ -105,6 +106,11 @@ public class ApplicationFunctions extends Functions {
 		return id;
 	}
 
+	/**
+	 * Return the name of the id of a unknow node if the node exist and than a name exist.
+	 * @param idnode
+	 * @return a name.
+	 */
 	public String receiveOf(long idnode) {
 		return PaprikaFacade.getInstance().getParameter(idnode, PaprikaKeyWords.NAMEATTRIBUTE);
 	}

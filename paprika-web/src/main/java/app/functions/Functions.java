@@ -33,6 +33,6 @@ public abstract class Functions {
 	 * @return a graph
 	 */
 	public Graph getGraph(){
-		return this.graph;
+	return this.graph;
 	}
 }

@@ -6,6 +6,7 @@ import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaWebMain;
+import app.utils.PaprikaKeyWords;
 /**
  * CodeSmellsFunctions is a utils class linked to CodeSmells class but use neo4j
  * @author guillaume
@@ -27,10 +28,10 @@ public class CodeSmellsFunctions extends Functions {
 		StatementResult result;
 		Node node = null;
 		try (Transaction tx = this.session.beginTransaction()) {
-			result = tx.run("MATCH (d:Description)-[:INFO]->(target:" + label + ") RETURN target");
+			result = tx.run(this.graph.matchSee("Description", label, "INFO"));
 			if (result.hasNext()) {
 				Record record = result.next();
-				node = record.get("target").asNode();
+				node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
 			}
 			tx.success();
 		}

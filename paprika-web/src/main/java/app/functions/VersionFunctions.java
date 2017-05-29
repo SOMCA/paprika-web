@@ -12,27 +12,27 @@ import app.model.Version;
 import app.utils.PaprikaKeyWords;
 
 import app.utils.neo4j.LowNode;
+
 /**
  * VersionFunctions is a utils class linked to Version class but use neo4j
+ * 
  * @author guillaume
  *
  */
 public class VersionFunctions extends Functions {
 
-
-	private static final String MATCHN="MATCH (n:";
-	private static final String WHEREID=") where ID(n)=";
 	private static final String REL_VERSION_CODESMELLS = "EXHIBITS";
 	private static final String LABELQUERY = "CodeSmells";
+	private static final String REL = " MATCH (n)-[:" + REL_VERSION_CODESMELLS + "]->(target:" + LABELQUERY;
+
 	/**
-	 * Prend un node version, et incrémente de 1 à l'attribut en prenant en
-	 * compte qu'il s'agit d'un long
-	 * 
-	 * @param label
-	 * @param parameter
+	 * Add 1 to a property on the project of the version
+	 * @param lowNode
+	 * @param attribute
+	 * @param value
+	 * @param tx
 	 * @return
 	 */
-	
 	private String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
 
 		long size = value;
@@ -46,21 +46,23 @@ public class VersionFunctions extends Functions {
 
 	/**
 	 * 
-	 * Enregistre une nouvelle version dans l'application ciblé de l'utilisateur
-	 * ciblé.
+	 * Write a new version on the project
 	 * 
-	 * @param email
-	 * @param application
+	 * @param idProject
+	 *            id of the Project
 	 * @param version
+	 *            name of the Version
+	 * @return a Version LowNode who contains many parameters.
+	 * 
 	 */
-	public LowNode writeVersion(long idapplication, String version) {
+	public LowNode writeVersion(long idProject, String version) {
 
 		StatementResult result;
 		Record record;
 		Node node;
 
 		LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
-		nodeApp.setId(idapplication);
+		nodeApp.setId(idProject);
 
 		// Incrémente le nombre de versions dans l'application:
 		LowNode nodeVer;
@@ -75,7 +77,7 @@ public class VersionFunctions extends Functions {
 					node.get(PaprikaKeyWords.ATTRIBUTE_NB_VERSION).asLong(), tx));
 			// Créer une version node:
 			result = tx.run(graph.create(nodeVer));
-			long id = this.graph.getID(result,PaprikaKeyWords.NAMELABEL);
+			long id = this.graph.getID(result, PaprikaKeyWords.NAMELABEL);
 			nodeVer.setId(id);
 
 			tx.run(graph.relation(nodeApp, nodeVer, PaprikaKeyWords.REL_PROJECT_VERSION));
@@ -84,105 +86,123 @@ public class VersionFunctions extends Functions {
 		return nodeVer;
 	}
 
+	/**
+	 * Return all code smells of the version on a result.
+	 * 
+	 * @param version
+	 *            a version with a correct id.
+	 * @return a result who can contains many codesmells or be empty
+	 */
 	public StatementResult loadDataCodeSmell(Version version) {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
-			result = tx.run("MATCH (ver:" + PaprikaKeyWords.VERSIONLABEL + ") WHERE ID(ver)="
-					+ version.getID() + " MATCH (ver)-[:" + REL_VERSION_CODESMELLS
+			result = tx.run("MATCH (ver:" + PaprikaKeyWords.VERSIONLABEL + ") WHERE ID(ver)=" + version.getID()
+					+ " MATCH (ver)-[:" + REL_VERSION_CODESMELLS
 					+ "]->(codesmells) MATCH (codesmells)-[:RESULT]->(target) RETURN target ");
 			tx.success();
 		}
 		return result;
 
 	}
-	
-
 
 	/**
-	 * Retrouve l'id de la version de l'application ciblé en utilisant des
-	 * informations de bases.
+	 * Return the id of the Version with the name of the version and the id
+	 * Project. Return -1 if not found.
 	 * 
-	 * @param email
-	 * @param application
+	 * @param idProject
+	 *            id of the project
 	 * @param version
-	 * @return
+	 *            name of the version.
+	 * @return the id of the version.
 	 */
-	public long receiveIDOfVersion(long idapplication, String version) {
+	public long receiveIDOfVersion(long idProject, String version) {
 		LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
-		nodeApp.setId(idapplication);
+		nodeApp.setId(idProject);
 		LowNode nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
 		nodeVer.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, version);
 
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
-		result = tx.run(graph.matchSee(nodeApp, nodeVer, PaprikaKeyWords.REL_PROJECT_VERSION));
-		tx.success();
+			result = tx.run(graph.matchSee(nodeApp, nodeVer, PaprikaKeyWords.REL_PROJECT_VERSION));
+			tx.success();
 		}
 		if (result.hasNext()) {
-			return this.graph.getID(result,PaprikaKeyWords.NAMELABEL);
+			return this.graph.getID(result, PaprikaKeyWords.NAMELABEL);
 		}
-		
+
 		return -1;
 	}
 
-	
-	private String beginString(long id){
-		return MATCHN+PaprikaKeyWords.VERSIONLABEL+WHEREID+Long.toString(id);
-	}
 	/**
-	 * Donne le nombre de codesmell contenu dans le noeud codesmell
-	 * @param id
-	 * @return
+	 * Return the number of code smells of the version of the parameter 'id'.
+	 * 
+	 * @param id id of the version
+	 * @return the number of codesmells of the version
 	 */
-	public long getNumberOfSmells(long id){
+	public long getNumberOfSmells(long id) {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
-		result = tx.run(beginString(id)
-				+ " MATCH (n)-[:"+REL_VERSION_CODESMELLS+"]->(target:"+LABELQUERY+")"
-						+ " return target.number");
-		tx.success();
+			LowNode node = new LowNode(PaprikaKeyWords.VERSIONLABEL);
+			node.setId(id);
+			result = tx.run(this.graph.matchPrefabs("n", node) + REL + " return target.number");
+			tx.success();
 		}
-		if(result.hasNext()){
-			Value value=result.next().get("number");
-			if(value!=null && !value.isNull()){
+		if (result.hasNext()) {
+			Value value = result.next().get("number");
+			if (value != null && !value.isNull()) {
 				return value.asLong();
 			}
 		}
 		return 0;
 	}
-	
-	
+
 	/**
-	 * applique le nombre de code smell trouvé, dans le noeud codesmell
+	 * Apply the number of smells on the node of parameter id.
+	 * The node is normally a code smell node.
+	 * 
 	 * @param id
 	 * @param number
 	 */
-	public void applyNumberOfCodeSmells(long id,long number){
+	public void applyNumberOfCodeSmells(long id, long number) {
 
 		try (Transaction tx = this.session.beginTransaction()) {
-		tx.run(beginString(id)
-				+ " MATCH (n)-[:"+REL_VERSION_CODESMELLS+"]->(target:"+LABELQUERY+")"
-						+ "set target.number="+Long.toString(number));
-		tx.success();
+			LowNode node = new LowNode(PaprikaKeyWords.VERSIONLABEL);
+			node.setId(id);
+			tx.run(this.graph.matchPrefabs("n", node) + REL + ") set target.number=" + Long.toString(number));
+			tx.success();
 		}
 
 	}
-	
-	public long getOrder(long id){
+
+	/**
+	 * Return the order of the version, for know if the version is on the good order.
+	 * 
+	 * @param id of the version.
+	 * @return a number
+	 */
+	public long getOrder(long id) {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
-		result = tx.run(beginString(id)+" return n."+PaprikaKeyWords.ORDER);
-		tx.success();
+			LowNode node = new LowNode(PaprikaKeyWords.VERSIONLABEL);
+			node.setId(id);
+			result = tx.run(this.graph.matchPrefabs("n", node) + " return n." + PaprikaKeyWords.ORDER);
+			tx.success();
 		}
-		if(result.hasNext()){
-			Value value=result.next().get(PaprikaKeyWords.ORDER);
-			if(value!=null && !value.isNull()){
+		if (result.hasNext()) {
+			Value value = result.next().get(PaprikaKeyWords.ORDER);
+			if (value != null && !value.isNull()) {
 				return value.asLong();
 			}
 		}
 		return 0;
 	}
 
+
+	/**
+	 * Return the name of the id of a unknow node if the node exist and than a name exist.
+	 * @param idnode
+	 * @return a name.
+	 */
 	public String receiveOf(long idnode) {
 		return PaprikaFacade.getInstance().getParameter(idnode, PaprikaKeyWords.NAMEATTRIBUTE);
 	}

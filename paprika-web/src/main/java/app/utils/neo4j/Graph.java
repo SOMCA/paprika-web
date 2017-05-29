@@ -15,6 +15,7 @@ public class Graph {
 
 	private static final String CREATEIT = "  CREATE (it)-[:";
 	private static final String RETURN = " RETURN ";
+	private static final String RETURNZ = ") RETURN ";
 
 	/**
 	 * Create a node with a custom lowNode
@@ -24,8 +25,7 @@ public class Graph {
 	 */
 	public String create(LowNode lowNode) {
 		/* créer une donnée */
-		return "CREATE (" + PaprikaKeyWords.NAMELABEL + ":" + lowNode.getLabel() + lowNode.parametertoData() + ")"
-				+ Graph.RETURN + PaprikaKeyWords.NAMELABEL;
+		return "CREATE (" + PaprikaKeyWords.NAMELABEL + ":" + lowNode.getLabel() + lowNode.parametertoData() + Graph.RETURNZ + PaprikaKeyWords.NAMELABEL;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class Graph {
 
 	/**
 	 * Return the match who contains all childrens of the first node, linked to
-	 * the relation.
+	 * the relation. With using two lowNode who contains parameter.
 	 * 
 	 * @param lowNode
 	 * @param lowNodeTarget
@@ -125,9 +125,36 @@ public class Graph {
 		if (relationLabel == null)
 			relationLabel = "*";
 		return matchPrefabs("a", lowNode) + matchPrefabs(PaprikaKeyWords.NAMELABEL, lowNodeTarget) + " MATCH (a)-[:"
-				+ relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + ")" + Graph.RETURN + PaprikaKeyWords.NAMELABEL;
+				+ relationLabel + "]->(" + PaprikaKeyWords.NAMELABEL + Graph.RETURNZ + PaprikaKeyWords.NAMELABEL;
 	}
 
+	/**
+	 * Return the match who contains all childrens of the first node, linked to
+	 * the relation of the label of the first node and labelchildren for each childrens.
+	 * 
+	 * If the relationLabel is null, so take all childrens without check the relation.
+	 * If labelChildren is null, so search on all childrens.
+	 * 
+	 * @param label 
+	 * @param labelChildren 
+	 * @param relationLabel 
+	 * 
+	 * @return a command String for Neo4j Cypher
+	 */
+	public String matchSee(String label, String labelChildren, String relationLabel) {
+		if (relationLabel == null)
+			relationLabel = "*";
+			
+		String children="";
+		if(labelChildren!=null)
+		   children=":" + labelChildren;
+		
+		return "MATCH (d:"+label+")-[:"+relationLabel+"]->("+PaprikaKeyWords.NAMELABEL + children + Graph.RETURNZ+ PaprikaKeyWords.NAMELABEL;
+	}
+
+	
+	
+	
 	/**
 	 * 
 	 * Set apply the parameter of the second LowNode on the first.
@@ -145,5 +172,6 @@ public class Graph {
 		result += Graph.RETURN + PaprikaKeyWords.NAMELABEL;
 		return result;
 	}
+	
 
 }
