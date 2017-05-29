@@ -144,7 +144,7 @@ public class VersionFunctions extends Functions {
 		try (Transaction tx = this.session.beginTransaction()) {
 			LowNode node = new LowNode(PaprikaKeyWords.VERSIONLABEL);
 			node.setId(id);
-			result = tx.run(this.graph.matchPrefabs("n", node) + REL + " return target.number");
+			result = tx.run(this.graph.matchPrefabs("n", node) + REL + ") return target.number");
 			tx.success();
 		}
 		if (result.hasNext()) {
