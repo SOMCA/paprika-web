@@ -12,17 +12,17 @@ public class AnalyzeProcess {
 
 	private String xml;
 	private String fName;
-	private Application application;
+	private String project;
 	private String user;
 	private long size;
 	private LowNode nodeVer;
 
-	public AnalyzeProcess(String xml, String fName, Application application, String user, long size,
+	public AnalyzeProcess(String xml, String fName, String project, String user, long size,
 			LowNode nodeVer) {
 		this.xml = xml;
 		this.fName = fName;
 		this.user = user;
-		this.application = application;
+		this.project = project;
 		this.size = size;
 		this.nodeVer = nodeVer;
 	}
@@ -36,10 +36,10 @@ public class AnalyzeProcess {
 
 	private void runPartAnalyse(Analyse ana) {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
-		String appname = this.application.getName();
+	
 		
 		String realname = fName.substring(0, fName.lastIndexOf('.'));
-		String pathstr = "application/" + this.user + "/" + appname + "/" + fName;
+		String pathstr = "application/" + this.user + "/" + this.project + "/" + fName;
 
 		try {
 			String attributepackage = "package=";
@@ -59,7 +59,7 @@ public class AnalyzeProcess {
 					String strversioncode = xml.substring(indexVc, xml.indexOf('"', indexVc));
 					indexP += attributepackage.length() + 1;
 					String strpackage = xml.substring(indexP, xml.indexOf('"', indexP));
-					String databasekey = this.user+ "/" + appname + "/" + strversionname;
+					String databasekey = this.user+ "/" + this.project  + "/" + strversionname;
 					String[] args = { "analyse", "-a", "android-platforms/", "-n", realname, "-p", strpackage, "-k",
 							databasekey, "-dev", "unknowDevelopper", "-cat", "unknowCategory", "-nd", "1000", "-d",
 							"1990-01-01", "-r", "250", "-s", Long.toString(size), "-u", "unsafe", "-omp", "True", "-vn",

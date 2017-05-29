@@ -11,11 +11,11 @@ import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
 /**
- * ApplicationsFunctions is a utils class linked to Application class but use neo4j
+ * ProjectsFunctions is a utils class linked to Project class but use neo4j
  * @author guillaume
  *
  */
-public class ApplicationFunctions extends Functions {
+public class ProjectFunctions extends Functions {
 
 
 	
@@ -80,7 +80,7 @@ public class ApplicationFunctions extends Functions {
 		LowNode nodeUser = new LowNode(PaprikaKeyWords.LABELUSER);
 		nodeUser.addParameter(PaprikaKeyWords.ATTRIBUTE_EMAIL, email);
 
-		// Incrémente le nombre d'applications dans l'utilisateur:
+		// Incrémente le nombre d'projects dans l'utilisateur:
 		try (Transaction tx = this.session.beginTransaction()) {
 
 			result = tx.run(graph.matchSee(nodeUser));
@@ -94,7 +94,7 @@ public class ApplicationFunctions extends Functions {
 					node.get(PaprikaKeyWords.ATTRIBUTE_NB_APP).asLong(), tx);
 			nodeApp.addParameter(PaprikaKeyWords.ORDER, incr);
 
-			// Créer une application node:
+			// Créer une project node:
 			result = tx.run(graph.create(nodeApp));
 			id = this.graph.getID(result, PaprikaKeyWords.NAMELABEL);
 			// Récupère son id:

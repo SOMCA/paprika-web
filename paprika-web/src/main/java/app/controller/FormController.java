@@ -7,7 +7,7 @@ import java.util.*;
 
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
-import app.model.Application;
+import app.model.Project;
 import app.utils.PaprikaKeyWords;
 import app.utils.PathIn;
 import app.utils.RequestUtil;
@@ -43,13 +43,13 @@ public class FormController {
 	public static final Route handleFormDeletePost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 
-		Application application = RequestUtil.getSessionApplication(request);
+		Project project = RequestUtil.getSessionProject(request);
 		PaprikaWebMain.LOGGER.trace("-------handleFormDeletePost--------");
 		String delete = request.queryParams("delete");
 		if (delete != null) {
 			PaprikaWebMain.LOGGER.trace("etape delete: " + delete);
-			deleteNotNull(request, application);
-			model.put(PaprikaKeyWords.APPLICATION, application);
+			deleteNotNull(request, project);
+			model.put(PaprikaKeyWords.PROJECT, project);
 		}
 		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
 	};
@@ -58,7 +58,7 @@ public class FormController {
 		throw new IllegalAccessError("Controller class");
 	}
 
-	private static void deleteNotNull(Request request, Application application) throws IOException {
+	private static void deleteNotNull(Request request, Project project) throws IOException {
 		Set<String> setQueryParams = request.queryParams();
 		Set<String> setOfIdToDelete = new HashSet<>();
 		for (String params : setQueryParams) {
@@ -70,7 +70,7 @@ public class FormController {
 		}
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		facade.deleteOnDataBase(setOfIdToDelete);
-		facade.needReloadApp(application);
+		facade.needReloadApp(project);
 	}
 
 }

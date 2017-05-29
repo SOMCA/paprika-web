@@ -53,7 +53,7 @@ public class LoginController {
 	public static final Route handleLogoutPost = (Request request, Response response) -> {
 		request.session().removeAttribute(CURRENTUSER);
 		request.session().removeAttribute("user");
-		request.session().removeAttribute(PaprikaKeyWords.APPLICATION);
+		request.session().removeAttribute(PaprikaKeyWords.PROJECT);
 		request.session().removeAttribute(PaprikaKeyWords.VERSION);
 		request.session().attribute("loggedOut", true);
 		response.redirect(PathIn.Web.INDEX);

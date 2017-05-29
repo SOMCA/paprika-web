@@ -8,8 +8,8 @@
     <div id="page-wrapper">
       <div class="row">
         <div class="col-lg-12" >
-          #if($application)
-          <h1 class="page-header">Dashboard:  $application.getName() </h1>
+          #if($project)
+          <h1 class="page-header">Dashboard:  $project.getName() </h1>
           #else
           <h1 class="page-header">Dashboard </h1>
           #end
@@ -19,7 +19,7 @@
 
       <div class="row">
         <div class="col-lg-8">
-          #if($application)
+          #if($project)
           <div id="infoTab" style="display:none" >
             #else
             <!--  <div id="infoTab" style="display:inline" >-->
@@ -33,14 +33,14 @@
                 <br> $msg.get("INDEX_NOT_LOGIN2")
                 <br> $msg.get("INDEX_NOT_LOGIN3")
                 <br>
-                #if($application)
+                #if($project)
                 <br> You need two versions analyzed for than the project display graph on them.
                 #end
               </div>
             </div>
           </div>
-          #if($application)
-          #if($application.getNumberOfAnalysedVersion() >= 2)
+          #if($project)
+          #if($project.getNumberOfAnalysedVersion() >= 2)
           #set($flagAreaStack=true)
           <div class="panel panel-default">
             <div class="panel-heading">
@@ -112,7 +112,7 @@
           #end
         </div>
 
-      #if($application)
+      #if($project)
       <div class="col-lg-4">
         <!-- /.panel -->
         <div class="panel panel-red">
@@ -122,7 +122,7 @@
                 <i class="fa fa-file fa-5x"></i>
               </div>
               <div class="col-xs-9 text-right">
-                <div class="huge">$application.getNumberOfVersion() </div>
+                <div class="huge">$project.getNumberOfVersion() </div>
                 <div>$msg.get("INDEX_DIV_NBV")</div>
               </div>
             </div>
@@ -245,7 +245,7 @@ function formsubmitWait2(){
 }
 #if($flagAreaStack)
 
-#set($dataAreaChart=$application.getGraph("area",10))
+#set($dataAreaChart=$project.getGraph("area",10))
 #if($dataAreaChart!="")
 $(function() {
      Morris.Area({

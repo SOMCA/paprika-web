@@ -15,7 +15,7 @@
           <div class="col-lg-8 checkbox">
 
             #set ($velocityMenu=0)
-            #foreach($titleD in $user.getDataApplications())
+            #foreach($titleD in $user.getDataProjects())
             #set($titleDname=$titleD.getName())
             #if($titleDname.length()>15)
             #set($titleDname="$titleDname.substring(0,16)"+"..")

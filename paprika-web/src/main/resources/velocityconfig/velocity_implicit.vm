@@ -6,7 +6,7 @@
 #* @vtlvariable name="loggedOut" type="java.lang.String" *#
 #* @vtlvariable name="title" type="java.lang.String" *#
 #* @vtlvariable name="version" type="app.object.Version" *#
-#* @vtlvariable name="application" type="app.object.Application" *#
+#* @vtlvariable name="application" type="app.object.Project" *#
 #* @vtlvariable name="authenticationFailed" type="java.lang.String" *#
 #* @vtlvariable name="authenticationSucceeded" type="java.lang.String" *#
 #* @vtlvariable name="loginRedirect" type="java.lang.String" *#

@@ -69,8 +69,8 @@ public class User extends Entity{
 	 * 
 	 * @return all project of the user
 	 */
-	public Iterator<Application> getDataApplications() {
-		List<Application> applications = new ArrayList<>();
+	public Iterator<Project> getDataProjects() {
+		List<Project> projects = new ArrayList<>();
 		Record record;
 		String name;
 
@@ -80,7 +80,7 @@ public class User extends Entity{
         List<Record> bigdata = facade.loadChildrenOfNode(lownode,  PaprikaKeyWords.REL_USER_PROJECT, PaprikaKeyWords.LABELPROJECT);
 		
 		if (bigdata == null)
-			return applications.iterator();
+			return projects.iterator();
 
 		Iterator<Record> iter = bigdata.iterator();
 		Node node;
@@ -89,8 +89,8 @@ public class User extends Entity{
 			node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
 
 			name = node.get(PaprikaKeyWords.NAMEATTRIBUTE).asString();
-			applications.add(new Application(name,node.id()));
+			projects.add(new Project(name,node.id()));
 		}
-		return applications.iterator();
+		return projects.iterator();
 	}
 }

@@ -17,17 +17,17 @@ import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
 /**
- * Application is a project of User, who contains many methods used on velocity
+ * Project is a project of User, who contains many methods used on velocity
  * 
  * @author guillaume
  *
  */
-public class Application extends Entity {
+public class Project extends Entity {
 
 	/*
 	 * listOfVersion est chargé uniquement quand on appelle une des fonctions de
-	 * l'applications. Si la page Version est chargé, il charge aussi
-	 * l'application, mais sans créer la liste de versions
+	 * l'projects. Si la page Version est chargé, il charge aussi
+	 * l'project, mais sans créer la liste de versions
 	 */
 	private List<Version> listofVersion;
 	/*
@@ -44,7 +44,7 @@ public class Application extends Entity {
 	 * @param id
 	 *            The id of the project.
 	 */
-	public Application(String name, long id) {
+	public Project(String name, long id) {
 		super(name, id);
 		this.reload = false;
 
@@ -66,7 +66,7 @@ public class Application extends Entity {
 	 * @return the number of version
 	 */
 	public int getNumberOfVersionReal() {
-		return this.getListVersionApplications().size();
+		return this.getListVersionProjects().size();
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class Application extends Entity {
 	 * 
 	 * @return a list of Version
 	 */
-	public List<Version> getListVersionApplications() {
+	public List<Version> getListVersionProjects() {
 		if (!this.reload) {
 
 			this.reload = true;
@@ -122,7 +122,7 @@ public class Application extends Entity {
 	 * @return a subpart of the parameter list
 	 */
 	public List<Version> getLastXVersion(int number) {
-		Iterator<Version> versions = getListVersionApplications().iterator();
+		Iterator<Version> versions = getListVersionProjects().iterator();
 		List<Version> lastVersion = new ArrayList<>();
 		int numberVersion = this.getNumberOfVersionReal();
 
@@ -150,7 +150,7 @@ public class Application extends Entity {
 	 * @return the iterator of the parameter listversion.
 	 */
 	public Iterator<Version> getVersions() {
-		return this.getListVersionApplications().iterator();
+		return this.getListVersionProjects().iterator();
 	}
 
 	/**

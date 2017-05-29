@@ -12,7 +12,7 @@ import javax.servlet.http.Part;
 
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
-import app.model.Application;
+import app.model.Project;
 import app.utils.PaprikaKeyWords;
 import app.utils.PathIn;
 import app.utils.RequestUtil;
@@ -41,24 +41,24 @@ public class IndexController {
 	public static final Route handleIndexaddApp = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		PaprikaFacade facade = PaprikaFacade.getInstance();
-		Application application = RequestUtil.getSessionApplication(request);
+		Project application = RequestUtil.getSessionProject(request);
 		// Formulaire quand on ajoute un project.
 		String project = request.queryParams("project");
 		String menu = RequestUtil.getParamMenu(request);
 		if (project != null) {
 			long idProject = facade.addProject(RequestUtil.getSessionUser(request), project);
 			if (idProject != -1)
-				request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(idProject));
+				request.session().attribute(PaprikaKeyWords.PROJECT, facade.project(idProject));
 		}
 		// Formulaire quand on choisit le menu.
 		else if (menu != null) {
-			request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(Long.parseLong(menu)));
+			request.session().attribute(PaprikaKeyWords.PROJECT, facade.project(Long.parseLong(menu)));
 		}
 		// Formulaire quand on upload un fichier.
 		else if (menu == null && project == null) {
 			boolean fileadded = addFile(request, application, facade);
 			if (fileadded) {
-				model.put(PaprikaKeyWords.APPLICATION, application);
+				model.put(PaprikaKeyWords.PROJECT, application);
 			}
 		}
 		return ViewUtil.render(request, model, PathIn.Template.INDEX);
@@ -72,13 +72,13 @@ public class IndexController {
 	 * Add a file
 	 * 
 	 * @param request
-	 * @param application
+	 * @param project
 	 * @param facade
 	 * @return
 	 * @throws IOException
 	 * @throws ServletException
 	 */
-	private static boolean addFile(Request request, Application application, PaprikaFacade facade)
+	private static boolean addFile(Request request, Project project, PaprikaFacade facade)
 			throws IOException, ServletException {
 
 		String location = "/application";
@@ -105,7 +105,7 @@ public class IndexController {
 			} else {
 
 				PaprikaWebMain.LOGGER.trace(realname);
-				facade.addFile(RequestUtil.getSessionCurrentUser(request), application, fName, uploadedFile, realname);
+				facade.addFile(RequestUtil.getSessionCurrentUser(request), project, fName, uploadedFile, realname);
 
 				return true;
 			}

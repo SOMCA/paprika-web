@@ -19,6 +19,7 @@ public class PathIn {
      * @author guillaume
      *
      */
+	@SuppressWarnings("javadoc")
     public static class Web {
   
          public static final String INDEX = "/index/";
@@ -39,9 +40,11 @@ public class PathIn {
      * @author guillaume
      *
      */
+    @SuppressWarnings("javadoc")
     public static class Template {
    
-        public static final String INDEX = "/velocity/pages/index.vm";
+        
+		public static final String INDEX = "/velocity/pages/index.vm";
         public static final String FORM_DELETE = "/velocity/forms/form_delete.vm";
         public static final String LOGIN = "/velocity/pages/login.vm";
         public static final String SIGNUP = "/velocity/pages/signUp.vm";

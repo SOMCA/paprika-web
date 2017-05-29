@@ -64,7 +64,7 @@ public class VersionFunctions extends Functions {
 		LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
 		nodeApp.setId(idProject);
 
-		// Incrémente le nombre de versions dans l'application:
+		// Incrémente le nombre de versions dans le project:
 		LowNode nodeVer;
 		try (Transaction tx = this.session.beginTransaction()) {
 

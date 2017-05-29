@@ -29,7 +29,7 @@ import com.spotify.docker.client.messages.HostConfig;
 import com.spotify.docker.client.messages.RegistryAuth;
 
 import app.exception.PapWebRunTimeException;
-import app.functions.ApplicationFunctions;
+import app.functions.ProjectFunctions;
 import app.functions.UserFunctions;
 import app.functions.VersionFunctions;
 import app.model.*;
@@ -103,16 +103,16 @@ public final class PaprikaFacade {
 	}
 
 	/**
-	 * Found the Application of id project
+	 * Found the Project of id project
 	 * 
-	 * @param application
+	 * @param project
 	 *            id of the project.
-	 * @return the application of the id
+	 * @return the project of the id
 	 */
-	public Application application(long application) {
-		ApplicationFunctions appFct = new ApplicationFunctions();
+	public Project project(long project) {
+		ProjectFunctions appFct = new ProjectFunctions();
 
-		return new Application(appFct.receiveOf(application), application);
+		return new Project(appFct.receiveOf(project), project);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public final class PaprikaFacade {
 	 * @return return the id of the project.
 	 */
 	public long addProject(User user, String project) {
-		ApplicationFunctions appFct = new ApplicationFunctions();
+		ProjectFunctions appFct = new ProjectFunctions();
 		long idProject = -1;
 		if (project != null && appFct.receiveIDOfProject(user.getName(), project) == -1) {
 			idProject = appFct.writeProjectOnUser(user.getName(), project);
@@ -150,12 +150,12 @@ public final class PaprikaFacade {
 	/**
 	 * Put the project to need be reload.
 	 * 
-	 * @param application
+	 * @param project
 	 *            the project.
 	 */
-	public void needReloadApp(Application application) {
-		if (application != null)
-			application.needReload();
+	public void needReloadApp(Project project) {
+		if (project != null)
+			project.needReload();
 	}
 
 	/**
@@ -359,20 +359,20 @@ public final class PaprikaFacade {
 	 *            Id of the version than you want analyze
 	 * @param fname
 	 *            The name of the version.
-	 * @param application
+	 * @param project
 	 *            The name of the project of the version.
 	 * @param user
 	 *            The current user who request the analyse.
 	 */
-	public void callAnalyzeThread(long idNode, String fname, Application application, User user) {
+	public void callAnalyzeThread(long idNode, String fname, String project, User user) {
 		this.setParameterOnNode(idNode, PaprikaKeyWords.CODEA, "loading");
 		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
 			PaprikaWebMain.LOGGER.trace("callAnalyzeThread:");
 			String command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " "
-					+ application.getName() + " " + Long.toString(application.getID()) + " " + Long.toString(idNode);
+					+ project + " " + Long.toString(idNode);
 			PaprikaWebMain.LOGGER.trace(command);
-			String pathstr = "application/" + user.getName() + "/" + application.getName() + "/" + fname;
+			String pathstr = "application/" + user.getName() + "/" + project + "/" + fname;
 			this.setParameterOnNode(idNode, "PathFile", pathstr);
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
@@ -385,8 +385,7 @@ public final class PaprikaFacade {
 			ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
 					.image("paprika-analyze:latest")
 					// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
-					.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(), application.getName(),
-							Long.toString(application.getID()), Long.toString(idNode))
+					.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(), project, Long.toString(idNode))
 					.workingDir("/dock").build();
 			ContainerCreation creation = docker.createContainer(containerConfig);
 
@@ -548,7 +547,7 @@ public final class PaprikaFacade {
 	 * 
 	 * @param currentUser
 	 *            E-mail of the currentUser (Unique)
-	 * @param application
+	 * @param project
 	 *            name of the project where you put the file(unique for each
 	 *            user)
 	 * @param fName
@@ -560,9 +559,9 @@ public final class PaprikaFacade {
 	 * @throws IOException
 	 *             If the file system have a problem
 	 */
-	public void addFile(String currentUser, Application application, String fName, Part uploadedFile, String realname)
+	public void addFile(String currentUser, Project project, String fName, Part uploadedFile, String realname)
 			throws IOException {
-		String pathstr = PaprikaKeyWords.REPERTORY + currentUser + '/' + application.getName() + '/' + fName;
+		String pathstr = PaprikaKeyWords.REPERTORY + currentUser + '/' + project.getName() + '/' + fName;
 		Path out = Paths.get(pathstr);
 		File file = new File(pathstr);
 		file.mkdirs();
@@ -573,8 +572,8 @@ public final class PaprikaFacade {
 			uploadedFile.delete();
 		}
 
-		this.addVersion(application.getID(), realname);
-		this.needReloadApp(application);
+		this.addVersion(project.getID(), realname);
+		this.needReloadApp(project);
 	}
 
 }

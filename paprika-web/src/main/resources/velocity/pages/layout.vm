@@ -74,7 +74,7 @@
         </form>
       </li>
       #set ($velocityMenu=0)
-      #foreach($title in $user.getDataApplications())
+      #foreach($title in $user.getDataProjects())
       #set($titlename=$title.getName())
 		  #if($titlename.length()>15)
          #set($titlename="$titlename.substring(0,16)"+"..")

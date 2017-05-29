@@ -108,7 +108,7 @@
         </div>
 #end
         <div class="col-lg-4">
-          #if($application)
+          #if($project)
 
           <div class="panel panel-red">
             <div class="panel-heading">

@@ -7,6 +7,7 @@ package app.utils;
  *
  *   Classe qui sert à stocker des static final variables
  */
+@SuppressWarnings("javadoc")
 public class PaprikaKeyWords {
 
 	public static final String LABELKEY = "Key";
@@ -29,7 +30,7 @@ public class PaprikaKeyWords {
 	public static final String VERSIONLABEL = "Version";
 	public static final String VERSION = "version";
 
-	public static final String APPLICATION="application";
+	public static final String PROJECT="project";
 
 	public static final String ORDER = "order";
 	

@@ -63,16 +63,16 @@ public class PaprikaAnalyzeMain {
 		for (int i = 0; i < leng; i++) {
 			PaprikaAnalyzeMain.LOGGER.trace(args[i]);
 		}
-		if (leng != 5) {
+		if (leng != 4) {
 			return;
 		}
 		PaprikaAnalyzeMain.LOGGER.trace("Launch Analyse");
 		String fName = args[0];
 		String user = args[1];
-		Application application = new Application(args[2], Long.parseLong(args[3]));
+		String project = args[2];
 		LowNode nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
-		nodeVer.setId(Long.parseLong(args[4]));
-		String pathstr = "application/" + user + "/" + application.getName() + "/" + fName;
+		nodeVer.setId(Long.parseLong(args[3]));
+		String pathstr = "application/" + user + "/" + project + "/" + fName;
 
 		ApkFile apkfile = null;
 		PaprikaFacade facade = PaprikaFacade.getInstance();
@@ -84,7 +84,7 @@ public class PaprikaAnalyzeMain {
 			String xml = apkfile.getManifestXml();
 			apkfile.close();
 
-			AnalyzeProcess anaThread = new AnalyzeProcess(xml, fName, application, user, size, nodeVer);
+			AnalyzeProcess anaThread = new AnalyzeProcess(xml, fName, project, user, size, nodeVer);
 
 			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "inprogress");
 			anaThread.run();

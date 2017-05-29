@@ -18,7 +18,7 @@
 
 		<div class="radarChart"></div>
 
-		#set($dataRadarChart=$application.getGraph("radar",3))
+		#set($dataRadarChart=$project.getGraph("radar",3))
 			#if($dataRadarChart!="")
 		<script>
 			//////////////////////////////////////////////////////////////

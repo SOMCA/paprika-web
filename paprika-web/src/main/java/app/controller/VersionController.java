@@ -8,7 +8,7 @@ import java.util.*;
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
 import app.exception.PapWebRunTimeException;
-import app.model.Application;
+import app.model.Project;
 import app.model.User;
 import app.model.Version;
 import app.utils.PaprikaKeyWords;
@@ -35,9 +35,9 @@ public class VersionController {
 		 */
 		LoginController.ensureUserIsLoggedIn(request, response);
 
-		Application application = RequestUtil.getSessionApplication(request);
+		Project project = RequestUtil.getSessionProject(request);
 
-		if (application == null)
+		if (project == null)
 			return ViewUtil.render(request, model, PathIn.Template.INDEX);
 
 		PaprikaWebMain.LOGGER.trace("-------serveVersionPage--------");
@@ -72,9 +72,9 @@ public class VersionController {
 		String menu = RequestUtil.getQueryVersion(request);
 		if (menu != null) {
 			PaprikaWebMain.LOGGER.trace("etape menu: " + menu);
-			request.session().attribute(PaprikaKeyWords.APPLICATION, facade.application(Long.parseLong(menu)));
+			request.session().attribute(PaprikaKeyWords.PROJECT, facade.project(Long.parseLong(menu)));
 		}
-		Application application = RequestUtil.getSessionApplication(request);
+		Project project = RequestUtil.getSessionProject(request);
 
 		// Formulaire quand on choisit la version dans la page layout.
 		String menuVer = RequestUtil.getParamMenuVersion(request);
@@ -90,11 +90,11 @@ public class VersionController {
 			PaprikaWebMain.LOGGER.trace("etape ANALYSE");
 			String fname = facade.getEntityName(version) + ".apk";
 			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/"
-					+ facade.getEntityName(application) + "/" + fname;
+					+ facade.getEntityName(project) + "/" + fname;
 			boolean flag = false;
 			flag = analyseVersion(pathstr);
 			if (flag) {
-				facade.callAnalyzeThread(facade.getEntityID(version), fname, application, user);
+				facade.callAnalyzeThread(facade.getEntityID(version), fname, project.getName(), user);
 				facade.reloadVersion(version);
 				model.put(PaprikaKeyWords.VERSION, version);
 			}

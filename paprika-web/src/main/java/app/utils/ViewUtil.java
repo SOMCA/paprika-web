@@ -2,7 +2,7 @@ package app.utils;
 
 import org.apache.velocity.app.VelocityEngine;
 
-import app.model.Application;
+import app.model.Project;
 import spark.*;
 import java.util.*;
 import spark.template.velocity.*;
@@ -36,10 +36,10 @@ public class ViewUtil {
 		model.put("user", RequestUtil.getSessionUser(request));
 		model.put("WebPath", PathIn.Web.class);
 
-		if (!model.containsKey(PaprikaKeyWords.APPLICATION)) {
+		if (!model.containsKey(PaprikaKeyWords.PROJECT)) {
 		
-			Application application= RequestUtil.getSessionApplication(request);
-			model.put(PaprikaKeyWords.APPLICATION, application);
+			Project project= RequestUtil.getSessionProject(request);
+			model.put(PaprikaKeyWords.PROJECT, project);
 
 		}
 

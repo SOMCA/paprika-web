@@ -10,20 +10,14 @@ import spark.*;
  * https://github.com/tipsy/spark-basic-structure
  *
  */
+@SuppressWarnings("javadoc")
 public class RequestUtil {
 
 	private static final String LOGINREDIRECT="loginRedirect";
 	  private RequestUtil() {
 		    throw new IllegalAccessError("Utility class");
 		  }
-	
-    public static String getQueryLocale(Request request) {
-        return request.queryParams("locale");
-    }
 
-    public static String getParamIsbn(Request request) {
-        return request.params("isbn");
-    }
     public static String getParamMenuVersion(Request request) {
         return request.queryParams("titleVer");
     }
@@ -31,8 +25,8 @@ public class RequestUtil {
         return request.queryParams("title");
     }
 
-    public static String getQueryApplication(Request request) {
-        return request.queryParams(PaprikaKeyWords.APPLICATION);
+    public static String getQueryProject(Request request) {
+        return request.queryParams(PaprikaKeyWords.PROJECT);
     }
 
     public static String getQueryVersion(Request request) {
@@ -74,8 +68,8 @@ public class RequestUtil {
         request.session().removeAttribute(LOGINREDIRECT);
         return loginRedirect;
     }
-    public static Application getSessionApplication(Request request) {
-    	return (Application)request.session().attribute(PaprikaKeyWords.APPLICATION);
+    public static Project getSessionProject(Request request) {
+    	return (Project)request.session().attribute(PaprikaKeyWords.PROJECT);
     }
     public static Version getSessionVersion(Request request) {
     	return (Version)request.session().attribute(PaprikaKeyWords.VERSION);
