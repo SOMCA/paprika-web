@@ -44,3 +44,8 @@ $java -jar Paprika-web.jar
 
 
 
+## Bug:
+On the menu->Project, new versions can be inverted with the old, only if 0 versions have be analyzed on the project.
+
+
+

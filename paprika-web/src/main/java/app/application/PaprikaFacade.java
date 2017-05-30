@@ -23,6 +23,7 @@ import org.neo4j.driver.v1.types.Node;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.HostConfig;
@@ -47,7 +48,9 @@ import app.utils.neo4j.LowNode;
  */
 public final class PaprikaFacade {
 
-	/** Private constructor*/
+	private int parallelanalyzeMax = 2;
+
+	/** Private constructor */
 	private PaprikaFacade() {
 	}
 
@@ -63,6 +66,7 @@ public final class PaprikaFacade {
 
 	/**
 	 * Access point to the unique instance of this singleton
+	 * 
 	 * @return the class.
 	 */
 	public static PaprikaFacade getInstance() {
@@ -275,6 +279,28 @@ public final class PaprikaFacade {
 			return;
 		}
 		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
+			tx.run("MATCH (n) WHERE ID(n)= " + Long.toString(idnode) + " SET n+={" + parameter + ":\"" + attribute
+					+ "\"}");
+
+			tx.success();
+		}
+	}
+
+	/**
+	 * Create or set a property with the value on the node of idnode.
+	 * 
+	 * @param idnode
+	 *            id of the node.
+	 * @param parameter
+	 *            properties.
+	 * @param attribute
+	 *            value of properties.
+	 */
+	public void setParameterOnNode(String idnode, String parameter, String attribute) {
+		if (Long.parseLong(idnode) == -1) {
+			return;
+		}
+		try (Transaction tx = PaprikaWebMain.getSession().beginTransaction()) {
 			tx.run("MATCH (n) WHERE ID(n)= " + idnode + " SET n+={" + parameter + ":\"" + attribute + "\"}");
 
 			tx.success();
@@ -363,40 +389,34 @@ public final class PaprikaFacade {
 	 *            The name of the project of the version.
 	 * @param user
 	 *            The current user who request the analyse.
+	 * 
 	 */
 	public void callAnalyzeThread(long idNode, String fname, String project, User user) {
+
 		this.setParameterOnNode(idNode, PaprikaKeyWords.CODEA, "loading");
 		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
 			PaprikaWebMain.LOGGER.trace("callAnalyzeThread:");
-			String command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " "
-					+ project + " " + Long.toString(idNode);
+			String command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " " + project + " "
+					+ Long.toString(idNode);
 			PaprikaWebMain.LOGGER.trace(command);
 			String pathstr = "application/" + user.getName() + "/" + project + "/" + fname;
 			this.setParameterOnNode(idNode, "PathFile", pathstr);
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
 
-			final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
-					.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro")
-					//
-					// .volumesFrom("web-paprika")
-					.build();
-			ContainerConfig containerConfig = ContainerConfig.builder().hostConfig(hostConfig)
-					.image("paprika-analyze:latest")
-					// fortest .cmd("sh", "-c", "while :; do sleep 1; done")
-					.cmd("java", "-jar", "Paprika-analyze.jar", fname, user.getName(), project, Long.toString(idNode))
-					.workingDir("/dock").build();
-			ContainerCreation creation = docker.createContainer(containerConfig);
 
-			String id = creation.id();
-			docker.startContainer(id);
 
+
+			boolean notfull = PaprikaWebMain.getContainerqueue().offer(new String[]{"java", "-jar", "Paprika-analyze.jar", fname, user.getName(), project, Long.toString(idNode)});
+			if (notfull) {
+				launchContainer(docker);
+			}
 			docker.close();
-			PaprikaWebMain.LOGGER.trace("container create and start success");
-			this.setParameterOnNode(idNode, "idContainer", id);
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			PaprikaWebMain.LOGGER.error(e.getMessage(), e);
 			throw new PapWebRunTimeException(e.getMessage());
 		}
@@ -405,24 +425,65 @@ public final class PaprikaFacade {
 	/**
 	 * Remove the finished container on Docker ( shell: docker ps -a, for see
 	 * the id, then docker rm id)
+	 * @param idNode  id of the version
 	 * 
 	 * @param id
 	 *            id of the container to delete, found on the version node of
 	 *            Neo4J
+	 * @return return true if the container have be removed correctly
 	 */
-	public void removeContainer(String id) {
+
+	public boolean removeContainer(String id) {
+		boolean removed = true;
 		try {
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 			DockerClient docker;
 
 			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
-			docker.removeContainer(id);
+			if (!docker.inspectContainer(id).state().running()) {
+
+				docker.removeContainer(id);
+				PaprikaWebMain.addVersionOnAnalyze(-1);
+				
+
+				launchContainer(docker);
+
+			} else
+				removed = false;
+			
+			
+			docker.close();
 
 		} catch (Exception e) {
+			removed = false;
 			PaprikaWebMain.LOGGER.error(e.getMessage(), e);
 			throw new PapWebRunTimeException(e.getMessage());
 		}
 		PaprikaWebMain.LOGGER.trace("Work?");
+		return removed;
+	}
+	// THis code need be moved on a external timer.
+	private void launchContainer(DockerClient docker) throws DockerException, InterruptedException{
+		if (PaprikaWebMain.getVersionOnAnalyze() < this.parallelanalyzeMax) {
+			final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
+					.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro")
+					.build();
+			String[] otherStrContainerConfig = PaprikaWebMain.getContainerqueue().poll();
+			if (otherStrContainerConfig != null) {
+				ContainerConfig otherContainerConfig = ContainerConfig.builder().hostConfig(hostConfig)
+						.image("paprika-analyze:latest")
+						.cmd(otherStrContainerConfig)
+						.workingDir("/dock").build();
+
+				ContainerCreation creation = docker.createContainer(otherContainerConfig);
+				String newid = creation.id();
+				this.setParameterOnNode(otherStrContainerConfig[otherStrContainerConfig.length-1], "idContainer", newid);
+				docker.startContainer(newid);
+				PaprikaWebMain.addVersionOnAnalyze(1);
+				PaprikaWebMain.LOGGER.trace("container create and start success");
+
+			}
+		} 
 	}
 
 	/**

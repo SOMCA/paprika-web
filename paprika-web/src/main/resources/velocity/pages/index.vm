@@ -254,9 +254,9 @@ $(function() {
         $dataAreaChart
       xkey: 'version',
       parseTime: false,
-      pointSize: 2,
+      pointSize: 3,
       hideHover: 'auto',
-      xLabelAngle:45,
+      xLabelAngle:90,
       resize: true
     });
 });

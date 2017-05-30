@@ -11,6 +11,8 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
+import com.spotify.docker.client.messages.ContainerConfig;
+
 import app.controller.FormController;
 import app.controller.IndexController;
 import app.controller.LoginController;
@@ -20,6 +22,7 @@ import app.functions.DescriptionFunctions;
 import app.utils.PathIn;
 import spark.Spark;
 import java.net.InetAddress;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * PaprikaWebMain is the main class of paprika-web
@@ -32,6 +35,9 @@ public class PaprikaWebMain {
 	 * The logger of Paprika-web
 	 */
 	public static final Logger LOGGER = LogManager.getLogger();
+	
+	private static int versionOnAnalyze=0;
+	private static final LinkedBlockingQueue<String[]> containerQueue= new LinkedBlockingQueue<>(3);
 
 	/**
 	 * Pour se connecter à neo4J, on utilise une authentification en dur,
@@ -127,5 +133,29 @@ public class PaprikaWebMain {
 
 		post(PathIn.Web.FORMDEL, FormController.handleFormDeletePost);
 
+	}
+
+	/**
+	 * The queue for know if we can run a new container.
+	 * @return the containerQueue
+	 */
+	public static LinkedBlockingQueue<String[]> getContainerqueue() {
+		return containerQueue;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public synchronized static int getVersionOnAnalyze() {
+		return versionOnAnalyze;
+	}
+
+	/**
+	 * Add the value on the versionOnAnalyze
+	 * @param value 
+	 */
+	public synchronized static void addVersionOnAnalyze(int value) {
+		PaprikaWebMain.versionOnAnalyze+= value;
 	}
 }

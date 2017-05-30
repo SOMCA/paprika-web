@@ -43,7 +43,9 @@ public class Version extends Entity {
 	}
 
 	/**
-	 * return the number of codesmells of the version. This method on velocity only when the version is analyzed
+	 * return the number of codesmells of the version. This method on velocity
+	 * only when the version is analyzed
+	 * 
 	 * @return a number of code smells
 	 */
 	public long getNumberCodeSmells() {
@@ -61,8 +63,10 @@ public class Version extends Entity {
 	}
 
 	/**
-	 * Check the Version node and update the parameter analyzed.
-	 * If analyzed, the method delete the android application, useless stuff and the container.
+	 * Check the Version node and update the parameter analyzed. If analyzed,
+	 * the method delete the android application, useless stuff and the
+	 * container.
+	 * 
 	 * @return the analyzed parameter
 	 */
 	public int checkAnalyzed() {
@@ -109,15 +113,18 @@ public class Version extends Entity {
 	}
 
 	/**
-	 * Remove many properties on the node and remove the container of the id container
+	 * Remove many properties on the node and remove the container of the id
+	 * container, if not success for the first, do not delete others.
 	 */
 	private void removeUseless() {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 
-		facade.removeParameterOnNode(getID(), "PathFile");
-		facade.removeParameterOnNode(getID(), "analyseInLoading");
-		facade.removeContainer(facade.getParameter(getID(), "idContainer"));
-		facade.removeParameterOnNode(getID(), "idContainer");
+		boolean removed = facade.removeContainer(facade.getParameter(getID(), "idContainer"));
+		if (removed) {
+			facade.removeParameterOnNode(getID(), "PathFile");
+			facade.removeParameterOnNode(getID(), "analyseInLoading");
+			facade.removeParameterOnNode(getID(), "idContainer");
+		}
 	}
 
 	/**
@@ -129,7 +136,9 @@ public class Version extends Entity {
 	}
 
 	/**
-	 * When the analyze is running, velocity call this method for know where are the analyze on the processus.
+	 * When the analyze is running, velocity call this method for know where are
+	 * the analyze on the processus.
+	 * 
 	 * @return the percent of the analyze.
 	 */
 	public String getAnalyseInLoading() {
@@ -139,6 +148,7 @@ public class Version extends Entity {
 
 	/**
 	 * return the numero order of the Version for sort versions lists of project
+	 * 
 	 * @return a value of properties on a Version node
 	 */
 	public long getOrder() {
@@ -147,6 +157,7 @@ public class Version extends Entity {
 
 	/**
 	 * Return all codesSmells of the Version
+	 * 
 	 * @return iterator of all code smells
 	 */
 	public Iterator<CodeSmells> getAllCodeSmells() {
