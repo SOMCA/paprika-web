@@ -1,4 +1,4 @@
-package spoon.annotations;
+package codesmells.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Nlmr {
+public @interface Iwr {
+	public int countInvalide() default 0;
+
 }

@@ -4,12 +4,10 @@ package spoon.main;
 import java.io.File;
 import spoon.Launcher;
 import spoon.processing.ProcessInterruption;
-import spoon.annotations.*;
 /**
  * Hello world!
  *
  */
-@Blob()
 public class App 
 {
     public static void main( String[] args ) throws Exception {
@@ -30,8 +28,9 @@ public class App
 		    currentFile.delete();
 		}
 		launcher.setSourceOutputDirectory(out);
-		launcher.getEnvironment().setCommentEnabled(true);
-		final CatchProcessor processor = new CatchProcessor();
+		//launcher.getEnvironment().setCommentEnabled(true);
+	
+		final MethodProcessor processor = new MethodProcessor();
 		launcher.addProcessor(processor);
 
 		
@@ -48,5 +47,6 @@ public class App
 		
 		
 	}
+    
 }
 

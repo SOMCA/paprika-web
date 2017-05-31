@@ -1,4 +1,4 @@
-package spoon.annotations;
+package codesmells.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Iod {
-	public int countBadOnDraw() default 0;
+public @interface Sak {
+	public int limitMethods() default 13;
+	public int currentMethods() default 0;
+
 }

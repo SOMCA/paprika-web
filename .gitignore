@@ -20,14 +20,15 @@ hs_err_pid*
 paprika-web/target/
 paprika-analyze/target/
 Paprika-analyze/lib/
+codeSmellsAnno/target/
+spoon-test/target/
 
 Other files:
 android-platforms/
 .metadata/
 .recommenders/
 
-paprika-analyze/.settings
-paprika-web/.settings
+*/.settings
 
 velocity.log
 velocity.log.1

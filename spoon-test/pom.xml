@@ -62,6 +62,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>codesmells.annotations</groupId>
+			<artifactId>codeSmellsAnno</artifactId>
+			<version>1</version>
+		</dependency>
+		<dependency>
 			<groupId>fr.inria.gforge.spoon</groupId>
 			<artifactId>spoon-core</artifactId>
 			<version>5.6.0</version>

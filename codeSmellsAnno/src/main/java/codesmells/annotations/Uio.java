@@ -1,4 +1,4 @@
-package spoon.annotations;
+package codesmells.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,8 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Igs {
-	public int get_setCount() default 0;
-	public int limitGet_Set() default 0;
-
+public @interface Uio {
 }
