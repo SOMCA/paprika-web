@@ -4,4 +4,3 @@ MAINTAINER Guillaume Willefert
 WORKDIR /dock
 ADD Paprika-web.jar /dock
 VOLUME /dock/application
-ADD /test /dock/test

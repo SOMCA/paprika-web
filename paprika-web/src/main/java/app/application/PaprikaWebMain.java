@@ -8,7 +8,11 @@ import org.apache.logging.log4j.Logger;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.Transaction;
+import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
 import app.controller.FormController;
@@ -21,6 +25,8 @@ import app.utils.PathIn;
 import spark.Spark;
 
 import java.net.InetAddress;
+import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -36,8 +42,9 @@ public class PaprikaWebMain {
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	private static int versionOnAnalyze = 0;
-	private static final LinkedBlockingQueue<String[]> containerQueue = new LinkedBlockingQueue<>(3);
-	private static final String[] containerRun = new String[2];
+	private static LinkedBlockingQueue<String[]> containerQueue;
+	private static Timer timer;
+
 	/**
 	 * Pour se connecter à neo4J, on utilise une authentification en dur,
 	 * utilisateur: neo4j pass: paprika
@@ -86,6 +93,47 @@ public class PaprikaWebMain {
 	}
 
 	/**
+	 * We save data on Neo4j, for relaunch after without problem.
+	 * Do not save the queue, just container who are running.
+	 */
+	private static void loadSave() {
+		
+		
+		if (containerQueue == null) {
+			// The number of analyze who can be run on same time.
+			String[] containerRun= new String[2];
+			Session session=getSession();
+			StringBuilder command= new StringBuilder("MATCH(n:DataSave) return ");
+			for(int i=0;i<containerRun.length;i++){
+				command.append("n.containerRun"+i+",");
+			}
+			
+			StatementResult result=session.run("MATCH(n:DataSave) return n.containerRun");
+			if(result.hasNext()){
+				Record record=result.next();
+				List<Value> values=record.values();
+				for(int i=0;i<containerRun.length;i++){
+					Value value=values.get(i);
+					if(value!=null && !value.isNull()){
+						System.out.println((value.asString()));
+						containerRun[i]=value.asString();
+					}
+				}
+			}else{
+				
+				session.run("CREATE (n:DataSave)");
+			}
+			// The number of Analyze who can be put on the queue.
+			containerQueue = new LinkedBlockingQueue<>(3);
+			timer= new Timer();
+	
+			PaprikaTimer task = new PaprikaTimer(containerRun);
+			// 30 secondes for test, think to 2 Minutes in reality.
+			timer.schedule(task, 0, 30000); // 1000= 1seconde
+		}
+	}
+
+	/**
 	 * The main who launch all methods spark.
 	 * 
 	 * @param args
@@ -94,6 +142,8 @@ public class PaprikaWebMain {
 	public static void main(String[] args) {
 
 		new DescriptionFunctions().addAllClassicDescription();
+
+		loadSave();
 
 		port(80);
 		enableDebugScreen();
@@ -115,7 +165,8 @@ public class PaprikaWebMain {
 		// Mis sur indexController car il est basé sur l'index
 		get(PathIn.Web.VERSION, VersionController.serveVersionPage);
 
-		//get(PathIn.Web.ZIP, (request, response) -> getFile(request, response));
+		// get(PathIn.Web.ZIP, (request, response) -> getFile(request,
+		// response));
 
 		/*
 		 * Reçoit les données du formulaire de login et renvoie à l'index.
@@ -144,13 +195,6 @@ public class PaprikaWebMain {
 	public static LinkedBlockingQueue<String[]> getContainerqueue() {
 		return containerQueue;
 	}
-	
-	public static void setContainerOnRun(int index,String id){
-		containerRun[index]=id;
-	}
-	public static String getContainerOnRun(int index){
-		return containerRun[index];
-	}
 
 	/**
 	 * 
@@ -168,41 +212,33 @@ public class PaprikaWebMain {
 	public synchronized static void addVersionOnAnalyze(int value) {
 		PaprikaWebMain.versionOnAnalyze += value;
 	}
-/*
-	private static Object getFile(Request request, Response response) {
+	/*
+	 * private static Object getFile(Request request, Response response) {
+	 * 
+	 * PaprikaZip zip = new PaprikaZip("fichier.zip","./test/"); zip.run(); File
+	 * zipFileName = Paths.get("fichier.zip").toFile();
+	 * 
+	 * 
+	 * response.raw().setContentType("application/octet-stream");
+	 * response.raw().setHeader("Content-Disposition", "attachment; filename=" +
+	 * zipFileName.getName()+".zip"); System.out.println(zipFileName.getName());
+	 * try {
+	 * 
+	 * try (ZipOutputStream zipOutputStream = new ZipOutputStream( new
+	 * BufferedOutputStream(response.raw().getOutputStream()));
+	 * BufferedInputStream bufferedInputStream = new BufferedInputStream( new
+	 * FileInputStream(zipFileName))) { ZipEntry zipEntry = new
+	 * ZipEntry(zipFileName.getName());
+	 * 
+	 * zipOutputStream.putNextEntry(zipEntry); byte[] buffer = new byte[1024];
+	 * int len = bufferedInputStream.read(buffer); while (len > 0) {
+	 * zipOutputStream.write(buffer, 0, len); len =
+	 * bufferedInputStream.read(buffer); } zipOutputStream.flush();
+	 * zipOutputStream.close(); }
+	 * 
+	 * } catch (Exception e) { halt(405, "server error"); }
+	 * 
+	 * return null; }
+	 */
 
-		PaprikaZip zip = new PaprikaZip("fichier.zip","./test/");
-		zip.run();
-		File zipFileName = Paths.get("fichier.zip").toFile();
-
-
-		response.raw().setContentType("application/octet-stream");
-		response.raw().setHeader("Content-Disposition", "attachment; filename=" + zipFileName.getName()+".zip");
-        System.out.println(zipFileName.getName());
-		try {
-
-			try (ZipOutputStream zipOutputStream = new ZipOutputStream(
-					new BufferedOutputStream(response.raw().getOutputStream()));
-					BufferedInputStream bufferedInputStream = new BufferedInputStream(
-							new FileInputStream(zipFileName))) {
-				ZipEntry zipEntry = new ZipEntry(zipFileName.getName());
-
-				zipOutputStream.putNextEntry(zipEntry);
-				byte[] buffer = new byte[1024];
-				int len = bufferedInputStream.read(buffer);
-				while (len > 0) {
-					zipOutputStream.write(buffer, 0, len);
-					len = bufferedInputStream.read(buffer);
-				}
-				zipOutputStream.flush();
-				zipOutputStream.close();
-			}
-
-		} catch (Exception e) {
-			halt(405, "server error");
-		}
-
-		return null;
-	}*/
-   
 }

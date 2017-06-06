@@ -2,13 +2,25 @@ package spoon.main;
 
 
 import java.io.File;
+
+import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.Git;
+
 import spoon.Launcher;
 import spoon.processing.ProcessInterruption;
+
 
 public class App 
 {
     public static void main( String[] args ) throws Exception {
 
+    	
+    	/*Git git = new Git("./input");
+    	AddCommand add = git.add();
+    	add.addFilepattern("someDirectory").call();
+    	*/
+    	
+    	
 		final Launcher launcher = new Launcher();
 		launcher.getEnvironment().setNoClasspath(true);
 		

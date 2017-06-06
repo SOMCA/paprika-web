@@ -23,10 +23,7 @@ import org.neo4j.driver.v1.types.Node;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
-import com.spotify.docker.client.exceptions.DockerException;
-import com.spotify.docker.client.messages.ContainerConfig;
-import com.spotify.docker.client.messages.ContainerCreation;
-import com.spotify.docker.client.messages.HostConfig;
+import com.spotify.docker.client.messages.ContainerInfo;
 import com.spotify.docker.client.messages.RegistryAuth;
 
 import app.exception.PapWebRunTimeException;
@@ -47,8 +44,6 @@ import app.utils.neo4j.LowNode;
  * 
  */
 public final class PaprikaFacade {
-
-	private int parallelanalyzeMax = 2;
 
 	/** Private constructor */
 	private PaprikaFacade() {
@@ -410,7 +405,7 @@ public final class PaprikaFacade {
 			boolean notfull = PaprikaWebMain.getContainerqueue().offer(new String[] { "java", "-jar",
 					"Paprika-analyze.jar", fname, user.getName(), project, Long.toString(idNode) });
 			if (notfull) {
-				launchContainer(docker);
+				// launchContainer(docker);
 			}
 			docker.close();
 
@@ -420,6 +415,36 @@ public final class PaprikaFacade {
 			PaprikaWebMain.LOGGER.error(e.getMessage(), e);
 			throw new PapWebRunTimeException(e.getMessage());
 		}
+	}
+
+	/**
+	 * Return true if the container do not exist anymore.
+	 * 
+	 * 
+	 * @param id
+	 *            id of the container
+	 * @return true if the container do not exist
+	 */
+	public boolean isRemoved(String id) {
+		boolean removed = true;
+		DockerClient docker = null;
+		try {
+			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
+
+			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
+			ContainerInfo info = docker.inspectContainer(id);
+			
+			if (info != null && docker.inspectContainer(id).state().running()) {
+				removed = false;
+			}
+
+		} catch (Exception e) {
+			removed = false;
+		}
+		if (docker != null) {
+			docker.close();
+		}
+		return removed;
 	}
 
 	/**
@@ -434,56 +459,29 @@ public final class PaprikaFacade {
 	 *            Neo4J
 	 * @return return true if the container have be removed correctly
 	 */
-
-	public boolean removeContainer(String id) {
-		boolean removed = true;
-		try {
-			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
-			DockerClient docker;
-
-			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
-			if (!docker.inspectContainer(id).state().running()) {
-
-				docker.removeContainer(id);
-				PaprikaWebMain.addVersionOnAnalyze(-1);
-
-				launchContainer(docker);
-
-			} else
-				removed = false;
-
-			docker.close();
-
-		} catch (Exception e) {
-			removed = false;
-			PaprikaWebMain.LOGGER.error(e.getMessage(), e);
-			throw new PapWebRunTimeException(e.getMessage());
-		}
-		PaprikaWebMain.LOGGER.trace("Work?");
-		return removed;
-	}
-
-	// THis code need be moved on a external timer.
-	public void launchContainer(DockerClient docker) throws DockerException, InterruptedException {
-		if (PaprikaWebMain.getVersionOnAnalyze() < this.parallelanalyzeMax) {
-			final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
-					.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro").build();
-			String[] otherStrContainerConfig = PaprikaWebMain.getContainerqueue().poll();
-			if (otherStrContainerConfig != null) {
-				ContainerConfig otherContainerConfig = ContainerConfig.builder().hostConfig(hostConfig)
-						.image("paprika-analyze:latest").cmd(otherStrContainerConfig).workingDir("/dock").build();
-
-				ContainerCreation creation = docker.createContainer(otherContainerConfig);
-				String newid = creation.id();
-				this.setParameterOnNode(otherStrContainerConfig[otherStrContainerConfig.length - 1], "idContainer",
-						newid);
-				docker.startContainer(newid);
-				PaprikaWebMain.addVersionOnAnalyze(1);
-				PaprikaWebMain.LOGGER.trace("container create and start success");
-
-			}
-		}
-	}
+	/*
+	 * public boolean removeContainer(String id) { boolean removed = true; try {
+	 * RegistryAuth registryAuth =
+	 * RegistryAuth.builder().serverAddress(getHostName()).build(); DockerClient
+	 * docker;
+	 * 
+	 * docker =
+	 * DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth
+	 * ).build(); if (!docker.inspectContainer(id).state().running()) {
+	 * 
+	 * docker.removeContainer(id); PaprikaWebMain.addVersionOnAnalyze(-1);
+	 * 
+	 * launchContainer(docker);
+	 * 
+	 * } else removed = false;
+	 * 
+	 * docker.close();
+	 * 
+	 * } catch (Exception e) { removed = false;
+	 * PaprikaWebMain.LOGGER.error(e.getMessage(), e); throw new
+	 * PapWebRunTimeException(e.getMessage()); }
+	 * PaprikaWebMain.LOGGER.trace("Work?"); return removed; }
+	 */
 
 	/**
 	 * Delete versions/project nodes of the neo4j database
@@ -646,7 +644,8 @@ public final class PaprikaFacade {
 	 *            user)
 	 * @param realname
 	 *            the name without the format.
-	 * @param linkGithub link of the github for the download the source code
+	 * @param linkGithub
+	 *            link of the github for the download the source code
 	 */
 	public void addGithub(Project project, String realname, String linkGithub) {
 
@@ -656,7 +655,7 @@ public final class PaprikaFacade {
 		boolean successAdd = this.addVersion(idProject, nameV);
 		if (successAdd) {
 			VersionFunctions verFct = new VersionFunctions();
-			long idV=verFct.receiveIDOfVersion(idProject, nameV);
+			long idV = verFct.receiveIDOfVersion(idProject, nameV);
 			this.setParameterOnNode(idV, "GitHub", linkGithub);
 			this.needReloadApp(project);
 		}

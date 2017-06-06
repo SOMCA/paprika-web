@@ -23,8 +23,9 @@ public class DescriptionFunctions extends Functions {
 		StatementResult result;
 		try (Transaction tx = this.session.beginTransaction()) {
 			result = tx.run("MATCH (d:Description) return d");
-			if (!result.hasNext())
+			if (!result.hasNext()){
 				tx.run("CREATE (d:Description)");
+			}
 			else
 				return;
 

@@ -119,7 +119,7 @@ public class Version extends Entity {
 	private void removeUseless() {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 
-		boolean removed = facade.removeContainer(facade.getParameter(getID(), "idContainer"));
+		boolean removed = facade.isRemoved(facade.getParameter(getID(), "idContainer"));
 		if (removed) {
 			facade.removeParameterOnNode(getID(), "PathFile");
 			facade.removeParameterOnNode(getID(), "analyseInLoading");
