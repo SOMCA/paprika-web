@@ -101,7 +101,10 @@
               <br> Informations of each code smell is on <a href='http://www.modelrefactoring.org/smell_catalog'>Androids Code smells</a>
               <br> Or on this french pdf: <a href='https://tel.archives-ouvertes.fr/tel-01418158/document'>Code Smells PDF french</a>
               <br>
-              <br> You need to press Analyse for launch the analyse, warning, the analyze can be very long.
+              <br> Press the button Analyze for launch the analyze.
+              <br> If the analyze is on 0%, you have to waiting than the server have a available place for analyze your version.(For a unknow duration)
+              <br> If the analyze is on 10%, it has begin and you need just wait 5-20 minutes.
+              <br> Wait, you can do something else while waiting :) (You can also left the page)
             </div>
           </div>
         </div>

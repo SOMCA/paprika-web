@@ -11,8 +11,6 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
-import com.spotify.docker.client.messages.ContainerConfig;
-
 import app.controller.FormController;
 import app.controller.IndexController;
 import app.controller.LoginController;
@@ -21,6 +19,7 @@ import app.controller.VersionController;
 import app.functions.DescriptionFunctions;
 import app.utils.PathIn;
 import spark.Spark;
+
 import java.net.InetAddress;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -35,10 +34,10 @@ public class PaprikaWebMain {
 	 * The logger of Paprika-web
 	 */
 	public static final Logger LOGGER = LogManager.getLogger();
-	
-	private static int versionOnAnalyze=0;
-	private static final LinkedBlockingQueue<String[]> containerQueue= new LinkedBlockingQueue<>(3);
 
+	private static int versionOnAnalyze = 0;
+	private static final LinkedBlockingQueue<String[]> containerQueue = new LinkedBlockingQueue<>(3);
+	private static final String[] containerRun = new String[2];
 	/**
 	 * Pour se connecter à neo4J, on utilise une authentification en dur,
 	 * utilisateur: neo4j pass: paprika
@@ -116,6 +115,8 @@ public class PaprikaWebMain {
 		// Mis sur indexController car il est basé sur l'index
 		get(PathIn.Web.VERSION, VersionController.serveVersionPage);
 
+		//get(PathIn.Web.ZIP, (request, response) -> getFile(request, response));
+
 		/*
 		 * Reçoit les données du formulaire de login et renvoie à l'index.
 		 * Demande à la page login que le formulaire envoie sur /index/,
@@ -137,10 +138,18 @@ public class PaprikaWebMain {
 
 	/**
 	 * The queue for know if we can run a new container.
+	 * 
 	 * @return the containerQueue
 	 */
 	public static LinkedBlockingQueue<String[]> getContainerqueue() {
 		return containerQueue;
+	}
+	
+	public static void setContainerOnRun(int index,String id){
+		containerRun[index]=id;
+	}
+	public static String getContainerOnRun(int index){
+		return containerRun[index];
 	}
 
 	/**
@@ -153,9 +162,47 @@ public class PaprikaWebMain {
 
 	/**
 	 * Add the value on the versionOnAnalyze
-	 * @param value 
+	 * 
+	 * @param value
 	 */
 	public synchronized static void addVersionOnAnalyze(int value) {
-		PaprikaWebMain.versionOnAnalyze+= value;
+		PaprikaWebMain.versionOnAnalyze += value;
 	}
+/*
+	private static Object getFile(Request request, Response response) {
+
+		PaprikaZip zip = new PaprikaZip("fichier.zip","./test/");
+		zip.run();
+		File zipFileName = Paths.get("fichier.zip").toFile();
+
+
+		response.raw().setContentType("application/octet-stream");
+		response.raw().setHeader("Content-Disposition", "attachment; filename=" + zipFileName.getName()+".zip");
+        System.out.println(zipFileName.getName());
+		try {
+
+			try (ZipOutputStream zipOutputStream = new ZipOutputStream(
+					new BufferedOutputStream(response.raw().getOutputStream()));
+					BufferedInputStream bufferedInputStream = new BufferedInputStream(
+							new FileInputStream(zipFileName))) {
+				ZipEntry zipEntry = new ZipEntry(zipFileName.getName());
+
+				zipOutputStream.putNextEntry(zipEntry);
+				byte[] buffer = new byte[1024];
+				int len = bufferedInputStream.read(buffer);
+				while (len > 0) {
+					zipOutputStream.write(buffer, 0, len);
+					len = bufferedInputStream.read(buffer);
+				}
+				zipOutputStream.flush();
+				zipOutputStream.close();
+			}
+
+		} catch (Exception e) {
+			halt(405, "server error");
+		}
+
+		return null;
+	}*/
+   
 }

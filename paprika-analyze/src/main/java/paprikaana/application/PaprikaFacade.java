@@ -1,6 +1,5 @@
 package paprikaana.application;
 
-import java.io.File;
 import java.util.List;
 
 
@@ -9,9 +8,6 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 import paprikaana.utils.neo4j.Graph;
 import paprikaana.utils.neo4j.LowNode;
-import spoon.testing.Assert;
-import spoon.Launcher;
-
 
 public final class PaprikaFacade {
 

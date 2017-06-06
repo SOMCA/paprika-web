@@ -43,7 +43,7 @@ public class PathIn {
     @SuppressWarnings("javadoc")
     public static class Template {
    
-        
+    
 		public static final String INDEX = "/velocity/pages/index.vm";
         public static final String FORM_DELETE = "/velocity/forms/form_delete.vm";
         public static final String LOGIN = "/velocity/pages/login.vm";

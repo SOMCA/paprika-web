@@ -4,10 +4,7 @@ package spoon.main;
 import java.io.File;
 import spoon.Launcher;
 import spoon.processing.ProcessInterruption;
-/**
- * Hello world!
- *
- */
+
 public class App 
 {
     public static void main( String[] args ) throws Exception {
@@ -30,18 +27,21 @@ public class App
 		launcher.setSourceOutputDirectory(out);
 		//launcher.getEnvironment().setCommentEnabled(true);
 	
-		final MethodProcessor processor = new MethodProcessor();
-		launcher.addProcessor(processor);
-
-		
+		final MethodProcessor methodprocessor = new MethodProcessor();
+		launcher.addProcessor(methodprocessor);
+		final ClassProcessor classprocessor = new ClassProcessor();
+		launcher.addProcessor(classprocessor);
+		final InterfaceProcessor interfaceProcessor = new InterfaceProcessor();
+		launcher.addProcessor(interfaceProcessor);
 		try {
 			
 			launcher.run();
 		} catch (ProcessInterruption e) {
 			System.out.println("ok");
 		}
-
-		System.out.println(processor.getFactory().getEnvironment().getWarningCount());
+	//	System.out.println(methodprocessor.getFactory().getEnvironment().getWarningCount());
+		
+		//System.out.println(classprocessor.getFactory().getEnvironment().getWarningCount());
 		
 	//	System.out.println(launcher.getFactory().Class().get("Appp"));
 		

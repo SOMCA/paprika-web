@@ -6,41 +6,40 @@
 This open-source project is the Web version of Paprika. This version is cut to two parts.
 The native Paprika is here: https://github.com/GeoffreyHecht/paprika
 
-
-* paprika-analyze: Part who run the analyse and send data to neo4J database.
-
-* paprika-web: Part who launch the web page and launch paprika-analyze when it need.
-
-## Français:
+The project use Docker and Maven, you need to have installed these functionality for run the project.
 
 
-Ce projet open-source est la version web de Paprika.
-Celle ci est coupé en deux parties.
+* paprika-analyze: Part who run the analyze and send data to neo4J database.
 
-* Paprika-analyze.jar: Partie qui s'occupe de lancer l'analyse en utilisant en très grande partie la version offline : https://github.com/GeoffreyHecht/paprika .
-* Paprika-web.jar: Partie web du projet. Celle ci lance paprika-analyse dans d'autres containers.
+* paprika-web: Part who launch the web page and launch paprika-analyze when it needed.
 
 
 
-## Run: You need build paprika-analyze and web before with mvn clean package then put target/file.jar on the main repertory (with run.sh)
-Go on shell and launch:
+## Run: 
 
-Docker version:
+For run Paprika-web, you need to compile paprika-analyze and paprika-web per the command:
+>> mvn clean package
+
+Then move new jar of target/file.jar on docker web or dockeranalyze (if analyze.jar or web.jar)
+
+When done, you need just to launch:
 $./run.sh
 
-Semi docker Version:
-$docker-compose build neoj
-$docker-compose up -d neoj
-$java -jar Paprika-web.jar
+The first run launch always a error you need to:
+go on <address>:7474 for create a small account.  ( address is "localhost"  per default) 
 
-## Paprika online use:
+Where the username need to be neo4j(the default) and the password always: paprika
+
+
+
+## Paprika-Web use:
 * Spark-core framework web.
 * Neo4J graph database.(With Cypher).
-* Bolt for linked Java to Neo4J.
+* Spark Bolt for linked Java to Neo4J.
 * Velocity template for page html.
-* All things on  https://github.com/GeoffreyHecht/paprika
 * Docker
-
+* Spoon of Inria
+* Paprika of Inria
 
 
 

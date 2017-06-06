@@ -30,9 +30,6 @@
               </div>
               <div class="panel-body" style="overflow:auto;width: 100%;height:100%;">
                 $msg.get("INDEX_NOT_LOGIN")
-                <br> $msg.get("INDEX_NOT_LOGIN2")
-                <br> $msg.get("INDEX_NOT_LOGIN3")
-                <br>
                 #if($project)
                 <br> You need two versions analyzed for than the project display graph on them.
                 #end
@@ -112,157 +109,176 @@
           #end
         </div>
 
-      #if($project)
-      <div class="col-lg-4">
-        <!-- /.panel -->
-        <div class="panel panel-red">
-          <div class="panel-heading">
-            <div class="row">
-              <div class="col-xs-3">
-                <i class="fa fa-file fa-5x"></i>
-              </div>
-              <div class="col-xs-9 text-right">
-                <div class="huge">$project.getNumberOfVersion() </div>
-                <div>$msg.get("INDEX_DIV_NBV")</div>
+        #if($project)
+        <div class="col-lg-4">
+          <!-- /.panel -->
+          <div class="panel panel-red">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-xs-3">
+                  <i class="fa fa-file fa-5x"></i>
+                </div>
+                <div class="col-xs-9 text-right">
+                  <div class="huge">$project.getNumberOfVersion() </div>
+                  <div>$msg.get("INDEX_DIV_NBV")</div>
+                </div>
               </div>
             </div>
-          </div>
 
 
-          <div class="panel-footer">
-            <a href="#" id="a_text" onclick="uploadclick()">
-              <span class="pull-left">$msg.get("INDEX_SPAN_AV")</span>
-            </a>
-            <a href="#" id="a_textwait" style="display:none">
-              <span class="pull-left">$msg.get("INDEX_SPAN_AV_WAIT")</span>
-            </a>
-            <a  id="a_uploadsubmit" href="#" onclick="uploadsubmit()">
-              <span class="pull-right"><i class="fa fa-upload"></i></span>
-              <div class="clearfix"></div>
-            </a>
-            <a id="a_spinnericon" href="#" style="display:none">
-              <span  class="pull-right" ><i class="fa fa-spinner fa-spin"></i></span>
-              <div class="clearfix"></div>
-            </a>
+            <div class="panel-footer">
+              <a href="#" id="a_text" onclick="uploadclick()">
+                <span class="pull-left">$msg.get("INDEX_SPAN_AV")</span>
+              </a>
+              <a href="#" id="a_textwait" style="display:none">
+                <span class="pull-left">$msg.get("INDEX_SPAN_AV_WAIT")</span>
+              </a>
+              <a  id="a_uploadsubmit" href="#" onclick="uploadsubmit()">
+                <span class="pull-right"><i class="fa fa-upload"></i></span>
+                <div class="clearfix"></div>
+              </a>
+              <a id="a_spinnericon" href="#" style="display:none">
+                <span  class="pull-right" ><i class="fa fa-spinner fa-spin"></i></span>
+                <div class="clearfix"></div>
+              </a>
+            </div>
 
-          </div>
+            <div class="panel-footer">
+              <a href="#" id="a_text">
+                <span class="pull-left">
+                  <form id="formuploadVersiongithub" method="post" action="/index/">
+                    <input type="text" name="github" id="github" placeholder="Or:gitHub link"required></input>
+                    <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitgithubversion">
+                    </button>
+                  </form>
+                </span>
+              </a>
+              <a  id="a_uploadsubmit" href="#" onclick="uploadsubmitgithub()">
+                <span class="pull-right"><i class="fa fa-upload"></i></span>
+                <div class="clearfix"></div>
+              </a>
+            </div>
+            <script>
+            function uploadsubmitgithub() {
+              document.getElementById("submitgithubversion").click();
+              return false;
+            }
+            </script>
+            <form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="visibility: hidden; width: 1px; height: 1px" method="post" enctype="multipart/form-data" action="/index/">
+              <input style="visibility: hidden; width: 1px; height: 1px" type="file" accept=".apk" name="appAndroid" id="appAndroid" required/>
+              <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitversion">
+              </button>
+            </form>
 
-
-
-
-          <form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="visibility: hidden; width: 1px; height: 1px" method="post" enctype="multipart/form-data" action="/index/">
-            <input style="visibility: hidden; width: 1px; height: 1px" type="file" accept=".apk" name="appAndroid" id="appAndroid" required/>
-            <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitversion">
-            </button>
-          </form>
-
-          <script>
-          function uploadclick() {
-            document.getElementById("appAndroid").click();
-            return false;
-          }
-          function uploadsubmit() {
-            document.getElementById("submitversion").click();
-            return false;
-          }
-
-          function formsubmitWait() {
-            var x = document.forms["formuploadVersion"]["appAndroid"].value;
-            if (x == "") {
-              alert("No file");
+            <script>
+            function uploadclick() {
+              document.getElementById("appAndroid").click();
+              return false;
+            }
+            function uploadsubmit() {
+              document.getElementById("submitversion").click();
               return false;
             }
 
-            document.getElementById("a_text").style.display="none";
-            document.getElementById("a_textwait").style.display = "inline";
-            document.getElementById("a_uploadsubmit").style.display="none";
-            document.getElementById("a_spinnericon").style.display = "inline";
+            function formsubmitWait() {
+              var x = document.forms["formuploadVersion"]["appAndroid"].value;
+              if (x == "") {
+                alert("No file");
+                return false;
+              }
 
-            setTimeout(formsubmitWait2, 2000);
+              document.getElementById("a_text").style.display="none";
+              document.getElementById("a_textwait").style.display = "inline";
+              document.getElementById("a_uploadsubmit").style.display="none";
+              document.getElementById("a_spinnericon").style.display = "inline";
+
+              setTimeout(formsubmitWait2, 2000);
 
 
-            return true;
-          }
-          function formsubmitWait2(){
-            document.getElementById("formuploadVersion").onsubmit="return true;";
-            document.getElementById("formuploadVersion").submit();
+              return true;
+            }
+            function formsubmitWait2(){
+              document.getElementById("formuploadVersion").onsubmit="return true;";
+              document.getElementById("formuploadVersion").submit();
 
-          }
-          </script>
+            }
+            </script>
+          </div>
+
+          <!-- /.panel-body -->
         </div>
-        <!-- /.panel-body -->
+
+        #end
+      
       </div>
 
-      #end
+      <!-- /.row -->
     </div>
 
-    <!-- /.row -->
+    <!-- /#page-wrapper -->
+
   </div>
+  <!-- /#wrapper -->
+  #parse("/velocity/pages/script.vm")
 
-  <!-- /#page-wrapper -->
+  <form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="display: none" method="post" enctype="multipart/form-data" action="/index/">
+    <input style="visibility: hidden; width: 1px; height: 1px" type="file" accept=".apk" name="appAndroid" id="appAndroid" required/>
+    <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitversion">
+    </button>
+  </form>
 
-</div>
-<!-- /#wrapper -->
-#parse("/velocity/pages/script.vm")
-
-<form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="display: none" method="post" enctype="multipart/form-data" action="/index/">
-  <input style="visibility: hidden; width: 1px; height: 1px" type="file" accept=".apk" name="appAndroid" id="appAndroid" required/>
-  <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitversion">
-  </button>
-</form>
-
-<script>
-function uploadclick() {
-  document.getElementById("appAndroid").click();
-  return false;
-}
-function uploadsubmit() {
-  document.getElementById("submitversion").click();
-  return false;
-}
-
-function formsubmitWait() {
-  var x = document.forms["formuploadVersion"]["appAndroid"].value;
-  if (x == "") {
-    alert("No file");
+  <script>
+  function uploadclick() {
+    document.getElementById("appAndroid").click();
+    return false;
+  }
+  function uploadsubmit() {
+    document.getElementById("submitversion").click();
     return false;
   }
 
-  document.getElementById("a_text").style.display="none";
-  document.getElementById("a_textwait").style.display = "inline";
-  document.getElementById("a_uploadsubmit").style.display="none";
-  document.getElementById("a_spinnericon").style.display = "inline";
+  function formsubmitWait() {
+    var x = document.forms["formuploadVersion"]["appAndroid"].value;
+    if (x == "") {
+      alert("No file");
+      return false;
+    }
 
-  setTimeout(formsubmitWait2, 2000);
+    document.getElementById("a_text").style.display="none";
+    document.getElementById("a_textwait").style.display = "inline";
+    document.getElementById("a_uploadsubmit").style.display="none";
+    document.getElementById("a_spinnericon").style.display = "inline";
+
+    setTimeout(formsubmitWait2, 2000);
 
 
-  return true;
-}
-function formsubmitWait2(){
-  document.getElementById("formuploadVersion").onsubmit="return true;";
-  document.getElementById("formuploadVersion").submit();
+    return true;
+  }
+  function formsubmitWait2(){
+    document.getElementById("formuploadVersion").onsubmit="return true;";
+    document.getElementById("formuploadVersion").submit();
 
-}
-#if($flagAreaStack)
+  }
+  #if($flagAreaStack)
 
-#set($dataAreaChart=$project.getGraph("area",10))
-#if($dataAreaChart!="")
-$(function() {
-     Morris.Area({
+  #set($dataAreaChart=$project.getGraph("area",10))
+  #if($dataAreaChart!="")
+  $(function() {
+    Morris.Area({
       element: 'area-application',
       data: [
         $dataAreaChart
-      xkey: 'version',
-      parseTime: false,
-      pointSize: 3,
-      hideHover: 'auto',
-      xLabelAngle:90,
-      resize: true
+        xkey: 'version',
+        parseTime: false,
+        pointSize: 3,
+        hideHover: 'auto',
+        xLabelAngle:90,
+        resize: true
+      });
     });
-});
-#end
-#end
-</script>
-</body>
+    #end
+    #end
+    </script>
+  </body>
 
-</html>
+  </html>

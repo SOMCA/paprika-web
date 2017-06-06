@@ -12,8 +12,6 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
-import paprikaana.model.*;
-
 import net.dongliu.apk.parser.ApkFile;
 import paprikaana.utils.neo4j.LowNode;
 import paprikaana.utils.neo4j.PaprikaKeyWords;

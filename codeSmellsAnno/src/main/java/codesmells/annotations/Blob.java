@@ -8,15 +8,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Blob {
-	public int limitMethod() default 22;
+	public int limitMethods() default 22;
 
-	public int limitAttribute() default 13;
+	public int limitAttributes() default 13;
 
-	public int limitLackOfCohesionMethod() default 40;
+	public int limitLackOfCohesionMethods() default 40;
 
-	public int currentMethod() default 0;
+	public int currentMethods() default 0;
 
-	public int currentAttribute() default 0;
+	public int currentAttributes() default 0;
 
-	public int currentLackOfCohesionMethod() default 0;
+	public int currentLackOfCohesionMethods() default 0;
 }

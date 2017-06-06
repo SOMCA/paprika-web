@@ -7,8 +7,10 @@ import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
+
 /**
  * CodeSmellsFunctions is a utils class linked to CodeSmells class but use neo4j
+ * 
  * @author guillaume
  *
  */
@@ -16,7 +18,9 @@ public class CodeSmellsFunctions extends Functions {
 
 	/**
 	 * Return the Description node of the codesmells
-	 * @param labelname short name of the code smell.
+	 * 
+	 * @param labelname
+	 *            short name of the code smell.
 	 * @return return a description node.
 	 */
 	public Node getNode(String labelname) {
@@ -39,11 +43,16 @@ public class CodeSmellsFunctions extends Functions {
 	}
 
 	/**
-	 * Return a class command or a method command for obtain without problem data on neo4J.
-	 * Class or method are stocked on the first index and the command on the second.
-	 * @param nameLabel shortname of the code smells
-	 * @param id id of the Code smell node.
-	 * @return a string[] where index=0 contains class or method, and index=1, contains long command.
+	 * Return a class command or a method command for obtain without problem
+	 * data on neo4J. Class or method are stocked on the first index and the
+	 * command on the second.
+	 * 
+	 * @param nameLabel
+	 *            shortname of the code smells
+	 * @param id
+	 *            id of the Code smell node.
+	 * @return a string[] where index=0 contains class or method, and index=1,
+	 *         contains long command.
 	 */
 	public String[] getToSearch(String nameLabel, long id) {
 
@@ -59,6 +68,8 @@ public class CodeSmellsFunctions extends Functions {
 		String command = null;
 		String search = null;
 		switch (nameLabel) {
+		case "ARGB8888":
+			break;
 		case "BLOB_NO_FUZZY":
 		case "BLOB":
 			command = beginCommandclass
@@ -78,17 +89,16 @@ public class CodeSmellsFunctions extends Functions {
 		case "HBR_NO_FUZZY":
 		case "HBR":
 		case "HSS_NO_FUZZY":
-		case "HSS":
-			command = beginCommandmethod
-					+ " RETURN l.full_name as Location,l.modifier as Modifier,l.return_type as Type";
-			search = methodSearch;
-			break;
-		case "ARGB8888":
 		case "IGS":
 		case "IOD":
 		case "IWR":
 		case "UIO":
 		case "THI":
+		case "HSS":
+			// Empty command, but general
+			command = beginCommandmethod
+					+ " RETURN l.full_name as Location,l.modifier as Modifier,l.return_type as Type";
+			search = methodSearch;
 			break;
 		case "LM_NO_FUZZY":
 		case "LM":
@@ -119,12 +129,14 @@ public class CodeSmellsFunctions extends Functions {
 			break;
 		}
 
-		return new String[]{search, command};
+		return new String[] { search, command };
 	}
 
 	/**
 	 * Obtain many values data on the code smell with the command.
-	 * @param command a command of getToSearch method
+	 * 
+	 * @param command
+	 *            a command of getToSearch method
 	 * @return a result who contains a array map of data
 	 */
 	public StatementResult getPreciseDataForEachCodeSmells(String command) {

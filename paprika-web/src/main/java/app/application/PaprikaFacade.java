@@ -180,15 +180,17 @@ public final class PaprikaFacade {
 	 *            the id of the project
 	 * @param version
 	 *            the name of the new version.
+	 * @return return true if success, else false;
 	 * 
 	 */
-	public void addVersion(long idproject, String version) {
+	public boolean addVersion(long idproject, String version) {
 		VersionFunctions verFct = new VersionFunctions();
 		if (version != null && verFct.receiveIDOfVersion(idproject, version) == -1) {
 			verFct.writeVersion(idproject, version);
+			return true;
 		}
 
-		return;
+		return false;
 	}
 
 	/**
@@ -405,10 +407,8 @@ public final class PaprikaFacade {
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
 
-
-
-
-			boolean notfull = PaprikaWebMain.getContainerqueue().offer(new String[]{"java", "-jar", "Paprika-analyze.jar", fname, user.getName(), project, Long.toString(idNode)});
+			boolean notfull = PaprikaWebMain.getContainerqueue().offer(new String[] { "java", "-jar",
+					"Paprika-analyze.jar", fname, user.getName(), project, Long.toString(idNode) });
 			if (notfull) {
 				launchContainer(docker);
 			}
@@ -425,7 +425,9 @@ public final class PaprikaFacade {
 	/**
 	 * Remove the finished container on Docker ( shell: docker ps -a, for see
 	 * the id, then docker rm id)
-	 * @param idNode  id of the version
+	 * 
+	 * @param idNode
+	 *            id of the version
 	 * 
 	 * @param id
 	 *            id of the container to delete, found on the version node of
@@ -444,14 +446,12 @@ public final class PaprikaFacade {
 
 				docker.removeContainer(id);
 				PaprikaWebMain.addVersionOnAnalyze(-1);
-				
 
 				launchContainer(docker);
 
 			} else
 				removed = false;
-			
-			
+
 			docker.close();
 
 		} catch (Exception e) {
@@ -462,28 +462,27 @@ public final class PaprikaFacade {
 		PaprikaWebMain.LOGGER.trace("Work?");
 		return removed;
 	}
+
 	// THis code need be moved on a external timer.
-	private void launchContainer(DockerClient docker) throws DockerException, InterruptedException{
+	public void launchContainer(DockerClient docker) throws DockerException, InterruptedException {
 		if (PaprikaWebMain.getVersionOnAnalyze() < this.parallelanalyzeMax) {
 			final HostConfig hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
-					.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro")
-					.build();
+					.links("neo4j-paprika", "web-paprika").binds("/tmp/application:/dock/application:ro").build();
 			String[] otherStrContainerConfig = PaprikaWebMain.getContainerqueue().poll();
 			if (otherStrContainerConfig != null) {
 				ContainerConfig otherContainerConfig = ContainerConfig.builder().hostConfig(hostConfig)
-						.image("paprika-analyze:latest")
-						.cmd(otherStrContainerConfig)
-						.workingDir("/dock").build();
+						.image("paprika-analyze:latest").cmd(otherStrContainerConfig).workingDir("/dock").build();
 
 				ContainerCreation creation = docker.createContainer(otherContainerConfig);
 				String newid = creation.id();
-				this.setParameterOnNode(otherStrContainerConfig[otherStrContainerConfig.length-1], "idContainer", newid);
+				this.setParameterOnNode(otherStrContainerConfig[otherStrContainerConfig.length - 1], "idContainer",
+						newid);
 				docker.startContainer(newid);
 				PaprikaWebMain.addVersionOnAnalyze(1);
 				PaprikaWebMain.LOGGER.trace("container create and start success");
 
 			}
-		} 
+		}
 	}
 
 	/**
@@ -591,7 +590,7 @@ public final class PaprikaFacade {
 	 * @throws UnknownHostException
 	 *             If the host of the container is not found.
 	 */
-	private String getHostName() throws UnknownHostException {
+	public String getHostName() throws UnknownHostException {
 		try {
 			String str = InetAddress.getByName("web-paprika").getHostAddress();
 			PaprikaWebMain.LOGGER.trace(str);
@@ -635,6 +634,32 @@ public final class PaprikaFacade {
 
 		this.addVersion(project.getID(), realname);
 		this.needReloadApp(project);
+	}
+
+	/**
+	 * Add a new version with a github link, he download the link on the
+	 * analyze, contrary to the method addFile.
+	 * 
+	 * 
+	 * @param project
+	 *            name of the project where you put the file(unique for each
+	 *            user)
+	 * @param realname
+	 *            the name without the format.
+	 * @param linkGithub link of the github for the download the source code
+	 */
+	public void addGithub(Project project, String realname, String linkGithub) {
+
+		String numberV = project.getNumberOfVersion();
+		long idProject = project.getID();
+		String nameV = realname + " " + numberV;
+		boolean successAdd = this.addVersion(idProject, nameV);
+		if (successAdd) {
+			VersionFunctions verFct = new VersionFunctions();
+			long idV=verFct.receiveIDOfVersion(idProject, nameV);
+			this.setParameterOnNode(idV, "GitHub", linkGithub);
+			this.needReloadApp(project);
+		}
 	}
 
 }

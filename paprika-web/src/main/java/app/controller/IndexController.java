@@ -83,33 +83,47 @@ public class IndexController {
 
 		String location = "/application";
 
-		long maxFileSize = 100000000;
-		long maxRequestSize = 100000000;
-		int fileSizeThreshold = 1024;
-		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(location, maxFileSize,
-				maxRequestSize, fileSizeThreshold);
-		request.raw().setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
-		Part uploadedFile = request.raw().getPart("appAndroid");
-		if (uploadedFile != null) {
-			String fName = request.raw().getPart("appAndroid").getSubmittedFileName();
-			int lastindex = fName.lastIndexOf('.');
-			if (lastindex == -1) {
-				PaprikaWebMain.LOGGER.error("The file have not format!");
-				return false;
-			}
+		String github = request.queryParams("github");
+		if (github != null) {
+			// https://github.com/Snrasha/Tandoori     Format< Ignore the user, probably.
+			String[] cutGithub= github.split("/");
+			for(String str: cutGithub) System.out.println("o ; "+str);
+			
+			if(cutGithub.length<5) return false;
+			boolean bool1="https:".equals(cutGithub[0]);
+			boolean bool2="github.com".equals(cutGithub[2]);
+			if(!bool1 || !bool2) return false;
+			
+			facade.addGithub(project, cutGithub[4], github);
+			System.out.println(github);
+			return true;
+		} else {
+			long maxFileSize = 100000000;
+			long maxRequestSize = 100000000;
+			int fileSizeThreshold = 1024;
+			MultipartConfigElement multipartConfigElement = new MultipartConfigElement(location, maxFileSize,
+					maxRequestSize, fileSizeThreshold);
+			request.raw().setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
+			Part uploadedFile = request.raw().getPart("appAndroid");
+			if (uploadedFile != null) {
+				String fName = request.raw().getPart("appAndroid").getSubmittedFileName();
+				int lastindex = fName.lastIndexOf('.');
+				if (lastindex == -1) {
+					PaprikaWebMain.LOGGER.error("The file have not format!");
+					return false;
+				}
 
-			String realname = fName.substring(0, lastindex);
-			String format = fName.substring(lastindex, fName.length());
-			if (!".apk".equals(format)) {
-				PaprikaWebMain.LOGGER.error("The file is not a .apk file! We have: " + format);
-			} else {
+				String realname = fName.substring(0, lastindex);
+				String format = fName.substring(lastindex, fName.length());
+				if (".apk".equals(format)) {
+					PaprikaWebMain.LOGGER.trace(realname);
+					facade.addFile(RequestUtil.getSessionCurrentUser(request), project, fName, uploadedFile, realname);
 
-				PaprikaWebMain.LOGGER.trace(realname);
-				facade.addFile(RequestUtil.getSessionCurrentUser(request), project, fName, uploadedFile, realname);
-
-				return true;
+					return true;
+				}
 			}
 		}
+
 		return false;
 	}
 }

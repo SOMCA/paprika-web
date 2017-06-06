@@ -6,9 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Igs {
-	public int get_setCount() default 0;
-	public int limitGet_Set() default 0;
-
 }
