@@ -28,7 +28,7 @@ public class GitpullRequest {
 	}
 
 	public void getData() throws IllegalStateException, IOException {
-		String url = "http://api.github.com/repos/" + this.nameUser + "/" + this.nameProject + "/pulls";
+		String url = "https://api.github.com/repos/" + App.nameUser + "/" + this.nameProject + "/pulls";
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(url);
 
@@ -37,12 +37,12 @@ public class GitpullRequest {
 		System.out.println(jsonTxt);
 		JSONObject json = new JSONObject(jsonTxt);
 
-		post.setHeader("Authorization","token "+ json.getString("token"));
+		post.addHeader("Authorization","token "+ json.getString("token"));
 		
 		
 		StringEntity params = new StringEntity(
 				"{ \"title\": \"Amazing new feature\"," + "\"body\": \"Please pull this in!\"," + "\"head\": \""
-						+ this.nameUser + ":" + "de" + "\"," + "\"base\": \"" + "master" + "\" }",
+						+ App.nameBot + ":" + this.branch + "\"," + "\"base\": \"" + "master" + "\" }",
 				ContentType.APPLICATION_JSON);
 		post.setEntity(params);
 		
