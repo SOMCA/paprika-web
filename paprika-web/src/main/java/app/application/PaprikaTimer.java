@@ -3,8 +3,6 @@ package app.application;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
 
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
 import com.spotify.docker.client.DefaultDockerClient;

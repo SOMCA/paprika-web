@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+
+/**
+ * To delete.
+ *
+ */
 public class PaprikaZip {
 	private List<String> fileList;
 	private final String OUTPUT_ZIP_FILE;
@@ -91,4 +96,34 @@ public class PaprikaZip {
 	private String generateZipEntry(String file) {
 		return file.substring(SOURCE_FOLDER.length(), file.length());
 	}
+	
+	
+	/*
+	 * private static Object getFile(Request request, Response response) {
+	 * 
+	 * PaprikaZip zip = new PaprikaZip("fichier.zip","./test/"); zip.run(); File
+	 * zipFileName = Paths.get("fichier.zip").toFile();
+	 * 
+	 * 
+	 * response.raw().setContentType("application/octet-stream");
+	 * response.raw().setHeader("Content-Disposition", "attachment; filename=" +
+	 * zipFileName.getName()+".zip"); System.out.println(zipFileName.getName());
+	 * try {
+	 * 
+	 * try (ZipOutputStream zipOutputStream = new ZipOutputStream( new
+	 * BufferedOutputStream(response.raw().getOutputStream()));
+	 * BufferedInputStream bufferedInputStream = new BufferedInputStream( new
+	 * FileInputStream(zipFileName))) { ZipEntry zipEntry = new
+	 * ZipEntry(zipFileName.getName());
+	 * 
+	 * zipOutputStream.putNextEntry(zipEntry); byte[] buffer = new byte[1024];
+	 * int len = bufferedInputStream.read(buffer); while (len > 0) {
+	 * zipOutputStream.write(buffer, 0, len); len =
+	 * bufferedInputStream.read(buffer); } zipOutputStream.flush();
+	 * zipOutputStream.close(); }
+	 * 
+	 * } catch (Exception e) { halt(405, "server error"); }
+	 * 
+	 * return null; }
+	 */
 }

@@ -6,7 +6,7 @@ docker-compose up -d neoj
 docker build -t paprika-web dockerweb
 docker build -t paprika-analyze dockeranalyze
 docker-compose build web
-docker-compose up web
+docker-compose up -d web
   #docker-machine ssh spirals-somca
     #sudo docker run -it paprika-web /bin/sh
       #ls -a

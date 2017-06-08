@@ -81,6 +81,19 @@
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>4.7.0.201704051617-r</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.mylyn.github/org.eclipse.egit.github.core -->
+		<dependency>
+			<groupId>org.eclipse.mylyn.github</groupId>
+			<artifactId>org.eclipse.egit.github.core</artifactId>
+			<version>2.1.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20170516</version>
+		</dependency>
+
 	</dependencies>
 	<pluginRepositories>
 		<!-- required for JDT dependency -->

@@ -128,8 +128,8 @@ public class PaprikaWebMain {
 			timer= new Timer();
 	
 			PaprikaTimer task = new PaprikaTimer(containerRun);
-			// 30 secondes for test, think to 2 Minutes in reality.
-			timer.schedule(task, 0, 30000); // 1000= 1seconde
+			// think to 2 Minutes in reality.
+			timer.schedule(task, 0, 60000); // 1000= 1seconde
 		}
 	}
 
@@ -212,33 +212,6 @@ public class PaprikaWebMain {
 	public synchronized static void addVersionOnAnalyze(int value) {
 		PaprikaWebMain.versionOnAnalyze += value;
 	}
-	/*
-	 * private static Object getFile(Request request, Response response) {
-	 * 
-	 * PaprikaZip zip = new PaprikaZip("fichier.zip","./test/"); zip.run(); File
-	 * zipFileName = Paths.get("fichier.zip").toFile();
-	 * 
-	 * 
-	 * response.raw().setContentType("application/octet-stream");
-	 * response.raw().setHeader("Content-Disposition", "attachment; filename=" +
-	 * zipFileName.getName()+".zip"); System.out.println(zipFileName.getName());
-	 * try {
-	 * 
-	 * try (ZipOutputStream zipOutputStream = new ZipOutputStream( new
-	 * BufferedOutputStream(response.raw().getOutputStream()));
-	 * BufferedInputStream bufferedInputStream = new BufferedInputStream( new
-	 * FileInputStream(zipFileName))) { ZipEntry zipEntry = new
-	 * ZipEntry(zipFileName.getName());
-	 * 
-	 * zipOutputStream.putNextEntry(zipEntry); byte[] buffer = new byte[1024];
-	 * int len = bufferedInputStream.read(buffer); while (len > 0) {
-	 * zipOutputStream.write(buffer, 0, len); len =
-	 * bufferedInputStream.read(buffer); } zipOutputStream.flush();
-	 * zipOutputStream.close(); }
-	 * 
-	 * } catch (Exception e) { halt(405, "server error"); }
-	 * 
-	 * return null; }
-	 */
+
 
 }

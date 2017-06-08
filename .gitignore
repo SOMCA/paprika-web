@@ -27,6 +27,8 @@ android-platforms/
 .metadata/
 .recommenders/
 
+**/*.json
+
 **/.settings/
 
 velocity.log
