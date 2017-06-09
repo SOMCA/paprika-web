@@ -34,8 +34,7 @@ public class AnalyzeProcess {
 	}
 
 	private void runPartAnalyse(Analyse ana) {
-		PaprikaFacade facade = PaprikaFacade.getInstance();
-	
+		VersionFunctions verFct = new VersionFunctions();
 		
 		String realname = fName.substring(0, fName.lastIndexOf('.'));
 		String pathstr = "application/" + this.user + "/" + this.project + "/" + fName;
@@ -64,18 +63,18 @@ public class AnalyzeProcess {
 							"1990-01-01", "-r", "250", "-s", Long.toString(size), "-u", "unsafe", "-omp", "True", "-vn",
 							strversionname, "-vc", strversioncode, pathstr };
 
-					facade.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "10");
+					verFct.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "10");
 					PaprikaApp paprikaapp;
 					paprikaapp = ana.runAnalysis(args);
 
-					facade.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "50");
+					verFct.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "50");
 
 					ModelToGraphBolt modelToGraph = new ModelToGraphBolt();
 					long idApp = modelToGraph.insertApp(paprikaapp, nodeVer).getID();
 
-					new VersionFunctions().writeAnalyzeOnVersion(nodeVer, idApp);
+					verFct.writeAnalyzeOnVersion(nodeVer, idApp);
 
-					facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
+					verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
 
 	
 					
@@ -89,14 +88,14 @@ public class AnalyzeProcess {
 	}
 
 	private void runPartQuery(Analyse ana) {
-		PaprikaFacade facade = PaprikaFacade.getInstance();
+		VersionFunctions verFct = new VersionFunctions();
 
 		long keyApp = nodeVer.getID();
 			String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
-			new VersionFunctions().writeQueryOnVersion(nodeVer, keyApp);
+			verFct.writeQueryOnVersion(nodeVer, keyApp);
 			ana.runQueryMode(args);
-			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
-			facade.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
+			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
+			verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
 	}
 
 	

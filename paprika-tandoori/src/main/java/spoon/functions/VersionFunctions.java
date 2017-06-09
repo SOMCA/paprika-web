@@ -1,9 +1,9 @@
-package paprikaana.functions;
+package spoon.functions;
 
 import org.neo4j.driver.v1.Transaction;
 
-import paprikaana.utils.neo4j.LowNode;
-import paprikaana.utils.neo4j.PaprikaKeyWords;
+import spoon.utils.neo4j.LowNode;
+import spoon.utils.neo4j.PaprikaKeyWords;
 
 
 public class VersionFunctions extends Functions {
@@ -64,7 +64,7 @@ public class VersionFunctions extends Functions {
 		if (idnode == -1) {
 			return;
 		}
-		try (Transaction tx =  this.session.beginTransaction()) {
+		try (Transaction tx = this.session.beginTransaction()) {
 			tx.run("MATCH (n) WHERE ID(n)= "+idnode+" SET n+={"+parameter+":\""+attribute+"\"}");
 			
 			tx.success();

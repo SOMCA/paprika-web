@@ -393,20 +393,27 @@ public final class PaprikaFacade {
 		this.setParameterOnNode(idNode, PaprikaKeyWords.CODEA, "loading");
 		this.setParameterOnNode(idNode, "analyseInLoading", "0");
 		try {
+			String command;
 			PaprikaWebMain.LOGGER.trace("callAnalyzeThread:");
-			String command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " " + project + " "
-					+ Long.toString(idNode);
-			PaprikaWebMain.LOGGER.trace(command);
-			String pathstr = "application/" + user.getName() + "/" + project + "/" + fname;
-			this.setParameterOnNode(idNode, "PathFile", pathstr);
+			String github = this.getParameter(idNode, "GitHub");
+			boolean isGitHub = github != null;
+			if (isGitHub) {
+				// length 5
+				command = "java -jar Tandoori.jar " + github + " " + Long.toString(idNode);
+			} else {
+				// length 7
+				command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " " + project + " "
+						+ Long.toString(idNode);
+				PaprikaWebMain.LOGGER.trace(command);
+				String pathstr = "application/" + user.getName() + "/" + project + "/" + fname;
+				this.setParameterOnNode(idNode, "PathFile", pathstr);
+			}
 			RegistryAuth registryAuth = RegistryAuth.builder().serverAddress(getHostName()).build();
 			DockerClient docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
 
-			boolean notfull = PaprikaWebMain.getContainerqueue().offer(new String[] { "java", "-jar",
-					"Paprika-analyze.jar", fname, user.getName(), project, Long.toString(idNode) });
-			if (notfull) {
-				// launchContainer(docker);
-			}
+			// Need and Contains always the id node of the version, on always
+			// the last index.
+			PaprikaWebMain.getContainerqueue().offer(command.split(" "));
 			docker.close();
 
 		} catch (
@@ -433,7 +440,7 @@ public final class PaprikaFacade {
 
 			docker = DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth).build();
 			ContainerInfo info = docker.inspectContainer(id);
-			
+
 			if (info != null && docker.inspectContainer(id).state().running()) {
 				removed = false;
 			}
@@ -446,42 +453,6 @@ public final class PaprikaFacade {
 		}
 		return removed;
 	}
-
-	/**
-	 * Remove the finished container on Docker ( shell: docker ps -a, for see
-	 * the id, then docker rm id)
-	 * 
-	 * @param idNode
-	 *            id of the version
-	 * 
-	 * @param id
-	 *            id of the container to delete, found on the version node of
-	 *            Neo4J
-	 * @return return true if the container have be removed correctly
-	 */
-	/*
-	 * public boolean removeContainer(String id) { boolean removed = true; try {
-	 * RegistryAuth registryAuth =
-	 * RegistryAuth.builder().serverAddress(getHostName()).build(); DockerClient
-	 * docker;
-	 * 
-	 * docker =
-	 * DefaultDockerClient.fromEnv().dockerAuth(false).registryAuth(registryAuth
-	 * ).build(); if (!docker.inspectContainer(id).state().running()) {
-	 * 
-	 * docker.removeContainer(id); PaprikaWebMain.addVersionOnAnalyze(-1);
-	 * 
-	 * launchContainer(docker);
-	 * 
-	 * } else removed = false;
-	 * 
-	 * docker.close();
-	 * 
-	 * } catch (Exception e) { removed = false;
-	 * PaprikaWebMain.LOGGER.error(e.getMessage(), e); throw new
-	 * PapWebRunTimeException(e.getMessage()); }
-	 * PaprikaWebMain.LOGGER.trace("Work?"); return removed; }
-	 */
 
 	/**
 	 * Delete versions/project nodes of the neo4j database

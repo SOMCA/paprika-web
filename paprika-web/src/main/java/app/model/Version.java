@@ -122,6 +122,7 @@ public class Version extends Entity {
 		boolean removed = facade.isRemoved(facade.getParameter(getID(), "idContainer"));
 		if (removed) {
 			facade.removeParameterOnNode(getID(), "PathFile");
+			facade.removeParameterOnNode(getID(), "GitHub");
 			facade.removeParameterOnNode(getID(), "analyseInLoading");
 			facade.removeParameterOnNode(getID(), "idContainer");
 		}

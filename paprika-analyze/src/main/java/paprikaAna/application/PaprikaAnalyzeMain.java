@@ -13,6 +13,7 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
 import net.dongliu.apk.parser.ApkFile;
+import paprikaana.functions.VersionFunctions;
 import paprikaana.utils.neo4j.LowNode;
 import paprikaana.utils.neo4j.PaprikaKeyWords;
 
@@ -73,7 +74,7 @@ public class PaprikaAnalyzeMain {
 		String pathstr = "application/" + user + "/" + project + "/" + fName;
 
 		ApkFile apkfile = null;
-		PaprikaFacade facade = PaprikaFacade.getInstance();
+		VersionFunctions verFct = new VersionFunctions();
 		try {
 			File file = new File(pathstr);
 			long size = file.length();
@@ -84,11 +85,11 @@ public class PaprikaAnalyzeMain {
 
 			AnalyzeProcess anaThread = new AnalyzeProcess(xml, fName, project, user, size, nodeVer);
 
-			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "inprogress");
+			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "inprogress");
 			anaThread.run();
 		} catch (IOException e) {
 			PaprikaAnalyzeMain.LOGGER.error("IOException error: File not found", e);
-			facade.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "error");
+			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "error");
 			throw new AnalyseException();
 		}
 	}

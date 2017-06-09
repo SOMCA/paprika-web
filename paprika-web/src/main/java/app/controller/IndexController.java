@@ -89,11 +89,12 @@ public class IndexController {
 			String[] cutGithub= github.split("/");
 			for(String str: cutGithub) System.out.println("o ; "+str);
 			
-			if(cutGithub.length<5) return false;
-			boolean bool1="https:".equals(cutGithub[0]);
-			boolean bool2="github.com".equals(cutGithub[2]);
-			if(!bool1 || !bool2) return false;
-			
+			boolean badLink= (cutGithub.length != 5)||(github.startsWith("https://github.com/"))||(!cutGithub[4].endsWith(".git") && cutGithub[4].length()>4);
+			if (badLink) {
+				System.out.println("Error: The format is https://github.com/User/project.git");
+				return false;
+			}
+
 			facade.addGithub(project, cutGithub[4], github);
 			System.out.println(github);
 			return true;
