@@ -1,0 +1,34 @@
+version: '2'
+services:
+  neoj:
+    image: neo4j:latest
+    container_name: neo4j-paprika
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - $HOME/neo4j/data:/data
+      - $HOME/neo4j/logs:/logs
+  web:
+    ports:
+      - "80:80"
+    image: paprika-web:latest
+    container_name: web-paprika
+    command: java -jar Paprika-web.jar -d
+    volumes:
+       - /tmp/application:/dock/application
+       - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - neoj
+    depends_on:
+      - neoj
+  test:
+    command: sh -c while(0) sleep 1; done
+    image: paprika-analyze:latest
+    container_name: analyze-paprika
+    volumes:
+       - /tmp/toto:/application
+    links:
+      - neoj
+    depends_on:
+      - neoj
