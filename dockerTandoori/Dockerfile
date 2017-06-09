@@ -7,3 +7,4 @@ ADD CodeSmellsAnnotations.jar /dock
 ADD android-platforms /dock/android-platforms
 ADD input /dock/input
 ADD output /dock/output
+ADD info.json /dock

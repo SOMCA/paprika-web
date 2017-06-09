@@ -613,16 +613,14 @@ public final class PaprikaFacade {
 	 * @param project
 	 *            name of the project where you put the file(unique for each
 	 *            user)
-	 * @param realname
-	 *            the name without the format.
 	 * @param linkGithub
 	 *            link of the github for the download the source code
 	 */
-	public void addGithub(Project project, String realname, String linkGithub) {
+	public void addGithub(Project project,String linkGithub) {
 
 		String numberV = project.getNumberOfVersion();
 		long idProject = project.getID();
-		String nameV = realname + " " + numberV;
+		String nameV = project.getName() + " " + numberV;
 		boolean successAdd = this.addVersion(idProject, nameV);
 		if (successAdd) {
 			VersionFunctions verFct = new VersionFunctions();

@@ -6,7 +6,14 @@
 docker-machine env spirals-somca
 eval $(docker-machine env spirals-somca)
 #Delete parasite?
-docker system prune -f
+#docker system prune -f
+
+#Create all empty directory:
+mkdir dockerweb/application
+mkdir dockerTandoori/input
+mkdir dockerTandoori/output
+
+
 #Launch and create the container neo4j
 docker-compose build neoj
 docker-compose up -d neoj
@@ -21,7 +28,7 @@ docker build -t paprika-tandoori dockerTandoori
 
 #Launch Paprika web
 docker-compose build web
-docker-compose up -d web
+docker-compose up web
 
 
 
