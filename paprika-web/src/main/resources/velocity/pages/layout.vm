@@ -1,0 +1,130 @@
+
+
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/index/">Paprika</a>
+  </div>
+  <div class="navbar-left">
+    #if($user)
+    <a class="navbar-brand" href="/index/">$msg.get("INDEX_NAV_AUTH_SUCCEEDED", $user.getUsername())</a>
+    #else
+    <a class="navbar-brand" href="/login/">$msg.get("INDEX_NAV_AUTHEN")</a>
+    #end
+  </div>
+  <!-- /.navbar-header -->
+
+  <ul class="nav navbar-top-links navbar-right">
+    <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        <i class="fa fa-plus fa-fw"></i> <i class="fa fa-caret-down"></i>
+      </a>
+      <ul class="dropdown-menu dropdown-messages">
+        <li>
+          <li><a onclick="infoClick()" href="#" ><i class="fa fa-info fa-fw"></i>$msg.get("INDEX_UL_INFO")</a></li>
+        </li>
+      </ul>
+      <!-- /.dropdown-messages -->
+    </li>
+  </li>
+
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+    </a>
+    <ul class="dropdown-menu dropdown-user">
+      #if($currentUser)
+      <li><a href="#"><i class="fa fa-user fa-fw"></i>$msg.get("INDEX_UL_PROFIL")</a></li>
+      <li><a href="/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("INDEX_UL_SETTINGS")</a></li>
+      <li class="divider"></li>
+      <li><a href="/logout/" ><i class="fa fa-sign-out fa-fw"></i>$msg.get("INDEX_UL_LOGOUT")</a></li>
+      #else
+      <li><a href="/login/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("INDEX_UL_LOGIN")</a></li>
+      <li class="divider"></li>
+      <li><a href="/signUp/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("INDEX_UL_SIGNUP")</a></li>
+      #end
+    </ul>
+    <!-- /.dropdown-user -->
+  </li>
+
+  <!-- /.dropdown -->
+</ul>
+<!-- /.navbar-top-links -->
+
+<div class="navbar-default sidebar" role="navigation">
+  <div class="sidebar-nav navbar-collapse">
+    <ul class="nav" id="side-menu">
+      #if($user)
+      <li class="sidebar-search">
+        <form method="post" style="none" action="/index/">
+          <div class="input-group custom-search-form">
+
+            <input type="text" maxlength="24" pattern=".{3,}" name="project" id="project" class="form-control" placeholder="$msg.get("INDEX_UL_NEWAPP")">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit" id="project" name="for" value="project"><i class="fa fa-plus"></i></button>
+            </span>
+
+          </div>
+        </form>
+      </li>
+      #set ($velocityMenu=0)
+      #foreach($title in $user.getDataProjects())
+      #set($titlename=$title.getName())
+		  #if($titlename.length()>15)
+         #set($titlename="$titlename.substring(0,16)"+"..")
+         #end
+      <li>
+
+        <a href="#" ondblclick="menuclick('02-$velocityMenu')"><i class="fa fa-bar-database fa-fw"></i>$titlename<span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+
+          <li>
+            <a href="#" onclick="menuclick('02-$velocityMenu');return false;">  $msg.get("INDEX_UL_VIEW")</a>
+          </li>
+          <form id="forTitle$velocityMenu" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/index/">
+            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="02-$velocityMenu" name="title" value="$title.getID()"></button>
+          </form>
+
+          #set ($velocityVer=1)
+          #foreach($titleVer in $title.getVersions())
+          #set($titleVername=$titleVer.getName())
+          #set($lengthTV=$titleVername.length())
+          #if($lengthTV>20)
+              #set($minLen=-15+$lengthTV)
+             #set($titleVername=".."+"$titleVername.substring($minLen,$lengthTV)")
+             #end
+          <li>
+            <a href="#" onclick="titleVerClick('03-$velocityMenu$velocityVer');return false;">$titleVername</a>
+          </li>
+          <form style="visibility: hidden; width: 1px; height: 1px" method="post" action="/version/">
+              <input style="visibility: hidden; width: 1px; height: 1px" type="text" name="titleofVer" value="$title.getID()"></input>
+            <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="03-$velocityMenu$velocityVer" name="titleVer" value="$titleVer.getID()"></button>
+          </form>
+          #set ($velocityVer=$velocityVer+1)
+          #end
+
+        </ul>
+
+      </li>
+      #set ($velocityMenu=$velocityMenu+1)
+      #end
+      #end
+      <script>
+      function menuclick(title) {
+        document.getElementById(title).click();
+      }
+      function titleVerClick(titleVer) {
+        document.getElementById(titleVer).click();
+      }
+      </script>
+    </ul>
+  </div>
+</div>
+</nav>
+<!-- jQuery -->
