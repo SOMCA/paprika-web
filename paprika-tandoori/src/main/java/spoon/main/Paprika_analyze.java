@@ -37,8 +37,10 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
 import spoon.Launcher;
+import spoon.functions.VersionFunctions;
 import spoon.main.processor.*;
 import spoon.processing.ProcessInterruption;
+import spoon.utils.neo4j.PaprikaKeyWords;
 
 public class Paprika_analyze {
 	private String url;
@@ -50,9 +52,10 @@ public class Paprika_analyze {
 	private String branch;
 	private String token;
 	private String cloneUrl;
-	private String idNode;
+	private long idNode;
+	private VersionFunctions verFct;
 
-	public Paprika_analyze(String github, String idnode) throws IOException {
+	public Paprika_analyze(String github, long idnode) throws IOException {
 		InputStream is;
 
 		is = new FileInputStream("./info.json");
@@ -81,10 +84,12 @@ public class Paprika_analyze {
 		// so no problem.
 		this.input = "./input/" + this.name;
 		this.out = "./output/" + this.name;
-
+		this.verFct = new VersionFunctions();
 	}
 
 	public void run() {
+		this.verFct.setParameterOnNode(this.idNode,PaprikaKeyWords.ANALYSEINLOAD, "10");
+
 		boolean isContinue;
 		try {
 			isContinue = before();
@@ -95,6 +100,8 @@ public class Paprika_analyze {
 		}
 		if (!isContinue)
 			return;
+		this.verFct.setParameterOnNode(this.idNode,PaprikaKeyWords.ANALYSEINLOAD, "80");
+
 		try {
 			isContinue = after();
 		} catch (IOException e) {
@@ -104,6 +111,10 @@ public class Paprika_analyze {
 
 		if (!isContinue)
 			return;
+		verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.CODEA, "done");
+		verFct.setParameterOnNode(this.idNode, "analyseInLoading", "100");
+		
+		
 	}
 
 	private void remove(String path) throws IOException {
@@ -139,6 +150,9 @@ public class Paprika_analyze {
 			// Go on the new branch.
 			// changeBranch(git);
 			git.close();
+			this.verFct.setParameterOnNode(this.idNode,PaprikaKeyWords.ANALYSEINLOAD, "15");
+
+			
 			if (this.cloneUrl == null)
 				return false;
 
@@ -172,6 +186,8 @@ public class Paprika_analyze {
 		final InterfaceProcessor interfaceProcessor = new InterfaceProcessor();
 		launcher.addProcessor(interfaceProcessor);
 		try {
+			this.verFct.setParameterOnNode(this.idNode,PaprikaKeyWords.ANALYSEINLOAD, "20");
+
 			launcher.run();
 		} catch (ProcessInterruption e) {
 			e.printStackTrace();
@@ -203,6 +219,8 @@ public class Paprika_analyze {
 		try {
 			addRepo(git);
 			commitRepo(git);
+			this.verFct.setParameterOnNode(this.idNode,PaprikaKeyWords.ANALYSEINLOAD, "90");
+
 		} catch (NoFilepatternException e) {
 			e.printStackTrace();
 			git.close();
@@ -215,10 +233,13 @@ public class Paprika_analyze {
 		}
 
 		try {
+			
 			PushCommand push = git.push();
 			push.setRemote("origin").setPushAll()
 					.setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", token)).call();
 			pullCall();
+			this.verFct.setParameterOnNode(this.idNode,PaprikaKeyWords.ANALYSEINLOAD, "95");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			git.close();
