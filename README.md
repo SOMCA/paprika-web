@@ -1,33 +1,38 @@
 # paprika-Project
 
 
-## English:
+## Description:
 
-This open-source project is the Web version of Paprika. This version is cut to two parts.
+This open-source project is the Web version of Paprika. This version is cut to three parts.
 The native Paprika is here: https://github.com/GeoffreyHecht/paprika
 
 The project use Docker and Maven, you need to have installed these functionality for run the project.
 
 
-* paprika-analyze: Part who run the analyze and send data to neo4J database.
+* paprika-analyze: Part who run the analyze with file.apk and send data to neo4J database.
 
 * paprika-web: Part who launch the web page and launch paprika-analyze when it needed.
 
+* paprika-tandoori: Part who run the analyze for GitHub.
 
 
 ## Run: 
 
-For run Paprika-web, you need to compile paprika-analyze and paprika-web per the command:
+For run Paprika-web, you need to compile paprika-analyze, paprika-web ad paprika-Tandoori,CodesmellsAnno per the command:
 >> mvn clean package
 
-Then move new jar of target/file.jar on docker web or dockeranalyze (if analyze.jar or web.jar)
+Then move new jar of target/file.jar on dockerweb,dockeranalyze or dockerTandoori
+CodesmellsAnno.jar go only on dockerTandoori.
+
+If you want use with GitHub:
+You need also have a info.json on the form of : { "token":"token_of_a_bot_account"}
+For have this token, you need to create a GitHub account, then create a token who have access to repo.
 
 When done, you need just to launch:
 $./run.sh
 
 The first run launch always a error you need to:
 go on <address>:7474 for create a small account.  ( address is "localhost"  per default) 
-
 Where the username need to be neo4j(the default) and the password always: paprika
 
 
@@ -45,6 +50,19 @@ Where the username need to be neo4j(the default) and the password always: paprik
 
 ## Bug:
 On the menu->Project, new versions can be inverted with the old, only if 0 versions have be analyzed on the project.
+
+
+
+
+## Requirement of the site:
+* Paprika-analyze:
+** accept only File.apk.
+** Can be very long.
+
+* Paprika-Tandoori 
+** require these Github Link "https://github.com/Snrasha/paprika-web.git" 
+** If you have  two files who have the same name and the same package, theses files will no be analyzed correctly. 
+
 
 
 

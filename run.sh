@@ -5,6 +5,7 @@
 #Connect to the spirals-somca VM
 docker-machine env spirals-somca
 eval $(docker-machine env spirals-somca)
+
 #Delete parasite?
 #docker system prune -f
 

@@ -12,7 +12,6 @@ import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 import spoon.functions.VersionFunctions;
 import spoon.utils.neo4j.PaprikaKeyWords;
 
-
 /**
  * 
  * 
@@ -60,15 +59,20 @@ public class PaprikaTandooriMain {
 			return;
 		VersionFunctions verFct = new VersionFunctions();
 		Paprika_analyze analyze = null;
+
 		try {
 			analyze = new Paprika_analyze(args[0], Long.parseLong(args[1]));
-			verFct.setParameterOnNode(Long.parseLong( args[1]), PaprikaKeyWords.CODEA, "inprogress");
-
-			analyze.run();
 		} catch (IOException e) {
-			verFct.setParameterOnNode(Long.parseLong( args[1]),PaprikaKeyWords.CODEA, "error");
 			e.printStackTrace();
-			return;
+		}
+		if (analyze != null) {
+			verFct.setParameterOnNode(Long.parseLong(args[1]), PaprikaKeyWords.CODEA, "inprogress");
+			if (analyze.run()) {
+				verFct.setParameterOnNode(Long.parseLong(args[1]), PaprikaKeyWords.CODEA, "error");
+			}
+		} else {
+			verFct.setParameterOnNode(Long.parseLong(args[1]), PaprikaKeyWords.CODEA, "error");
+
 		}
 
 	}

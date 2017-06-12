@@ -87,8 +87,6 @@ public class IndexController {
 		if (github != null) {
 			// https://github.com/Snrasha/Tandoori     Format< Ignore the user, probably.
 			String[] cutGithub= github.split("/");
-			for(String str: cutGithub) System.out.println("o ; "+str);
-			
 			boolean badLink= (cutGithub.length != 5)||(!github.startsWith("https://github.com/"))||(!cutGithub[4].endsWith(".git") || cutGithub[4].length()<=4);
 			if (badLink) {
 				System.out.println("Error: The format is https://github.com/User/project.git");
