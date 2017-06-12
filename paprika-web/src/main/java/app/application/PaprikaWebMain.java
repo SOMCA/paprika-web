@@ -93,40 +93,45 @@ public class PaprikaWebMain {
 	}
 
 	/**
-	 * We save data on Neo4j, for relaunch after without problem.
-	 * Do not save the queue, just container who are running.
+	 * We save data on Neo4j, for relaunch after without problem. Do not save
+	 * the queue, just container who are running.
 	 */
 	private static void loadSave() {
-		
-		
+
 		if (containerQueue == null) {
 			// The number of analyze who can be run on same time.
-			String[] containerRun= new String[2];
-			Session session=getSession();
-			StringBuilder command= new StringBuilder("MATCH(n:DataSave) return ");
-			for(int i=0;i<containerRun.length;i++){
-				command.append("n.containerRun"+i+",");
+			String[] containerRun = new String[2];
+			Session session = getSession();
+			StringBuilder command = new StringBuilder("MATCH(n:DataSave) return ");
+			for (int i = 0; i < containerRun.length; i++) {
+				command.append("n.containerRun" + i + ",");
 			}
-			
-			StatementResult result=session.run("MATCH(n:DataSave) return n.containerRun");
-			if(result.hasNext()){
-				Record record=result.next();
-				List<Value> values=record.values();
-				for(int i=0;i<containerRun.length;i++){
-					Value value=values.get(i);
-					if(value!=null && !value.isNull()){
-						System.out.println((value.asString()));
-						containerRun[i]=value.asString();
+
+			StatementResult result = session.run("MATCH(n:DataSave) return n.containerRun");
+			if (result.hasNext()) {
+				Record record = result.next();
+				List<Value> values = record.values();
+				if(!values.isEmpty()){
+				if (values.size() == containerRun.length) {
+					for (int i = 0; i < containerRun.length; i++) {
+						System.out.println(containerRun.length);
+						System.out.println(values.size());
+						Value value = values.get(i);
+						if (value != null && !value.isNull()) {
+							System.out.println((value.asString()));
+							containerRun[i] = value.asString();
+						}
 					}
 				}
-			}else{
-				
+				}
+			} else {
+
 				session.run("CREATE (n:DataSave)");
 			}
 			// The number of Analyze who can be put on the queue.
 			containerQueue = new LinkedBlockingQueue<>(3);
-			timer= new Timer();
-	
+			timer = new Timer();
+
 			PaprikaTimer task = new PaprikaTimer(containerRun);
 			// think to 2 Minutes in reality.
 			timer.schedule(task, 0, 60000); // 1000= 1seconde
@@ -212,6 +217,5 @@ public class PaprikaWebMain {
 	public synchronized static void addVersionOnAnalyze(int value) {
 		PaprikaWebMain.versionOnAnalyze += value;
 	}
-
 
 }

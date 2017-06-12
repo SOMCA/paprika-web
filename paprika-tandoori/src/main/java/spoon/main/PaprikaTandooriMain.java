@@ -9,6 +9,9 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
+import spoon.functions.VersionFunctions;
+import spoon.utils.neo4j.PaprikaKeyWords;
+
 /**
  * 
  * 
@@ -22,7 +25,6 @@ public class PaprikaTandooriMain {
 
 	private PaprikaTandooriMain() {
 	}
-	
 
 	/**
 	 * Prend le nom du container neo4j-praprika et renvoie son adresse.
@@ -50,20 +52,28 @@ public class PaprikaTandooriMain {
 		}
 		return session;
 	}
-	
+
 	public static void main(String[] args) {
+		// First is github link and the second the id of the Version node.
 		if (args.length != 2)
 			return;
-
+		VersionFunctions verFct = new VersionFunctions();
 		Paprika_analyze analyze = null;
+
 		try {
-			analyze = new Paprika_analyze(args[0], args[1]);
-			analyze.run();
+			analyze = new Paprika_analyze(args[0], Long.parseLong(args[1]));
 		} catch (IOException e) {
 			e.printStackTrace();
-			return;
 		}
+		if (analyze != null) {
+			verFct.setParameterOnNode(Long.parseLong(args[1]), PaprikaKeyWords.CODEA, "inprogress");
+			if (analyze.run()) {
+				verFct.setParameterOnNode(Long.parseLong(args[1]), PaprikaKeyWords.CODEA, "error");
+			}
+		} else {
+			verFct.setParameterOnNode(Long.parseLong(args[1]), PaprikaKeyWords.CODEA, "error");
 
+		}
 
 	}
 
