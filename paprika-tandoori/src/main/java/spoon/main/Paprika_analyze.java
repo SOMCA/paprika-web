@@ -36,12 +36,10 @@ import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
+import neo4jBolt.Graph;
 import spoon.Launcher;
 import spoon.functions.VersionFunctions;
-import spoon.main.processor.*;
 import spoon.processing.ProcessInterruption;
-
-import spoon.utils.neo4j.PaprikaKeyWords;
 
 /**
  * Paprika_analyse use multiple library like Git or Github.
@@ -99,7 +97,7 @@ public class Paprika_analyze {
 	}
 
 	private boolean process() {
-		this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "10");
+		this.verFct.setParameterOnNode(this.idNode, Graph.ANALYSEINLOAD, "10");
 
 		boolean isContinue;
 		try {
@@ -111,7 +109,7 @@ public class Paprika_analyze {
 		}
 		if (!isContinue)
 			return false;
-		this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "80");
+		this.verFct.setParameterOnNode(this.idNode, Graph.ANALYSEINLOAD, "80");
 
 		try {
 			isContinue = after();
@@ -132,7 +130,7 @@ public class Paprika_analyze {
 		// deleteRepo();
 
 		boolean flag = this.process();
-		verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.CODEA, "done");
+		verFct.setParameterOnNode(this.idNode, Graph.CODEA, "done");
 		verFct.setParameterOnNode(this.idNode, "analyseInLoading", "100");
 
 		deleteRepo();
@@ -170,7 +168,7 @@ public class Paprika_analyze {
 			Git git = cloneRepo();
 
 			git.close();
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "15");
+			this.verFct.setParameterOnNode(this.idNode, Graph.ANALYSEINLOAD, "15");
 
 			if (this.cloneUrl == null)
 				return false;
@@ -205,7 +203,7 @@ public class Paprika_analyze {
 		final InterfaceProcessor interfaceProcessor = new InterfaceProcessor();
 		launcher.addProcessor(interfaceProcessor);*/
 		try {
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "20");
+			this.verFct.setParameterOnNode(this.idNode, Graph.ANALYSEINLOAD, "20");
 			launcher.run();
 		} catch (ProcessInterruption e) {
 			e.printStackTrace();
@@ -261,7 +259,7 @@ public class Paprika_analyze {
 		try {
 			addRepo(git);
 			commitRepo(git);
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "90");
+			this.verFct.setParameterOnNode(this.idNode, Graph.ANALYSEINLOAD, "90");
 
 		} catch (NoFilepatternException e) {
 			e.printStackTrace();
@@ -280,7 +278,7 @@ public class Paprika_analyze {
 			push.setRemote("origin").setPushAll()
 					.setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", token)).call();
 			pullCall();
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "95");
+			this.verFct.setParameterOnNode(this.idNode, Graph.ANALYSEINLOAD, "95");
 
 		} catch (Exception e) {
 			e.printStackTrace();

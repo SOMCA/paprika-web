@@ -2,10 +2,8 @@ package spoon.main;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,11 +37,11 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
 import entities.PaprikaApp;
+import neo4jBolt.Graph;
+import neo4jBolt.LowNode;
+import neo4jBolt.ModelToGraphBolt;
 import spoon.functions.VersionFunctions;
 import spoon.main.processor.AnnotateProcessor;
-import spoon.utils.neo4j.LowNode;
-import spoon.utils.neo4j.ModelToGraph;
-import spoon.utils.neo4j.PaprikaKeyWords;
 
 public class AnalyzeProcess {
 
@@ -114,21 +112,20 @@ public class AnalyzeProcess {
 			
 			
 			
-			String[] args = { "-i", input, "-o", output, "-n", this.fName, "-a", "android-platforms/", "-k",
-					Long.toString(this.nodeVer.getID()) };
+			String[] args = {input, output, this.fName, "android-platforms/", Long.toString(this.nodeVer.getID()) };
 
-			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.ANALYSEINLOAD, "10");
+			verFct.setParameterOnNode(nodeVer.getID(), Graph.ANALYSEINLOAD, "10");
 			PaprikaApp paprikaapp;
 			paprikaapp = ana.runAnalysis(args);
 
-			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.ANALYSEINLOAD, "50");
+			verFct.setParameterOnNode(nodeVer.getID(), Graph.ANALYSEINLOAD, "50");
 
-			ModelToGraph modelToGraph = new ModelToGraph();
+			ModelToGraphBolt modelToGraph = new ModelToGraphBolt();
 			long idApp = modelToGraph.insertApp(paprikaapp, nodeVer).getID();
 
 			verFct.writeAnalyzeOnVersion(nodeVer, idApp);
 
-			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
+			verFct.setParameterOnNode(nodeVer.getID(), Graph.APPKEY, Long.toString(nodeVer.getID()));
 
 			
 		
@@ -144,7 +141,7 @@ public class AnalyzeProcess {
 		String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
 		verFct.writeQueryOnVersion(nodeVer, keyApp);
 		ana.runQueryMode(args);
-		verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
+		verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "done");
 		verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
 		
 		

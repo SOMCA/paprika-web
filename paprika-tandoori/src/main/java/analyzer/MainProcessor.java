@@ -19,25 +19,31 @@ public class MainProcessor {
     public static PaprikaClass currentClass;
     public static PaprikaMethod currentMethod;
     public static ArrayList<URL> paths;
-    private String input;
-    private String output;
+    private String appPath;
+    private String jarsPath;
     private String sdkPath;
+    
+    
+    public MainProcessor(){
+    	
+    }
 
-    public MainProcessor(String appName, String appVersion, String appKey, String input, String output, String sdkPath ) {
+    public MainProcessor(String appName, String appVersion, String appKey, String appPath, String sdkPath, String jarsPath) {
         this.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, appKey);
-        this.currentClass = null;
-        this.currentMethod = null;
-        this.input = input;
-        this.output = output;
+        currentClass = null;
+        currentMethod = null;
+        this.appPath = appPath;
+        this.jarsPath = jarsPath;
         this.sdkPath = sdkPath;
     }
 
     public void process() {
         Launcher launcher = new Launcher();
-        launcher.addInputResource(input);
+        launcher.addInputResource(appPath);
         launcher.getEnvironment().setNoClasspath(true);
+        File folder = new File(jarsPath);
         try {
-            paths = new ArrayList<URL>();
+            paths = this.listFilesForFolder(folder);
             paths.add(new File(sdkPath).toURI().toURL());
             String[] cl = new String[paths.size()];
             for (int i = 0; i < paths.size(); i++) {
@@ -45,9 +51,6 @@ public class MainProcessor {
                 cl[i] = url.getPath();
             }
             launcher.getEnvironment().setSourceClasspath(cl);
-    		launcher.setSourceOutputDirectory(output);
-    		launcher.getEnvironment().setAutoImports(true);
-
             launcher.buildModel();
             ClassProcessor classProcessor = new ClassProcessor();
             InterfaceProcessor interfaceProcessor =new InterfaceProcessor();

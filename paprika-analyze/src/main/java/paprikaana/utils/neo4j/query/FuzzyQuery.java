@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import paprikaana.utils.neo4j.QueryEngineBolt;
 
 /**
  * Created by Geoffrey Hecht on 17/08/15.

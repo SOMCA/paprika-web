@@ -27,7 +27,6 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
 import paprikaana.application.PaprikaAnalyzeMain;
-import paprikaana.utils.neo4j.QueryEngineBolt;
 
 /**
  * Created by Geoffrey Hecht on 14/08/15.

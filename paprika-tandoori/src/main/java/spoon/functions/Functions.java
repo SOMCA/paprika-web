@@ -2,8 +2,8 @@ package spoon.functions;
 
 import org.neo4j.driver.v1.Session;
 
+import neo4jBolt.Graph;
 import spoon.main.PaprikaTandooriMain;
-import spoon.utils.neo4j.Graph;
 
 
 public abstract class Functions {
@@ -12,7 +12,7 @@ public abstract class Functions {
 
 	public Functions() {
 		this.graph = new Graph();
-		this.session = PaprikaTandooriMain.getSession();
+		this.session = Graph.getSession();
 	}
 	
 

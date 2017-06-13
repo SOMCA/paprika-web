@@ -24,8 +24,6 @@ import java.io.IOException;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 
-import paprikaana.utils.neo4j.QueryEngineBolt;
-
 /**
  * Created by antonin on 16-05-03.
  */

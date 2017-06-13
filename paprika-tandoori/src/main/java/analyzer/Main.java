@@ -2,8 +2,7 @@ package analyzer;
 
 import entities.*;
 import metrics.MetricsCalculator;
-
-import neo4j.*;
+import neo4jBolt.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.*;
 

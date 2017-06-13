@@ -5,70 +5,37 @@ import java.io.IOException;
 import org.neo4j.cypher.CypherException;
 
 import analyzer.GraphCreator;
-import analyzer.MainProcessor;
 import entities.PaprikaApp;
 import entities.PaprikaLibrary;
 import metrics.MetricsCalculator;
-import neo4j.*;
+import neo4jBolt.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
-import spoon.utils.neo4j.QueryEngineBolt;
 
 
 public class Analyse {
 
 	public PaprikaApp runAnalysis(String[] args) {
-		ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
-		Subparsers subparsers = parser.addSubparsers().dest("sub_command");
-
-		Subparser analyseParser = subparsers.addParser("analyse").help("Analyse an app");
-        analyseParser.addArgument("-i","--input").help("Path of the input folder");
-        analyseParser.addArgument("-o","--output").help("Path of the ouput folder");
-        analyseParser.addArgument("-a", "--androidJar").required(true).help("Path to android platform jar");
-        analyseParser.addArgument("-n", "--name").required(true).help("Name of the application");
-        analyseParser.addArgument("-k", "--key").required(true).help("sha256 of the apk used as identifier");
-        analyseParser.addArgument("-l", "--libs").help("List of the external libs used by the apps (separated by :)");
-
-
-		Namespace res=null;
-		try {
-		 res = parser.parseArgs(args);
-		} catch (ArgumentParserException e) {
-		}
-
-		return under_runAnalysis(res);
-
-	}
-	
-	 public  PaprikaApp under_runAnalysis(Namespace arg){
 	        System.out.println("Collecting metrics");
-	        String input = arg.getString("input");
-	        String output = arg.getString("output");
-	        String name = arg.getString("name");
-	        String version = arg.getString("version");
-	        String key = arg.getString("key");
-	        String sdkPath = arg.getString("androidJar");
-	        String[] libs = arg.getString("libs").split(":");
-	        MainProcessor mainProcessor = new MainProcessor(name, version, key, input,output, sdkPath);
+	        String input = args[0];
+	        String output =  args[1];
+	        String name =  args[2];
+	        String sdkPath =  args[3];
+	        String key =  args[4];
+	        MainProcessorBolt mainProcessor = new MainProcessorBolt(name,"1.0", key, input,output, sdkPath);
 	        mainProcessor.process();
-	        GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
+	        GraphCreator graphCreator = new GraphCreator(MainProcessorBolt.currentApp);
 	        graphCreator.createClassHierarchy();
 	        graphCreator.createCallGraph();
-	        if(libs !=null)
-	        {
-	            for(String lib : libs){
-	                addLibrary(MainProcessor.currentApp,lib);
-	            }
-	        }
-	        MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
-	        System.out.println("Saving into database "+arg.getString("database"));
+
+	        MetricsCalculator.calculateAppMetrics(MainProcessorBolt.currentApp);
 	        System.out.println("Done");
 	        
-	        return MainProcessor.currentApp;
+	        return MainProcessorBolt.currentApp;
 	    }
 
 

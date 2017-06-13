@@ -1,18 +1,10 @@
 package spoon.main;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
-
+import neo4jBolt.Graph;
+import neo4jBolt.LowNode;
 import spoon.functions.VersionFunctions;
-import spoon.utils.neo4j.LowNode;
-import spoon.utils.neo4j.PaprikaKeyWords;
 
 /**
  * 
@@ -22,38 +14,10 @@ import spoon.utils.neo4j.PaprikaKeyWords;
  */
 public class PaprikaTandooriMain {
 
-	private static Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
-			AuthTokens.basic("neo4j", "paprika"));
-
 	private PaprikaTandooriMain() {
 	}
 
-	/**
-	 * Prend le nom du container neo4j-praprika et renvoie son adresse.
-	 * 
-	 * @return
-	 */
-	private static String getHostName() {
-		try {
-			String str = InetAddress.getByName("neo4j-paprika").getHostAddress();
-			return str;
-		} catch (final Exception e) {
-			return "localhost";
-		}
-	}
-
-	public static Session getSession() {
-		Session session = null;
-
-		try {
-			session = driver.session();
-		} catch (ServiceUnavailableException e) {
-			driver.close();
-			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687", AuthTokens.basic("neo4j", "paprika"));
-			session = driver.session();
-		}
-		return session;
-	}
+	
 
 	public static void main(String[] args) {
 		// 0 : fname
@@ -64,7 +28,7 @@ public class PaprikaTandooriMain {
 			return;
 
 		String fName = args[0];
-		LowNode nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
+		LowNode nodeVer = new LowNode(Graph.VERSIONLABEL);
 		nodeVer.setId(Long.parseLong(args[1]));
 
 		String github = args[2];
@@ -74,10 +38,10 @@ public class PaprikaTandooriMain {
 		AnalyzeProcess anaThread;
 		try {
 			anaThread = new AnalyzeProcess(fName, nodeVer, github);
-			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "inprogress");
+			verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "inprogress");
 			anaThread.run();
 		} catch (IOException e) {
-			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "error");
+			verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "error");
 		}
 
 		// VersionFunctions verFct = new VersionFunctions();
@@ -90,14 +54,14 @@ public class PaprikaTandooriMain {
 		// }
 		// if (analyze != null) {
 		// verFct.setParameterOnNode(Long.parseLong(args[1]),
-		// PaprikaKeyWords.CODEA, "inprogress");
+		// Graph.CODEA, "inprogress");
 		// if (analyze.run()) {
 		// verFct.setParameterOnNode(Long.parseLong(args[1]),
-		// PaprikaKeyWords.CODEA, "error");
+		// Graph.CODEA, "error");
 		// }
 		// } else {
 		// verFct.setParameterOnNode(Long.parseLong(args[1]),
-		// PaprikaKeyWords.CODEA, "error");
+		// Graph.CODEA, "error");
 		//
 		// }
 

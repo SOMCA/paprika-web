@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.neo4j.driver.v1.Session;
 
 import paprikaana.application.PaprikaAnalyzeMain;
-import paprikaana.utils.neo4j.QueryEngineBolt;
 
 /**
  * Created by Geoffrey Hecht on 17/08/15.

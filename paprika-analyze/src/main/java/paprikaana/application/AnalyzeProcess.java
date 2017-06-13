@@ -4,8 +4,8 @@ package paprikaana.application;
 import paprikaana.entities.PaprikaApp;
 import paprikaana.functions.VersionFunctions;
 import paprikaana.utils.neo4j.LowNode;
-import paprikaana.utils.neo4j.ModelToGraphBolt;
 import paprikaana.utils.neo4j.PaprikaKeyWords;
+import paprikaana.utils.neo4j.query.ModelToGraphBolt;
 
 public class AnalyzeProcess {
 
