@@ -132,6 +132,7 @@ public class PaprikaTimer extends TimerTask {
 
 	private String launchContainer(DockerClient docker) {
 		String newid = null;
+		boolean githubok=false;
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		if (PaprikaWebMain.getVersionOnAnalyze() < this.parallelanalyzeMax) {
 			String[] otherStrContainerConfig = PaprikaWebMain.getContainerqueue().poll();
@@ -140,7 +141,8 @@ public class PaprikaTimer extends TimerTask {
 				HostConfig hostConfig = null;
 				ContainerConfig otherContainerConfig = null;
 				// Github
-				if (otherStrContainerConfig.length == 5) {
+				if (otherStrContainerConfig.length == 6) {
+					githubok=true;
 					hostConfig = HostConfig.builder().networkMode("paprikaweb_default")
 							.links("neo4j-paprika", "web-paprika").build();
 
@@ -161,7 +163,7 @@ public class PaprikaTimer extends TimerTask {
 					creation = docker.createContainer(otherContainerConfig);
 
 					newid = creation.id();
-					facade.setParameterOnNode(otherStrContainerConfig[otherStrContainerConfig.length - 1],
+					facade.setParameterOnNode(otherStrContainerConfig[otherStrContainerConfig.length - (githubok?2:1)],
 							"idContainer", newid);
 
 					docker.startContainer(newid);

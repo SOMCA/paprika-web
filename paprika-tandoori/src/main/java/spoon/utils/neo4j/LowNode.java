@@ -27,7 +27,6 @@ public class LowNode {
 		this.label = label;
 		this.map = new HashMap<>();
 		this.id = -1;
-
 	}
 
 	public String getLabel() {

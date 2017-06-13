@@ -398,8 +398,8 @@ public final class PaprikaFacade {
 			String github = this.getParameter(idNode, "GitHub");
 			boolean isGitHub = github != null;
 			if (isGitHub) {
-				// length 5
-				command = "java -jar Paprika-Tandoori.jar " + github + " " + Long.toString(idNode);
+				// length 6
+				command = "java -jar Paprika-Tandoori.jar " + fname + " " + Long.toString(idNode) + " " + github;
 			} else {
 				// length 7
 				command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " " + project + " "
@@ -616,7 +616,7 @@ public final class PaprikaFacade {
 	 * @param linkGithub
 	 *            link of the github for the download the source code
 	 */
-	public void addGithub(Project project,String linkGithub) {
+	public void addGithub(Project project, String linkGithub) {
 
 		String numberV = project.getNumberOfVersion();
 		long idProject = project.getID();

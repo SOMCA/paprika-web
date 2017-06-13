@@ -84,7 +84,6 @@ public class AnalyzeProcess {
 			PaprikaAnalyzeMain.LOGGER.error("runPartAnalyse: AnalyseException", e);
 			throw new AnalyseException();
 		}
-
 	}
 
 	private void runPartQuery(Analyse ana) {

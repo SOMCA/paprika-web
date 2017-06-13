@@ -2,8 +2,10 @@ package spoon.main;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,130 +38,68 @@ import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
-import spoon.Launcher;
+import entities.PaprikaApp;
 import spoon.functions.VersionFunctions;
-import spoon.main.processor.*;
-import spoon.processing.ProcessInterruption;
-
+import spoon.main.processor.AnnotateProcessor;
+import spoon.utils.neo4j.LowNode;
+import spoon.utils.neo4j.ModelToGraph;
 import spoon.utils.neo4j.PaprikaKeyWords;
 
-/**
- * Paprika_analyse use multiple library like Git or Github.
- * 
- * Egit for fork.
- * HttpsRequest for delete and pull.
- * JGit for clone and push
- * 
- * @author guillaume
- *
- */
-public class Paprika_analyze {
-	private String url;
-	private String input;
-	private String out;
-	private String name;
-	private String nameUser;
+public class AnalyzeProcess {
+
+	private String fName;
+	private LowNode nodeVer;
+	private String github;
 	private final String nameBot = "SnrashaBot";
-	private String branch;
 	private String token;
 	private String cloneUrl;
-	private long idNode;
-	private VersionFunctions verFct;
+	private String input;
+	private String output;
+	private String nameDir;
+	private String nameUser;
+	private String branch;
 
-	public Paprika_analyze(String github, long idnode) throws IOException {
+	public AnalyzeProcess(String fName, LowNode nodeVer, String github) throws IOException {
+		this.github = github;
 
+		this.fName = fName;
+		this.nodeVer = nodeVer;
+
+		String[] split = github.split("/");
+
+		this.nameDir = split[4].substring(0, split[4].length() - 4);
+
+		this.nameUser = split[3];
+		this.input = "./input/" + this.nameDir;
+		this.output = "./output/" + this.nameDir;
+
+		
+		
+		
 		InputStream is;
 		is = new FileInputStream("./info.json");
 		String jsonTxt;
 		jsonTxt = IOUtils.toString(is);
-		// System.out.println(jsonTxt);
 		JSONObject json = new JSONObject(jsonTxt);
 		this.token = json.getString("token");
 
-		if (github == null) {
-			this.url = "https://github.com/Snrasha/spoon-test.git";
-
-		} else {
-			// The link is checked on Paprika-web container, so useless to
-			// retry, no?
-			this.url = github;
-		}
-		this.idNode = idnode;
-
-		String[] split = url.split("/");
-
-		this.name = split[4].substring(0, split[4].length() - 4);
-
-		this.nameUser = split[3];
-		// The container is unique per analyze and do not use a shared volume,
-		// so no problem.
-		this.input = "./input/" + this.name;
-		this.out = "./output/" + this.name;
-		this.verFct = new VersionFunctions();
 	}
 
-	private boolean process() {
-		this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "10");
-
-		boolean isContinue;
-		try {
-			isContinue = before();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (!isContinue)
-			return false;
-		this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "80");
-
-		try {
-			isContinue = after();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (!isContinue)
-			return false;
-		return true;
-	}
-
-	/**
-	 * Than process fail or success, this is not important, we finish the
-	 * analyse.
-	 */
-	public boolean run() {
-		// deleteRepo();
-
-		boolean flag = this.process();
-		verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.CODEA, "done");
-		verFct.setParameterOnNode(this.idNode, "analyseInLoading", "100");
-
-		deleteRepo();
-		return flag;
+	public void run() {
+		Analyse ana = new Analyse();
+		this.runPartAnalyse(ana);
+		this.runPartQuery(ana);
 
 	}
 
-	private void remove(String path) throws IOException {
-		FileUtils.deleteDirectory(new File(path));
-	}
-
-	private Git cloneRepo() throws InvalidRemoteException, TransportException, GitAPIException {
-		Set<String> set = new HashSet<>();
-		set.add("refs/heads/" + this.branch);
-		CloneCommand clone = Git.cloneRepository();
-		return clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", this.token))
-				.setDirectory(new File(input)).setURI(this.cloneUrl).setBranchesToClone(set)
-				.setBranch("refs/heads/" + this.branch).call();
-	}
-
-	private boolean before() throws IOException {
+	private void runPartAnalyse(Analyse ana) {
+		VersionFunctions verFct = new VersionFunctions();
 
 		try {
 
 			RepositoryService service = new RepositoryService();
 			service.getClient().setCredentials("token", this.token);
-			RepositoryId toBeForked = new RepositoryId(this.nameUser, this.name);
+			RepositoryId toBeForked = new RepositoryId(this.nameUser, this.nameDir);
 
 			Repository repo = service.forkRepository(toBeForked);
 
@@ -170,49 +110,65 @@ public class Paprika_analyze {
 			Git git = cloneRepo();
 
 			git.close();
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "15");
+			
+			
+			
+			
+			String[] args = { "-i", input, "-o", output, "-n", this.fName, "-a", "android-platforms/", "-k",
+					Long.toString(this.nodeVer.getID()) };
 
-			if (this.cloneUrl == null)
-				return false;
+			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.ANALYSEINLOAD, "10");
+			PaprikaApp paprikaapp;
+			paprikaapp = ana.runAnalysis(args);
 
-		} catch (InvalidRemoteException e) {
-			e.printStackTrace();
-			return false;
-		} catch (TransportException e) {
-			e.printStackTrace();
-			return false;
-		} catch (GitAPIException e) {
-			e.printStackTrace();
-			return false;
+			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.ANALYSEINLOAD, "50");
 
+			ModelToGraph modelToGraph = new ModelToGraph();
+			long idApp = modelToGraph.insertApp(paprikaapp, nodeVer).getID();
+
+			verFct.writeAnalyzeOnVersion(nodeVer, idApp);
+
+			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
+
+			
+		
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		// Remove the out folder
-		remove(this.out);
+	}
 
-		// Launch Paprika-Spoon
-		final Launcher launcher = new Launcher();
-		launcher.getEnvironment().setNoClasspath(true);
+	private void runPartQuery(Analyse ana) {
+		VersionFunctions verFct = new VersionFunctions();
 
-		launcher.addInputResource(this.input);
-
-		launcher.setSourceOutputDirectory(this.out);
-		launcher.getEnvironment().setAutoImports(true);
-/*
-		final MethodProcessor methodprocessor = new MethodProcessor();
-		launcher.addProcessor(methodprocessor);
-		final ClassProcessor classprocessor = new ClassProcessor();
-		launcher.addProcessor(classprocessor);
-		final InterfaceProcessor interfaceProcessor = new InterfaceProcessor();
-		launcher.addProcessor(interfaceProcessor);*/
+		long keyApp = nodeVer.getID();
+		String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
+		verFct.writeQueryOnVersion(nodeVer, keyApp);
+		ana.runQueryMode(args);
+		verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
+		verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
+		
+		
+		
+		AnnotateProcessor annote= new AnnotateProcessor(this.input,this.output);
+		annote.process();
 		try {
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "20");
-			launcher.run();
-		} catch (ProcessInterruption e) {
+			after();
+		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
-
 		}
-		return true;
+		deleteRepo();
+		
+	}
+	
+	
+
+	private Git cloneRepo() throws InvalidRemoteException, TransportException, GitAPIException {
+		Set<String> set = new HashSet<>();
+		set.add("refs/heads/" + this.branch);
+		CloneCommand clone = Git.cloneRepository();
+		return clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", this.token))
+				.setDirectory(new File(input)).setURI(this.cloneUrl).setBranchesToClone(set)
+				.setBranch("refs/heads/" + this.branch).call();
 	}
 
 	private void addRepo(Git git) throws NoFilepatternException, GitAPIException {
@@ -236,7 +192,7 @@ public class Paprika_analyze {
 
 		DirectorySearch fileSearch = new DirectorySearch(".java");
 		Map<String, String> javaInput = fileSearch.run(this.input);
-		Map<String, String> javaOutput = fileSearch.run(this.out);
+		Map<String, String> javaOutput = fileSearch.run(this.output);
 		int count = javaInput.size();
 		if (count == 0) {
 			System.out.println("\nNo result found!");
@@ -261,8 +217,6 @@ public class Paprika_analyze {
 		try {
 			addRepo(git);
 			commitRepo(git);
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "90");
-
 		} catch (NoFilepatternException e) {
 			e.printStackTrace();
 			git.close();
@@ -280,7 +234,6 @@ public class Paprika_analyze {
 			push.setRemote("origin").setPushAll()
 					.setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", token)).call();
 			pullCall();
-			this.verFct.setParameterOnNode(this.idNode, PaprikaKeyWords.ANALYSEINLOAD, "95");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -288,13 +241,7 @@ public class Paprika_analyze {
 			return false;
 		}
 		git.close();
-		try {
-			remove(out);
-			remove(input);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+
 
 		return true;
 	}
@@ -303,7 +250,7 @@ public class Paprika_analyze {
 	 * Delete a repositery if he exist of the Paprika_analyze
 	 */
 	private void deleteRepo() {
-		String url = "https://api.github.com/repos/" + this.nameBot + "/" + this.name;
+		String url = "https://api.github.com/repos/" + this.nameBot + "/" + this.nameDir;
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpDelete delete = new HttpDelete(url);
 		delete.addHeader("Authorization", "token " + this.token);
@@ -316,7 +263,7 @@ public class Paprika_analyze {
 	}
 
 	private void pullCall() throws ClientProtocolException, IOException {
-		String url = "https://api.github.com/repos/" + this.nameUser + "/" + this.name + "/pulls";
+		String url = "https://api.github.com/repos/" + this.nameUser + "/" + this.nameDir + "/pulls";
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(url);
 
