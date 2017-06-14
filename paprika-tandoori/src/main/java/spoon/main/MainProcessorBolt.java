@@ -22,7 +22,6 @@ public class MainProcessorBolt extends MainProcessor {
 
     private String input;
     private String output;
-    private String sdkPath;
     
     public MainProcessorBolt(){
     	

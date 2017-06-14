@@ -1,5 +1,8 @@
 Put the Paprika-Tandoori.jar here.
 
+You need to download the code smell annotations library here:
+https://github.com/SnrashaBot/CSAnnotations.git
+
 Then:
 *Put also the CodeSmellsAnnotations.jar
 

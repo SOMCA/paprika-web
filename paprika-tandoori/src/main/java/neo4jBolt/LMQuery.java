@@ -32,6 +32,8 @@ import org.neo4j.driver.v1.Transaction;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 /**
  * Created by Geoffrey Hecht on 14/08/15.
+ * 
+ * Modified per Guillaume Willefert
  */
 public class LMQuery extends FuzzyQuery{
     protected static double high = 17;
@@ -50,7 +52,7 @@ public class LMQuery extends FuzzyQuery{
     	StatementResult result;
         try (Transaction tx = this.session.beginTransaction()) {
         	
-            String query = "MATCH (m:Method {app_key:"+queryEngine.getKeyApp()+"} ) WHERE m.number_of_instructions >" + veryHigh + " RETURN m as nod,m.app_key as app_key";
+            String query = "MATCH (m:Method {app_key:"+queryEngine.getKeyApp()+"} ) WHERE m.number_of_Lines >" + veryHigh + " RETURN m as nod,m.app_key as app_key";
             if(details){
                 query += ",m.full_name as full_name";
             }else{
@@ -65,7 +67,7 @@ public class LMQuery extends FuzzyQuery{
     public void executeFuzzy(boolean details) throws IOException {
     	StatementResult result;
             try (Transaction tx = this.session.beginTransaction()) {
-                String query =  "MATCH (m:Method {app_key:"+queryEngine.getKeyApp()+"} ) WHERE m.number_of_instructions >" + high + "  RETURN m as nod,m.app_key as app_key,m.number_of_instructions as number_of_instructions";
+                String query =  "MATCH (m:Method {app_key:"+queryEngine.getKeyApp()+"} ) WHERE m.number_of_Lines >" + high + "  RETURN m as nod,m.app_key as app_key,m.number_of_Lines as number_of_Lines";
                 if(details){
                     query += ",m.full_name as full_name";
                 }
@@ -77,12 +79,12 @@ public class LMQuery extends FuzzyQuery{
                 FunctionBlock fb = this.fuzzyFunctionBlock();
                 while(result.hasNext()){
                     Map<String, Object> res = new HashMap<>(result.next().asMap());
-                    cc =((Long)res.get("number_of_instructions")).intValue();
+                    cc =((Long)res.get("number_of_Lines")).intValue();
 
                     if(cc >= veryHigh){
                         res.put("fuzzy_value", 1);
                     }else {
-                        fb.setVariable("number_of_instructions",cc);
+                        fb.setVariable("number_of_Lines",cc);
                         fb.evaluate();
 
                         res.put("fuzzy_value", fb.getVariable("res").getValue());

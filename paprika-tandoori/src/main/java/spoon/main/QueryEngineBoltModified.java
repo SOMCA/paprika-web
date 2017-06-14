@@ -31,13 +31,19 @@ import spoon.main.processor.AnnotateProcessor;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Modified for capture all code smells.
+ * 
+ * @author guillaume
+ *
+ */
 public class QueryEngineBoltModified extends QueryEngineBolt {
-
-	
 
 	public QueryEngineBoltModified(long keyApp) {
 		super(keyApp);
 	}
+
+	@Override
 	public void resultToCSV(StatementResult result, String nameQuery) throws IOException {
 		StatementResult result_query;
 		try (Transaction tx = this.session.beginTransaction()) {
@@ -98,7 +104,10 @@ public class QueryEngineBoltModified extends QueryEngineBolt {
 				}
 
 			}
-
+			System.out.println("***");
+			System.out.println(nameQuery);
+			System.out.println(hashset.toString());
+			System.out.println("***");
 			AnnotateProcessor.codesmells.put(nameQuery, hashset);
 
 			nodeQueryData.addParameter("number", number);
@@ -107,6 +116,8 @@ public class QueryEngineBoltModified extends QueryEngineBolt {
 			tx.success();
 		}
 	}
+
+	@Override
 	public void resultToCSV(List<Map> rows, String nameQuery) throws IOException {
 		StatementResult result_query;
 		try (Transaction tx = this.session.beginTransaction()) {
@@ -144,6 +155,7 @@ public class QueryEngineBoltModified extends QueryEngineBolt {
 			long number = 0;
 			for (Map<String, Object> row : rows) {
 
+				System.out.println(row.keySet().toString());
 				val = row.get("nod");
 				if (val != null) {
 					// si la colonne est de nom node, alors on ajoute une
@@ -161,19 +173,23 @@ public class QueryEngineBoltModified extends QueryEngineBolt {
 				}
 				val = row.get("full_name");
 				if (val != null) {
-					String name = (String)val;
+					String name = (String) val;
 					hashset.add(name);
 				}
 
 			}
 			AnnotateProcessor.codesmells.put(nameQuery, hashset);
 
+			System.out.println("***");
+			System.out.println(nameQuery);
+			System.out.println(hashset.toString());
+			System.out.println("***");
+			
 			nodeQueryData.addParameter("number", number);
 			tx.run(this.graph.set(nodeFastRel, nodeQueryData));
 
 			tx.success();
 		}
 	}
-
 
 }

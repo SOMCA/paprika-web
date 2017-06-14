@@ -21,7 +21,7 @@ public class MainProcessor {
     public static ArrayList<URL> paths;
     private String appPath;
     private String jarsPath;
-    private String sdkPath;
+    protected String sdkPath;
     
     
     public MainProcessor(){

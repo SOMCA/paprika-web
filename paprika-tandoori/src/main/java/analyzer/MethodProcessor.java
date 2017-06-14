@@ -38,10 +38,8 @@ public class MethodProcessor {
         int numberOfDeclaredLocals = ctMethod.getElements(new TypeFilter<CtLocalVariable>(CtLocalVariable.class)).size();
         
 
-        int numberOfLine=ctMethod.getPosition().getSourceEnd() - ctMethod.getPosition().getSourceStart();
-
+        paprikaMethod.setNumberOfLines(ctMethod.getPosition().getEndLine()- ctMethod.getPosition().getLine());
         
-        paprikaMethod.setNumberOfLines(numberOfLine);
         handleUsedVariables(ctMethod, paprikaMethod);
         handleInvocations(ctMethod, paprikaMethod);
         paprikaMethod.setComplexity(getComplexity(ctMethod));

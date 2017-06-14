@@ -87,7 +87,7 @@
 		</dependency>
 		<dependency>
 			<groupId>codesmells.annotations</groupId>
-			<artifactId>codeSmellsAnno</artifactId>
+			<artifactId>CSAnnotations</artifactId>
 			<version>1</version>
 		</dependency>
 		<dependency>

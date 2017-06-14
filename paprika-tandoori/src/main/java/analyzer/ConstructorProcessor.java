@@ -37,7 +37,7 @@ public class ConstructorProcessor {
             position++;
         }
         int numberOfDeclaredLocals = ctConstructor.getElements(new TypeFilter<CtLocalVariable>(CtLocalVariable.class)).size();
-        paprikaMethod.setNumberOfLines(ctConstructor.getPosition().getSourceEnd() - ctConstructor.getPosition().getSourceStart());
+        paprikaMethod.setNumberOfLines(ctConstructor.getPosition().getEndLine() - ctConstructor.getPosition().getLine());
         paprikaMethod.setConstructor(true);
         handleUsedVariables(ctConstructor, paprikaMethod);
         handleInvocations(ctConstructor, paprikaMethod);

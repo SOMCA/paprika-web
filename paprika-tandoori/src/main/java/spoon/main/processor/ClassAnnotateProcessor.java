@@ -23,7 +23,7 @@ public class ClassAnnotateProcessor extends AbstractProcessor<CtClass> {
 		
 		blobDetection(element, qualifiedName,"BLOB");
 		blobDetection(element, qualifiedName,"BLOB_NO_FUZZY");
-		
+	
 		
 		processMethods(element,qualifiedName);
 	}
@@ -31,6 +31,7 @@ public class ClassAnnotateProcessor extends AbstractProcessor<CtClass> {
 	private void blobDetection(CtClass element,String qualifiedName,String codesmell) {
 		Set<String> valueSet=AnnotateProcessor.codesmells.get(codesmell);
 		if (valueSet!=null && valueSet.contains(qualifiedName)) {
+		
 			Class<codesmells.annotations.Blob> annotationType = codesmells.annotations.Blob.class;
 			AnnotationFactory factory = new AnnotationFactory(element.getFactory());
 			factory.annotate(element, annotationType);

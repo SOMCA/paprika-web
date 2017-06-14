@@ -117,7 +117,7 @@ public class PaprikaTimer extends TimerTask {
 					}
 					if (needUpdate) {
 						System.out.println("apply Datasave " + i);
-						tx.run("MATCH(n:DataSave) SET n.containerRun" + i + "=\"" + this.containerRun[i]);
+						tx.run("MATCH(n:DataSave) SET n.containerRun" + i + "=\"" + this.containerRun[i]+"\"");
 					}
 				}
 			}

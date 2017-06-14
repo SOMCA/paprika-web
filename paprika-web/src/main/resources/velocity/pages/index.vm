@@ -147,7 +147,7 @@
               <a href="#" id="a_text">
                 <span class="pull-left">
                   <form id="formuploadVersiongithub" method="post" action="/index/">
-                    <input type="text" name="github" id="github" placeholder="Or:gitHub link"required></input>
+                    <input type="text" name="github" id="github" placeholder="GitHub link"required></input>
                     <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitgithubversion">
                     </button>
                   </form>
@@ -209,7 +209,7 @@
         </div>
 
         #end
-      
+
       </div>
 
       <!-- /.row -->

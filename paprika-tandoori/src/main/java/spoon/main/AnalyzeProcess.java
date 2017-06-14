@@ -47,7 +47,6 @@ public class AnalyzeProcess {
 
 	private String fName;
 	private LowNode nodeVer;
-	private String github;
 	private final String nameBot = "SnrashaBot";
 	private String token;
 	private String cloneUrl;
@@ -58,7 +57,6 @@ public class AnalyzeProcess {
 	private String branch;
 
 	public AnalyzeProcess(String fName, LowNode nodeVer, String github) throws IOException {
-		this.github = github;
 
 		this.fName = fName;
 		this.nodeVer = nodeVer;
@@ -69,16 +67,14 @@ public class AnalyzeProcess {
 
 		this.nameUser = split[3];
 		this.input = "./input/" + this.nameDir;
-		this.output = "./output/" + this.nameDir;
+		this.output = "./output/" +this.nameDir;
 
-		
-		
-		
 		InputStream is;
 		is = new FileInputStream("./info.json");
 		String jsonTxt;
 		jsonTxt = IOUtils.toString(is);
 		JSONObject json = new JSONObject(jsonTxt);
+		
 		this.token = json.getString("token");
 
 	}
@@ -94,13 +90,13 @@ public class AnalyzeProcess {
 		VersionFunctions verFct = new VersionFunctions();
 
 		try {
+			deleteRepo();
 
 			RepositoryService service = new RepositoryService();
 			service.getClient().setCredentials("token", this.token);
 			RepositoryId toBeForked = new RepositoryId(this.nameUser, this.nameDir);
-
 			Repository repo = service.forkRepository(toBeForked);
-
+			
 			this.branch = repo.getMasterBranch();
 			this.cloneUrl = repo.getCloneUrl();
 			System.out.println(this.cloneUrl);
@@ -108,11 +104,8 @@ public class AnalyzeProcess {
 			Git git = cloneRepo();
 
 			git.close();
-			
-			
-			
-			
-			String[] args = {input, output, this.fName, "android-platforms/", Long.toString(this.nodeVer.getID()) };
+
+			String[] args = { input, output, this.fName, "android-platforms/", Long.toString(this.nodeVer.getID()) };
 
 			verFct.setParameterOnNode(nodeVer.getID(), Graph.ANALYSEINLOAD, "10");
 			PaprikaApp paprikaapp;
@@ -127,8 +120,6 @@ public class AnalyzeProcess {
 
 			verFct.setParameterOnNode(nodeVer.getID(), Graph.APPKEY, Long.toString(nodeVer.getID()));
 
-			
-		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -143,10 +134,8 @@ public class AnalyzeProcess {
 		ana.runQueryMode(args);
 		verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "done");
 		verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
-		
-		
-		
-		AnnotateProcessor annote= new AnnotateProcessor(this.input,this.output);
+
+		AnnotateProcessor annote = new AnnotateProcessor(this.input, this.output);
 		annote.process();
 		try {
 			after();
@@ -154,15 +143,20 @@ public class AnalyzeProcess {
 			e.printStackTrace();
 		}
 		deleteRepo();
-		
+
 	}
-	
-	
 
 	private Git cloneRepo() throws InvalidRemoteException, TransportException, GitAPIException {
 		Set<String> set = new HashSet<>();
 		set.add("refs/heads/" + this.branch);
 		CloneCommand clone = Git.cloneRepository();
+		/*
+		 * clone.setCredentialsProvider(new
+		 * UsernamePasswordCredentialsProvider("token", this.token));
+		 * clone.setDirectory(new File(input)); clone.setURI(this.cloneUrl);
+		 * clone.setBranchesToClone(set); clone.setBranch("refs/heads/" +
+		 * this.branch);
+		 */
 		return clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", this.token))
 				.setDirectory(new File(input)).setURI(this.cloneUrl).setBranchesToClone(set)
 				.setBranch("refs/heads/" + this.branch).call();
@@ -239,7 +233,6 @@ public class AnalyzeProcess {
 		}
 		git.close();
 
-
 		return true;
 	}
 
@@ -254,7 +247,6 @@ public class AnalyzeProcess {
 		try {
 			client.execute(delete);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -266,9 +258,10 @@ public class AnalyzeProcess {
 
 		post.addHeader("Authorization", "token " + this.token);
 
-		StringEntity params = new StringEntity("{ \"title\": \"Paprika Analyze\","
-				+ "\"body\": \"Do not merge! Look just annotations, then close!\"," + "\"head\": \"" + this.nameBot
-				+ ":" + this.branch + "\"," + "\"base\": \"" + "master" + "\" }", ContentType.APPLICATION_JSON);
+		String text = "Do not merge! Look just annotations, then close! You can merge but you need the annotations of library here on the search: SnrashaBot CSAnnotations  ";
+ 
+		StringEntity params = new StringEntity("{\"title\":\"Paprika Analyze\",\"body\":\""+text+"\",\"head\":\""
+				+ this.nameBot + ":" + this.branch + "\",\"base\":\"master\"}", ContentType.APPLICATION_JSON);
 		post.setEntity(params);
 		client.execute(post);
 

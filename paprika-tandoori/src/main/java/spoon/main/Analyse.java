@@ -119,9 +119,9 @@ public class Analyse {
 	}
 	
 	public void queryMode(Namespace arg) throws IOException {
-		QueryEngineBolt queryEngine = new QueryEngineBolt(Long.parseLong(arg.getString("key")));
+		QueryEngineBoltModified queryEngine = new QueryEngineBoltModified(Long.parseLong(arg.getString("key")));
 		String request = arg.get("request");
-		Boolean details = arg.get("details");
+		Boolean details = true;
 		switch (request) {
 		case "STATS":
 			launchStats(queryEngine);

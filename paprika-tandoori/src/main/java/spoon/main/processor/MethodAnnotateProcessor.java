@@ -24,7 +24,8 @@ public class MethodAnnotateProcessor {
 	private void getterSetterDetection(CtMethod element,String qualifiedName,String codesmells) {
 		Set<String> valueSet=AnnotateProcessor.codesmells.get(codesmells);
 		if (valueSet!=null && valueSet.contains(qualifiedName)) {
-			Class<codesmells.annotations.Blob> annotationType = codesmells.annotations.Blob.class;
+			System.out.println("true");
+			Class<codesmells.annotations.Igs> annotationType = codesmells.annotations.Igs.class;
 			AnnotationFactory factory = new AnnotationFactory(element.getFactory());
 			factory.annotate(element, annotationType);
 		}
@@ -34,7 +35,7 @@ public class MethodAnnotateProcessor {
 	private void longMethodDetection(CtMethod element,String qualifiedName,String codesmells) {
 		Set<String> valueSet=AnnotateProcessor.codesmells.get(codesmells);
 		if (valueSet!=null && valueSet.contains(qualifiedName)) {
-			Class<codesmells.annotations.Blob> annotationType = codesmells.annotations.Blob.class;
+			Class<codesmells.annotations.Lm> annotationType = codesmells.annotations.Lm.class;
 			AnnotationFactory factory = new AnnotationFactory(element.getFactory());
 			factory.annotate(element, annotationType);
 		}
