@@ -14,30 +14,10 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
-import paprikaana.entities.PaprikaApp;
-import paprikaana.utils.neo4j.query.ARGB8888Query;
-import paprikaana.utils.neo4j.query.BLOBQuery;
-import paprikaana.utils.neo4j.query.CCQuery;
-import paprikaana.utils.neo4j.query.HashMapUsageQuery;
-import paprikaana.utils.neo4j.query.HeavyAsyncTaskStepsQuery;
-import paprikaana.utils.neo4j.query.HeavyBroadcastReceiverQuery;
-import paprikaana.utils.neo4j.query.HeavyServiceStartQuery;
-import paprikaana.utils.neo4j.query.IGSQuery;
-import paprikaana.utils.neo4j.query.InitOnDrawQuery;
-import paprikaana.utils.neo4j.query.InvalidateWithoutRectQuery;
-import paprikaana.utils.neo4j.query.LICQuery;
-import paprikaana.utils.neo4j.query.LMQuery;
-import paprikaana.utils.neo4j.query.MIMQuery;
-import paprikaana.utils.neo4j.query.NLMRQuery;
-import paprikaana.utils.neo4j.query.OverdrawQuery;
-import paprikaana.utils.neo4j.query.QuartileCalculator;
-import paprikaana.utils.neo4j.query.QueryEngineBolt;
-import paprikaana.utils.neo4j.query.SAKQuery;
-import paprikaana.utils.neo4j.query.TrackingHardwareIdQuery;
-import paprikaana.utils.neo4j.query.UnsuitedLRUCacheSizeQuery;
-import paprikaana.utils.neo4j.query.UnsupportedHardwareAccelerationQuery;
-import paprikaana.analyzer.Analyzer;
-import paprikaana.analyzer.SootAnalyzer;
+import paprika.analyzer.Analyzer;
+import paprika.analyzer.SootAnalyzer;
+import paprika.entities.PaprikaApp;
+import paprika.neo4jBolt.*;
 
 public class Analyse {
 

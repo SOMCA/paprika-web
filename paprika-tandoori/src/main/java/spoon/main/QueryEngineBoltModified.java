@@ -31,9 +31,6 @@ import spoon.main.processor.AnnotateProcessor;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Created by Geoffrey Hecht on 12/01/15.
- */
 public class QueryEngineBoltModified extends QueryEngineBolt {
 
 	

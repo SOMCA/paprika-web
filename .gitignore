@@ -20,8 +20,8 @@ hs_err_pid*
 **/target/
 **/*.DS_Store
 Paprika-analyze/lib/
-paprika/
 Tandoori/
+Paprika/
 
 Other files:
 android-platforms/

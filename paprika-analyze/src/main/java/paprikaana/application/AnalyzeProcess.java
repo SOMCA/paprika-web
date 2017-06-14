@@ -1,11 +1,11 @@
 package paprikaana.application;
 
 
-import paprikaana.entities.PaprikaApp;
+import paprika.entities.PaprikaApp;
+import paprika.neo4jBolt.Graph;
+import paprika.neo4jBolt.LowNode;
+import paprika.neo4jBolt.ModelToGraphBolt;
 import paprikaana.functions.VersionFunctions;
-import paprikaana.utils.neo4j.LowNode;
-import paprikaana.utils.neo4j.PaprikaKeyWords;
-import paprikaana.utils.neo4j.query.ModelToGraphBolt;
 
 public class AnalyzeProcess {
 
@@ -63,18 +63,18 @@ public class AnalyzeProcess {
 							"1990-01-01", "-r", "250", "-s", Long.toString(size), "-u", "unsafe", "-omp", "True", "-vn",
 							strversionname, "-vc", strversioncode, pathstr };
 
-					verFct.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "10");
+					verFct.setParameterOnNode(nodeVer.getID(),Graph.ANALYSEINLOAD, "10");
 					PaprikaApp paprikaapp;
 					paprikaapp = ana.runAnalysis(args);
 
-					verFct.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "50");
+					verFct.setParameterOnNode(nodeVer.getID(),Graph.ANALYSEINLOAD, "50");
 
 					ModelToGraphBolt modelToGraph = new ModelToGraphBolt();
 					long idApp = modelToGraph.insertApp(paprikaapp, nodeVer).getID();
 
 					verFct.writeAnalyzeOnVersion(nodeVer, idApp);
 
-					verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
+					verFct.setParameterOnNode(nodeVer.getID(), Graph.APPKEY, Long.toString(nodeVer.getID()));
 
 	
 					
@@ -93,7 +93,7 @@ public class AnalyzeProcess {
 			String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
 			verFct.writeQueryOnVersion(nodeVer, keyApp);
 			ana.runQueryMode(args);
-			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
+			verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "done");
 			verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
 	}
 

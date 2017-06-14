@@ -40,7 +40,7 @@ public class ModelToGraphBolt {
 	public ModelToGraphBolt() {
 
 		graph = new Graph();
-		session = Graph.getSession();
+		session = DriverBolt.getSession();
 		methodNodeMap = new HashMap<>();
 		classNodeMap = new HashMap<>();
 		variableNodeMap = new HashMap<>();
