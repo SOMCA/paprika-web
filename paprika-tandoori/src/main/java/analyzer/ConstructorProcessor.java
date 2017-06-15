@@ -1,11 +1,11 @@
 package analyzer;
 
-
 import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtConstructor;
+import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.visitor.filter.TypeFilter;
 
@@ -48,7 +48,12 @@ public class ConstructorProcessor {
     }
 
     private int countEffectiveCodeLines(CtConstructor ctMethod) {
-        return ctMethod.getBody().toString().split("\n").length;
+        try {
+            return ctMethod.getBody().toString().split("\n").length;
+        }catch (NullPointerException npe){
+            return ctMethod.getPosition().getEndLine()-ctMethod.getPosition().getLine();
+        }
+
     }
 
     private void handleUsedVariables(CtConstructor ctConstructor, PaprikaMethod paprikaMethod) {
