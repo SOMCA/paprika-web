@@ -8,8 +8,18 @@ import spoon.reflect.code.CtNewClass;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.factory.AnnotationFactory;
 
-
+/**
+ * All commentary are on the ClassAnnotateProcessor
+ * @author guillaume
+ *
+ */
+//We use many rawtypes.
+@SuppressWarnings("rawtypes")
 public class InterfaceAnnotateProcessor extends AbstractProcessor<CtInterface> {
+	private CtInterface element;
+	private String qualifiedName;
+	private AnnotationFactory factory;
+	
 	@Override
 	public void process(CtInterface element) {
         String qualifiedName = element.getQualifiedName();
@@ -18,18 +28,25 @@ public class InterfaceAnnotateProcessor extends AbstractProcessor<CtInterface> {
             qualifiedName = splitName[0] + "$" +
                     ((CtNewClass) element.getParent()).getType().getQualifiedName() + splitName[1];
         }
+		
+		AnnotationFactory factory = new AnnotationFactory(element.getFactory());
+		this.element=element;
+		this.qualifiedName=qualifiedName;
+		this.factory=factory;
+		
         
-        
-        SakDetection(element,qualifiedName,"SAK");
-		SakDetection(element,qualifiedName,"SAK_NO_FUZZY");
+        SakDetection("SAK");
+		SakDetection("SAK_NO_FUZZY");
+	}
+	private boolean isOnSet(String codesmells){
+		Set<String> valueSet=AnnotateProcessor.codesmells.get(codesmells);
+		return (valueSet!=null && valueSet.contains(qualifiedName));
 	}
 
-	private void SakDetection(CtInterface element,String qualifiedName,String codesmell) {
 
-		Set<String> valueSet=AnnotateProcessor.codesmells.get(codesmell);
-		if (valueSet!=null && valueSet.contains(qualifiedName)) {
-			Class<codesmells.annotations.Sak> annotationType = codesmells.annotations.Sak.class;
-			AnnotationFactory factory = new AnnotationFactory(element.getFactory());
+	private void SakDetection(String codesmell) {
+		if(this.isOnSet(codesmell)){
+			Class<codesmells.annotations.SAK> annotationType = codesmells.annotations.SAK.class;
 			factory.annotate(element, annotationType);
 		}
 	}

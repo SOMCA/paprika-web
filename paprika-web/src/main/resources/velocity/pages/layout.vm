@@ -9,13 +9,13 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="/index/">Paprika</a>
+    <a class="navbar-brand" href="/index/">$msg.get("LAYOUT_TITLE")</a>
   </div>
   <div class="navbar-left">
     #if($user)
-    <a class="navbar-brand" href="/index/">$msg.get("INDEX_NAV_AUTH_SUCCEEDED", $user.getUsername())</a>
+    <a class="navbar-brand" href="/index/">$msg.get("LAYOUT_NAV_AUTH_SUCCEEDED", $user.getUsername())</a>
     #else
-    <a class="navbar-brand" href="/login/">$msg.get("INDEX_NAV_AUTHEN")</a>
+    <a class="navbar-brand" href="/login/">$msg.get("LAYOUT_NAV_AUTHEN")</a>
     #end
   </div>
   <!-- /.navbar-header -->
@@ -27,7 +27,7 @@
       </a>
       <ul class="dropdown-menu dropdown-messages">
         <li>
-          <li><a onclick="infoClick()" href="#" ><i class="fa fa-info fa-fw"></i>$msg.get("INDEX_UL_INFO")</a></li>
+          <li><a onclick="infoClick()" href="#" ><i class="fa fa-info fa-fw"></i>$msg.get("LAYOUT_UL_INFO")</a></li>
         </li>
       </ul>
       <!-- /.dropdown-messages -->
@@ -40,14 +40,14 @@
     </a>
     <ul class="dropdown-menu dropdown-user">
       #if($currentUser)
-      <li><a href="#"><i class="fa fa-user fa-fw"></i>$msg.get("INDEX_UL_PROFIL")</a></li>
-      <li><a href="/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("INDEX_UL_SETTINGS")</a></li>
+      <li><a href="#"><i class="fa fa-user fa-fw"></i>$msg.get("LAYOUT_UL_PROFIL")</a></li>
+      <li><a href="/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_SETTINGS")</a></li>
       <li class="divider"></li>
-      <li><a href="/logout/" ><i class="fa fa-sign-out fa-fw"></i>$msg.get("INDEX_UL_LOGOUT")</a></li>
+      <li><a href="/logout/" ><i class="fa fa-sign-out fa-fw"></i>$msg.get("LAYOUT_UL_LOGOUT")</a></li>
       #else
-      <li><a href="/login/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("INDEX_UL_LOGIN")</a></li>
+      <li><a href="/login/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("LAYOUT_UL_LOGIN")</a></li>
       <li class="divider"></li>
-      <li><a href="/signUp/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("INDEX_UL_SIGNUP")</a></li>
+      <li><a href="/signUp/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("LAYOUT_UL_SIGNUP")</a></li>
       #end
     </ul>
     <!-- /.dropdown-user -->
@@ -65,7 +65,7 @@
         <form method="post" style="none" action="/index/">
           <div class="input-group custom-search-form">
 
-            <input type="text" maxlength="24" pattern=".{3,}" name="project" id="project" class="form-control" placeholder="$msg.get("INDEX_UL_NEWAPP")">
+            <input type="text" maxlength="24" pattern=".{3,}" name="project" id="project" class="form-control" placeholder="$msg.get("LAYOUT_UL_NEWAPP")">
             <span class="input-group-btn">
               <button class="btn btn-default" type="submit" id="project" name="for" value="project"><i class="fa fa-plus"></i></button>
             </span>
@@ -85,7 +85,7 @@
         <ul class="nav nav-second-level">
 
           <li>
-            <a href="#" onclick="menuclick('02-$velocityMenu');return false;">  $msg.get("INDEX_UL_VIEW")</a>
+            <a href="#" onclick="menuclick('02-$velocityMenu');return false;">  $msg.get("LAYOUT_UL_VIEW")</a>
           </li>
           <form id="forTitle$velocityMenu" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/index/">
             <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="02-$velocityMenu" name="title" value="$title.getID()"></button>

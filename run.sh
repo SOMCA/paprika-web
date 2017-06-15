@@ -1,4 +1,13 @@
 
+# Bash MacOS
+#import android-platforms:
+git clone https://github.com/Sable/android-platforms.git dockeranalyze/android-platforms
+
+rm -rf dockerTandoori/android-platforms
+cp -R dockeranalyze/android-platforms dockerTandoori/android-platforms
+
+
+
 #run this command if spirals-somca do not exist on docker-machine ls
 ##docker-machine create --driver generic --generic-ip-address=spirals-somca --generic-ssh-key ~/.ssh/id_rsa --generic-ssh-user=gwillefe spirals-somca
 
@@ -8,6 +17,7 @@ eval $(docker-machine env spirals-somca)
 
 #Delete parasite?
 #docker system prune -f
+
 
 #Create all empty directory:
 mkdir dockerweb/application

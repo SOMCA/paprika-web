@@ -7,7 +7,7 @@
     <div id="page-wrapper">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="page-header">Dashboard: Delete settings </h1>
+          <h1 class="page-header">$msg.get("DASHBOARD") $msg.get("FORMDEL_HEADING") </h1>
         </div>
       </div>
       <div class="row">
@@ -28,7 +28,7 @@
 
               </div>
               <div class="panel-footer">
-                <a href="#" onclick="return textswitch('01-$velocityMenu');">Versions</a>
+                <a href="#" onclick="return textswitch('01-$velocityMenu');">$msg.get("FORMDEL_VER")</a>
               </div>
               <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="01-$velocityMenu">
                 <div style="margin-left: 25px;">
@@ -50,10 +50,10 @@
           <div class="col-lg-4">
             <div class="panel panel-default">
               <div class="panel-heading">
-                  <label><input type="checkbox" required/>  Valid the Delete</label>
+                  <label><input type="checkbox" required/>$msg.get("FORMDEL_DELV")</label>
               </div>
               <div class="panel-footer">
-                  <button class="list-group-item" style="width:auto" type="submit" id="submitDelete" name="delete" value="00-"> Delete </button>
+                  <button class="list-group-item" style="width:auto" type="submit" id="submitDelete" name="delete" value="00-">$msg.get("FORMDEL_DEL")</button>
               </div>
             </div>
           </div>

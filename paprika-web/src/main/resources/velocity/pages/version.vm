@@ -8,9 +8,9 @@
       <div class="row">
         <div class="col-lg-12">
           #if($version)
-          <h1 class="page-header">Dashboard:  $version.getName() </h1>
+          <h1 class="page-header">$msg.get("DASHBOARD")  $version.getName() </h1>
           #else
-          <h1 class="page-header">Dashboard </h1>
+          <h1 class="page-header">$msg.get("DASHBOARD") </h1>
           #end
         </div>
         <!-- /.col-lg-12 -->
@@ -47,13 +47,10 @@
             <!--  <div id="infoTab" style="display:inline" >-->
             <div class="panel panel-default">
               <div class="panel-heading">
-                <i class="fa fa-info-o fa-fw"></i> Help
+                <i class="fa fa-info-o fa-fw"></i>$msg.get("VERSION_HELP")
               </div>
               <div class="panel-body" style="overflow:auto;width: 100%;height:100%;">
-                <br> Informations of each code smell is on <a href='http://www.modelrefactoring.org/smell_catalog'>Androids Code smells</a>
-                <br> Or on this french pdf: <a href='https://tel.archives-ouvertes.fr/tel-01418158/document'>Code Smells PDF french</a>
-                <br>
-                <br> If you have nothing who is display after the analyse, so our Paprika have not found code smell on your application.
+              $msg.get("VERSION_TEXT")
               </div>
             </div>
           </div>
@@ -65,7 +62,7 @@
               <i class="fa fa-bar-table-o fa-fw"></i>$namec$point$codesmell.getLongName()
             </div>
             <div class="panel-footer">
-              <a href="#" onclick="return textswitch('1$namec');">Description</a>
+              <a href="#" onclick="return textswitch('1$namec');">$msg.get("VERSION_DESCRIPTION")</a>
             </div>
             <div class="panel-body" style="display:none" id="1$namec">
               <div style="margin-left: 25px;">
@@ -73,7 +70,7 @@
               </div>
             </div>
             <div class="panel-footer">
-              <a href="#" onclick="return textswitch('2$namec');">Data</a>
+              <a href="#" onclick="return textswitch('2$namec');">$msg.get("VERSION_DATA")</a>
             </div>
             <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="2$namec">
               <div style="overflow:scroll;overflow:auto;width: 100%;height:100%;">
@@ -95,16 +92,10 @@
           <!--  <div id="infoTab" style="display:inline" >-->
           <div class="panel panel-default">
             <div class="panel-heading">
-              <i class="fa fa-info-o fa-fw"></i> Help
+              <i class="fa fa-info-o fa-fw"></i>$msg.get("VERSION_HELP")
             </div>
             <div class="panel-body" style="overflow:auto;width: 100%;height:100%;">
-              <br> Informations of each code smell is on <a href='http://www.modelrefactoring.org/smell_catalog'>Androids Code smells</a>
-              <br> Or on this french pdf: <a href='https://tel.archives-ouvertes.fr/tel-01418158/document'>Code Smells PDF french</a>
-              <br>
-              <br> Press the button Analyze for launch the analyze.
-              <br> If the analyze is on 0%, you have to waiting than the server have a available place for analyze your version.(For a unknow duration)
-              <br> If the analyze is on 10%, it has begin and you need just wait 5-20 minutes.
-              <br> Wait, you can do something else while waiting :) (You can also left the page)
+              $msg.get("VERSION_TEXT2")
             </div>
           </div>
         </div>
@@ -122,7 +113,7 @@
                 </div>
                 <div class="col-xs-9 text-right">
                   <div class="huge">$numberCodeSmells</div>
-                  <div>Code Smells</div>
+                  <div>$msg.get("VERSION_CS")</div>
 
                 </div>
 
@@ -170,12 +161,12 @@
           #if($flagothers)
           <div class="panel panel-default">
             <div class="panel-heading">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Donut Code Smells
+              <i class="fa fa-bar-chart-o fa-fw"></i> $msg.get("VERSION_DONUT")
             </div>
             <div class="panel-body">
               <div id="donutVersion">
               </div>
-              <a href="https://github.com/GeoffreyHecht/paprika/wiki/Paprika-model-and-metrics" class="btn btn-default btn-block">Informations variables Paprika</a>
+              <a href="https://github.com/GeoffreyHecht/paprika/wiki/Paprika-model-and-metrics" class="btn btn-default btn-block">$msg.get("VERSION_INFOMORE")</a>
             </div>
           </div>
 

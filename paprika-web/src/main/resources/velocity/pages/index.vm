@@ -9,9 +9,9 @@
       <div class="row">
         <div class="col-lg-12" >
           #if($project)
-          <h1 class="page-header">Dashboard:  $project.getName() </h1>
+          <h1 class="page-header">$msg.get("DASHBOARD")  $project.getName() </h1>
           #else
-          <h1 class="page-header">Dashboard </h1>
+          <h1 class="page-header">$msg.get("DASHBOARD") </h1>
           #end
         </div>
         <!-- /.col-lg-12 -->
@@ -26,12 +26,12 @@
             #end
             <div class="panel panel-default">
               <div class="panel-heading">
-                <i class="fa fa-info-o fa-fw"></i> Help
+                <i class="fa fa-info-o fa-fw"></i> $msg.get("INDEX_HELP")
               </div>
               <div class="panel-body" style="overflow:auto;width: 100%;height:100%;">
                 $msg.get("INDEX_NOT_LOGIN")
                 #if($project)
-                <br> You need two versions analyzed for than the project display graph on them.
+                  $msg.get("INDEX_NEED2")
                 #end
               </div>
             </div>
@@ -41,25 +41,8 @@
           #set($flagAreaStack=true)
           <div class="panel panel-default">
             <div class="panel-heading">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Area of number of code smells
+              <i class="fa fa-bar-chart-o fa-fw"></i>$msg.get("INDEX_AREA")
               <div class="pull-right">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                    Actions
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu pull-right" role="menu">
-                    <li><a href="#">Action</a>
-                    </li>
-                    <li><a href="#">Another action</a>
-                    </li>
-                    <li><a href="#">Something else here</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
             <!-- /.panel-heading -->
@@ -73,25 +56,8 @@
           </div>
           <div class="panel panel-default">
             <div class="panel-heading">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Radar of three last versions.
+              <i class="fa fa-bar-chart-o fa-fw"></i> $msg.get("INDEX_RADAR")
               <div class="pull-right">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                    Actions
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu pull-right" role="menu">
-                    <li><a href="#">Action</a>
-                    </li>
-                    <li><a href="#">Another action</a>
-                    </li>
-                    <li><a href="#">Something else here</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
             <!-- /.panel-heading -->

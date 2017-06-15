@@ -1,11 +1,11 @@
 package analyzer;
 
+
 import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtConstructor;
-import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.visitor.filter.TypeFilter;
 
@@ -37,7 +37,7 @@ public class ConstructorProcessor {
             position++;
         }
         int numberOfDeclaredLocals = ctConstructor.getElements(new TypeFilter<CtLocalVariable>(CtLocalVariable.class)).size();
-        paprikaMethod.setNumberOfLines(ctConstructor.getPosition().getEndLine() - ctConstructor.getPosition().getLine());
+        paprikaMethod.setNumberOfLines(countEffectiveCodeLines(ctConstructor));
         paprikaMethod.setConstructor(true);
         handleUsedVariables(ctConstructor, paprikaMethod);
         handleInvocations(ctConstructor, paprikaMethod);
@@ -45,6 +45,10 @@ public class ConstructorProcessor {
         paprikaMethod.setNumberOfDeclaredLocals(numberOfDeclaredLocals);
 
 
+    }
+
+    private int countEffectiveCodeLines(CtConstructor ctMethod) {
+        return ctMethod.getBody().toString().split("\n").length;
     }
 
     private void handleUsedVariables(CtConstructor ctConstructor, PaprikaMethod paprikaMethod) {

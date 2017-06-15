@@ -5,7 +5,6 @@ import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
-import spoon.reflect.factory.AnnotationFactory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.util.Arrays;
@@ -36,10 +35,7 @@ public class MethodProcessor {
             position++;
         }
         int numberOfDeclaredLocals = ctMethod.getElements(new TypeFilter<CtLocalVariable>(CtLocalVariable.class)).size();
-        
-
-        paprikaMethod.setNumberOfLines(ctMethod.getPosition().getEndLine()- ctMethod.getPosition().getLine());
-        
+        paprikaMethod.setNumberOfLines(countEffectiveCodeLines(ctMethod));
         handleUsedVariables(ctMethod, paprikaMethod);
         handleInvocations(ctMethod, paprikaMethod);
         paprikaMethod.setComplexity(getComplexity(ctMethod));
@@ -52,6 +48,10 @@ public class MethodProcessor {
                 break;
             }
         }
+    }
+
+    private int countEffectiveCodeLines(CtMethod ctMethod) {
+        return ctMethod.getBody().toString().split("\n").length;
     }
 
     private void handleUsedVariables(CtMethod ctMethod, PaprikaMethod paprikaMethod) {
@@ -151,9 +151,7 @@ public class MethodProcessor {
         }
         try {
             if (parent.equals(returnedExpression.getVariable().getDeclaration().getDeclaringType())) {
-                
-
-            	return true;
+                return true;
             }
         }catch (NullPointerException npe){
             System.out.println(npe.getLocalizedMessage());
@@ -194,13 +192,7 @@ public class MethodProcessor {
         }
         CtFieldWrite returnedExpression = (CtFieldWrite) ((CtAssignment) statement).getAssigned();
         if (returnedExpression.getTarget() instanceof CtThisAccess) {
-    		
-        	// IGS ANNOTATION
-        	Class<codesmells.annotations.Igs> annotationType = codesmells.annotations.Igs.class;
-			AnnotationFactory factory = new AnnotationFactory(element.getFactory());
-			factory.annotate(element, annotationType);
-        	
-        	return true;
+            return true;
         }
 
         return false;

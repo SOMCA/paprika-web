@@ -1,6 +1,22 @@
 package paprikaana.application;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.json.JSONObject;
+
 import paprika.entities.PaprikaApp;
 import paprika.neo4jBolt.Graph;
 import paprika.neo4jBolt.LowNode;
@@ -32,6 +48,7 @@ public class AnalyzeProcess {
 		PaprikaAnalyzeMain.LOGGER.trace("Query part");
 		this.runPartQuery(ana);
 	}
+
 
 	private void runPartAnalyse(Analyse ana) {
 		VersionFunctions verFct = new VersionFunctions();

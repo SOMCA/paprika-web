@@ -50,7 +50,6 @@ public class MainProcessorBolt extends MainProcessor {
                 cl[i] = url.getPath();
             }
             launcher.getEnvironment().setSourceClasspath(cl);
-
             launcher.buildModel();
             ClassProcessor classProcessor = new ClassProcessor();
             InterfaceProcessor interfaceProcessor =new InterfaceProcessor();

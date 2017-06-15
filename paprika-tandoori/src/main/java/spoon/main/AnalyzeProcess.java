@@ -67,14 +67,14 @@ public class AnalyzeProcess {
 
 		this.nameUser = split[3];
 		this.input = "./input/" + this.nameDir;
-		this.output = "./output/" +this.nameDir;
+		this.output = "./output/" + this.nameDir;
 
 		InputStream is;
 		is = new FileInputStream("./info.json");
 		String jsonTxt;
 		jsonTxt = IOUtils.toString(is);
 		JSONObject json = new JSONObject(jsonTxt);
-		
+
 		this.token = json.getString("token");
 
 	}
@@ -89,6 +89,8 @@ public class AnalyzeProcess {
 	private void runPartAnalyse(Analyse ana) {
 		VersionFunctions verFct = new VersionFunctions();
 
+	
+
 		try {
 			deleteRepo();
 
@@ -96,14 +98,12 @@ public class AnalyzeProcess {
 			service.getClient().setCredentials("token", this.token);
 			RepositoryId toBeForked = new RepositoryId(this.nameUser, this.nameDir);
 			Repository repo = service.forkRepository(toBeForked);
-			
+
 			this.branch = repo.getMasterBranch();
 			this.cloneUrl = repo.getCloneUrl();
 			System.out.println(this.cloneUrl);
 			// Clone the repo of the url.
-			Git git = cloneRepo();
-
-			git.close();
+			cloneRepo();
 
 			String[] args = { input, output, this.fName, "android-platforms/", Long.toString(this.nodeVer.getID()) };
 
@@ -259,8 +259,8 @@ public class AnalyzeProcess {
 		post.addHeader("Authorization", "token " + this.token);
 
 		String text = "Do not merge! Look just annotations, then close! You can merge but you need the annotations of library here on the search: SnrashaBot CSAnnotations  ";
- 
-		StringEntity params = new StringEntity("{\"title\":\"Paprika Analyze\",\"body\":\""+text+"\",\"head\":\""
+
+		StringEntity params = new StringEntity("{\"title\":\"Paprika Analyze\",\"body\":\"" + text + "\",\"head\":\""
 				+ this.nameBot + ":" + this.branch + "\",\"base\":\"master\"}", ContentType.APPLICATION_JSON);
 		post.setEntity(params);
 		client.execute(post);

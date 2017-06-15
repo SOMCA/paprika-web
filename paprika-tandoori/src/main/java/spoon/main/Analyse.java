@@ -28,10 +28,12 @@ public class Analyse {
 	        String key =  args[4];
 	        MainProcessorBolt mainProcessor = new MainProcessorBolt(name,"1.0", key, input,output, sdkPath);
 	        mainProcessor.process();
+	        System.out.println("process Mainprocessor done");
 	        GraphCreator graphCreator = new GraphCreator(MainProcessorBolt.currentApp);
 	        graphCreator.createClassHierarchy();
+	        System.out.println(" createClassHierarchy done");
 	        graphCreator.createCallGraph();
-
+	        System.out.println(" createCallGraph done");
 	        MetricsCalculator.calculateAppMetrics(MainProcessorBolt.currentApp);
 	        System.out.println("Done");
 	        

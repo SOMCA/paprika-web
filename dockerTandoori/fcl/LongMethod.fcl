@@ -1,14 +1,14 @@
 FUNCTION_BLOCK FB
 
 VAR_INPUT
-	number_of_Lines : REAL;
+	number_of_lines : REAL;
 END_VAR
 
 VAR_OUTPUT
 	res : REAL;
 END_VAR
 
-FUZZIFY number_of_Lines
+FUZZIFY number_of_lines
 	TERM high := (17, 0) (26, 1);
 END_FUZZIFY
 
@@ -19,7 +19,7 @@ DEFUZZIFY res
 END_DEFUZZIFY
 
 RULEBLOCK No1
-	RULE 1 : IF number_of_Lines IS high THEN res IS long;
+	RULE 1 : IF number_of_lines IS high THEN res IS long;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
