@@ -134,6 +134,7 @@ public class PaprikaWebMain {
 		get("/paprika", IndexController.serveIndexPage);
 		get("/paprika/", IndexController.serveIndexPage);
 		get("/paprika/index", IndexController.serveIndexPage);
+		get("/paprika/reset/", IndexController.resetIndexPage);
 		get(PathIn.Web.INDEX, IndexController.serveIndexPage);
 		// La page de login, quand tu veux te connecter.
 		get(PathIn.Web.LOGIN, LoginController.serveLoginPage);

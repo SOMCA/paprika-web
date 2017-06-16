@@ -2,6 +2,7 @@ package app.utils;
 
 import org.apache.velocity.app.VelocityEngine;
 
+import app.model.Project;
 import spark.*;
 import java.util.*;
 import spark.template.velocity.*;
@@ -36,8 +37,9 @@ public class ViewUtil {
 
 		
 		if (!model.containsKey(PaprikaKeyWords.PROJECT)) {
-			model.put("data", new DataSave());
-			
+			Project project = RequestUtil.getSessionProject(request);
+			if(project!=null && (PathIn.Template.INDEX.equals(templatePath)||PathIn.Template.VERSION.equals(templatePath) )) model.put(PaprikaKeyWords.PROJECT, project);
+
 			/*
 			if (!templatePath.equals(PathIn.Template.FORM_DELETE)) {
 
@@ -45,6 +47,7 @@ public class ViewUtil {
 				model.put(PaprikaKeyWords.PROJECT, project);
 			}*/
 		}
+		if(model.get(PaprikaKeyWords.PROJECT)==null)model.put("data", new DataSave());
 	//	model.put("data", new DataSave());
 
 		if (!model.containsKey(PaprikaKeyWords.VERSION)) {

@@ -43,14 +43,17 @@ public class FormController {
 	public static final Route handleFormDeletePost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 
-		Project project = RequestUtil.getSessionProject(request);
+		//Project project = RequestUtil.getSessionProject(request);
 		PaprikaWebMain.LOGGER.trace("-------handleFormDeletePost--------");
 		String delete = request.queryParams("delete");
 		if (delete != null) {
 			PaprikaWebMain.LOGGER.trace("etape delete: " + delete);
-			deleteNotNull(request, project);
-			model.put(PaprikaKeyWords.PROJECT, project);
+			deleteNotNull(request, null);//project);
+			//model.put(PaprikaKeyWords.PROJECT, project);
 		}
+		model.put(PaprikaKeyWords.PROJECT, null);
+		
+		
 		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
 	};
 
@@ -70,7 +73,7 @@ public class FormController {
 		}
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		facade.deleteOnDataBase(setOfIdToDelete);
-		facade.needReloadApp(project);
+		//facade.needReloadApp(project);
 	}
 
 }

@@ -18,6 +18,8 @@ public class SignUpController {
 	 */
 	public static final Route serveSignUpPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
+		model.put(PaprikaKeyWords.PROJECT, null);
+		
 		return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
 	};
 	/**
@@ -27,7 +29,8 @@ public class SignUpController {
 
 		Map<String, Object> model = new HashMap<>();
 		PaprikaFacade facade = PaprikaFacade.getInstance();
-
+		model.put(PaprikaKeyWords.PROJECT, null);
+		
 		if (!facade.signUp(RequestUtil.getQueryUsername(request), RequestUtil.getQueryPassword(request))) {
 			model.put("signUpFailed", true);
 			return ViewUtil.render(request, model, PathIn.Template.SIGNUP);

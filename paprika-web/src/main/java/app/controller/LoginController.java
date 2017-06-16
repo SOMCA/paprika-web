@@ -26,6 +26,8 @@ public class LoginController {
 		Map<String, Object> model = new HashMap<>();
 		model.put("loggedOut", RequestUtil.removeSessionAttrLoggedOut(request));
 		model.put("loginRedirect", RequestUtil.removeSessionAttrLoginRedirect(request));
+		model.put(PaprikaKeyWords.PROJECT, null);
+		
 		return ViewUtil.render(request, model, PathIn.Template.LOGIN);
 	};
 	/**
@@ -33,6 +35,8 @@ public class LoginController {
 	 */
 	public static final Route handleLoginPost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
+		model.put(PaprikaKeyWords.PROJECT, null);
+		
 		if (!authenticate(RequestUtil.getQueryUsername(request), RequestUtil.getQueryPassword(request))) {
 			model.put("authenticationFailed", true);
 			return ViewUtil.render(request, model, PathIn.Template.LOGIN);
