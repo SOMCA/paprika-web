@@ -34,6 +34,9 @@ public class PaprikaKeyWords {
 
 	public static final String ORDER = "order";
 	
+	public static final String EXAMPLE = "example";
+	
+	
 	private PaprikaKeyWords(){
 		
 	}

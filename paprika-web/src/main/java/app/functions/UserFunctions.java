@@ -1,6 +1,5 @@
 package app.functions;
 
-
 import org.neo4j.driver.v1.Record;
 
 import org.neo4j.driver.v1.StatementResult;
@@ -12,16 +11,20 @@ import app.model.User;
 import app.utils.PaprikaKeyWords;
 
 import app.utils.neo4j.LowNode;
+
 /**
  * UserFunctions is a utils class linked to User class but use neo4j
+ * 
  * @author guillaume
  *
  */
 public class UserFunctions extends Functions {
 	private static final String ATTRIBUTE_KEY = "hashpwd";
-		/**
+
+	/**
 	 * Return the salt of the first node of label "key" If not found, return
 	 * null
+	 * 
 	 * @return a salt code
 	 */
 	public String retrieveSalt() {
@@ -44,10 +47,11 @@ public class UserFunctions extends Functions {
 	}
 
 	/**
-	 * Return a User if the email(who is unique) correspond to a email on the neo4j database.
-	 * Else null.
+	 * Return a User if the email(who is unique) correspond to a email on the
+	 * neo4j database. Else null.
 	 * 
-	 * @param email email of a user.
+	 * @param email
+	 *            email of a user.
 	 * @return a User of the email
 	 */
 	public User foundUser(String email) {
@@ -101,6 +105,76 @@ public class UserFunctions extends Functions {
 			tx.success();
 		}
 	}
-	
+
+	/**
+	 * Create example of version when you create a new User
+	 * 
+	 * @param idproject
+	 * @param version
+	 * @param number
+	 */
+	public void writeExample(String email) {
+		String nameProject = "Example";
+		String nameV1 = "Example_0";
+		String nameV2 = "Example_1";
+		long id = -1;
+
+		VersionFunctions verFct = new VersionFunctions();
+
+		StatementResult result;
+		Record record;
+		Node node;
+
+		LowNode nodeUser = new LowNode(PaprikaKeyWords.LABELUSER);
+		nodeUser.addParameter(PaprikaKeyWords.ATTRIBUTE_EMAIL, email);
+
+		try (Transaction tx = this.session.beginTransaction()) {
+
+			result = tx.run(graph.matchSee(nodeUser));
+			record = result.next();
+			node = record.get(PaprikaKeyWords.NAMELABEL).asNode();
+			PaprikaWebMain.LOGGER.trace(node.get(PaprikaKeyWords.ATTRIBUTE_NB_APP));
+			LowNode nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
+			nodeApp.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, nameProject);
+			nodeApp.addParameter(PaprikaKeyWords.EXAMPLE, "true");
+			nodeApp.addParameter(PaprikaKeyWords.ATTRIBUTE_NB_VERSION, 0);
+			String incr = new ProjectFunctions().increment(nodeUser, PaprikaKeyWords.ATTRIBUTE_NB_APP,
+					node.get(PaprikaKeyWords.ATTRIBUTE_NB_APP).asLong(), tx);
+			nodeApp.addParameter(PaprikaKeyWords.ORDER, incr);
+
+			// Créer une project node:
+			result = tx.run(graph.create(nodeApp));
+			id = this.graph.getID(result, PaprikaKeyWords.NAMELABEL);
+			// Récupère son id:
+			nodeApp.setId(id);
+
+			tx.run(graph.relation(nodeUser, nodeApp, PaprikaKeyWords.REL_USER_PROJECT));
+
+
+			nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
+			nodeApp.setId(id);
+			// Incrémente le nombre de versions dans le project:
+			LowNode nodeVer;
+			for (int i = 0; i < 2; i++) {
+
+				
+				nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
+				nodeVer.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, nameProject + "_" + i);
+				nodeVer.addParameter(PaprikaKeyWords.ORDER,
+						verFct.increment(nodeApp, PaprikaKeyWords.ATTRIBUTE_NB_VERSION,
+								i, tx));
+				nodeVer.addParameter(PaprikaKeyWords.EXAMPLE,"true");
+
+				// Créer une version node:
+				result = tx.run(graph.create(nodeVer));
+				long idVer = this.graph.getID(result, PaprikaKeyWords.NAMELABEL);
+				nodeVer.setId(idVer);
+
+				tx.run(graph.relation(nodeApp, nodeVer, PaprikaKeyWords.REL_PROJECT_VERSION));
+			}
+			tx.success();
+		}
+
+	}
 
 }

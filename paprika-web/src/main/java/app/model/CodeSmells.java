@@ -16,9 +16,9 @@ import app.functions.CodeSmellsFunctions;
  */
 public class CodeSmells extends Entity {
 
-	private long numberOfSmells;
-	private String description;
-	private String longName;
+	protected long numberOfSmells;
+	protected String description;
+	protected String longName;
 	
 	private static final String[] arrayHtml= {"<tr>","</tr>","<td>","</td>","<th>","</th>"};
 
@@ -101,7 +101,7 @@ public class CodeSmells extends Entity {
 				arrayData.append(line);
 			}
 		}
-
+		//System.out.println("Data: "+arrayData);
 		return arrayData.toString();
 	}
 	
@@ -156,6 +156,7 @@ public class CodeSmells extends Entity {
 			
 		}
 		line.append(arrayHtml[1]);
+		//System.out.println("Class: "+line);
 		return line;
 	}
 
@@ -191,6 +192,7 @@ public class CodeSmells extends Entity {
 			
 		}
 		line.append(arrayHtml[1]);
+		//System.out.println("Class: "+line);
 		return line;
 	}
 	
