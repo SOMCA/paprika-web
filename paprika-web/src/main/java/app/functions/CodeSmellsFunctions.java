@@ -103,7 +103,7 @@ public class CodeSmellsFunctions extends Functions {
 		case "LM_NO_FUZZY":
 		case "LM":
 			command = beginCommandmethod
-					+ " RETURN l.full_name as Location,l.modifier as Modifier,l.return_type as Type, l.number_of_instructions as Number_of_line";
+					+ " RETURN l.full_name as Location,l.modifier as Modifier,l.return_type as Type, CASE WHEN l.number_of_lines is null THEN l.number_of_instructions ELSE  l.number_of_lines END as Number_of_lines";
 			search = methodSearch;
 			break;
 		case "MIM":

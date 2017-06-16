@@ -1,11 +1,27 @@
 package paprikaana.application;
 
 
-import paprikaana.entities.PaprikaApp;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.json.JSONObject;
+
+import paprika.entities.PaprikaApp;
+import paprika.neo4jBolt.Graph;
+import paprika.neo4jBolt.LowNode;
+import paprika.neo4jBolt.ModelToGraphBolt;
 import paprikaana.functions.VersionFunctions;
-import paprikaana.utils.neo4j.LowNode;
-import paprikaana.utils.neo4j.ModelToGraphBolt;
-import paprikaana.utils.neo4j.PaprikaKeyWords;
 
 public class AnalyzeProcess {
 
@@ -32,6 +48,7 @@ public class AnalyzeProcess {
 		PaprikaAnalyzeMain.LOGGER.trace("Query part");
 		this.runPartQuery(ana);
 	}
+
 
 	private void runPartAnalyse(Analyse ana) {
 		VersionFunctions verFct = new VersionFunctions();
@@ -63,18 +80,18 @@ public class AnalyzeProcess {
 							"1990-01-01", "-r", "250", "-s", Long.toString(size), "-u", "unsafe", "-omp", "True", "-vn",
 							strversionname, "-vc", strversioncode, pathstr };
 
-					verFct.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "10");
+					verFct.setParameterOnNode(nodeVer.getID(),Graph.ANALYSEINLOAD, "10");
 					PaprikaApp paprikaapp;
 					paprikaapp = ana.runAnalysis(args);
 
-					verFct.setParameterOnNode(nodeVer.getID(),PaprikaKeyWords.ANALYSEINLOAD, "50");
+					verFct.setParameterOnNode(nodeVer.getID(),Graph.ANALYSEINLOAD, "50");
 
 					ModelToGraphBolt modelToGraph = new ModelToGraphBolt();
 					long idApp = modelToGraph.insertApp(paprikaapp, nodeVer).getID();
 
 					verFct.writeAnalyzeOnVersion(nodeVer, idApp);
 
-					verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.APPKEY, Long.toString(nodeVer.getID()));
+					verFct.setParameterOnNode(nodeVer.getID(), Graph.APPKEY, Long.toString(nodeVer.getID()));
 
 	
 					
@@ -84,7 +101,6 @@ public class AnalyzeProcess {
 			PaprikaAnalyzeMain.LOGGER.error("runPartAnalyse: AnalyseException", e);
 			throw new AnalyseException();
 		}
-
 	}
 
 	private void runPartQuery(Analyse ana) {
@@ -94,7 +110,7 @@ public class AnalyzeProcess {
 			String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
 			verFct.writeQueryOnVersion(nodeVer, keyApp);
 			ana.runQueryMode(args);
-			verFct.setParameterOnNode(nodeVer.getID(), PaprikaKeyWords.CODEA, "done");
+			verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "done");
 			verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");
 	}
 

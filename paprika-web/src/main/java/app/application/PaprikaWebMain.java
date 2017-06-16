@@ -8,11 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Transaction;
-import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
 import app.controller.FormController;
@@ -21,11 +17,11 @@ import app.controller.LoginController;
 import app.controller.SignUpController;
 import app.controller.VersionController;
 import app.functions.DescriptionFunctions;
+import app.functions.DataSaveFunctions;
 import app.utils.PathIn;
 import spark.Spark;
 
 import java.net.InetAddress;
-import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -101,33 +97,12 @@ public class PaprikaWebMain {
 		if (containerQueue == null) {
 			// The number of analyze who can be run on same time.
 			String[] containerRun = new String[2];
-			Session session = getSession();
 			StringBuilder command = new StringBuilder("MATCH(n:DataSave) return ");
 			for (int i = 0; i < containerRun.length; i++) {
 				command.append("n.containerRun" + i + ",");
 			}
 
-			StatementResult result = session.run("MATCH(n:DataSave) return n.containerRun");
-			if (result.hasNext()) {
-				Record record = result.next();
-				List<Value> values = record.values();
-				if(!values.isEmpty()){
-				if (values.size() == containerRun.length) {
-					for (int i = 0; i < containerRun.length; i++) {
-						System.out.println(containerRun.length);
-						System.out.println(values.size());
-						Value value = values.get(i);
-						if (value != null && !value.isNull()) {
-							System.out.println((value.asString()));
-							containerRun[i] = value.asString();
-						}
-					}
-				}
-				}
-			} else {
-
-				session.run("CREATE (n:DataSave)");
-			}
+			containerRun=new DataSaveFunctions().searchContainer(containerRun);
 			// The number of Analyze who can be put on the queue.
 			containerQueue = new LinkedBlockingQueue<>(3);
 			timer = new Timer();
@@ -146,17 +121,20 @@ public class PaprikaWebMain {
 	 */
 	public static void main(String[] args) {
 
+		System.out.println("load description");
 		new DescriptionFunctions().addAllClassicDescription();
-
+		System.out.println("load save");
 		loadSave();
 
 		port(80);
 		enableDebugScreen();
 		Spark.staticFileLocation("/public");
-
+		System.out.println("active get");
 		// La page d'index.
-		get("", IndexController.serveIndexPage);
-		get("/", IndexController.serveIndexPage);
+		get("/paprika", IndexController.serveIndexPage);
+		get("/paprika/", IndexController.serveIndexPage);
+		get("/paprika/index", IndexController.serveIndexPage);
+		get("/paprika/reset/", IndexController.resetIndexPage);
 		get(PathIn.Web.INDEX, IndexController.serveIndexPage);
 		// La page de login, quand tu veux te connecter.
 		get(PathIn.Web.LOGIN, LoginController.serveLoginPage);
@@ -179,7 +157,7 @@ public class PaprikaWebMain {
 		 * handleloginpost attrape alors la requête en passant.
 		 * 
 		 */
-
+		System.out.println("active post");
 		post(PathIn.Web.INDEX, IndexController.handleIndexaddApp);
 		post(PathIn.Web.VERSION, VersionController.handleVersionPost);
 

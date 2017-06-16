@@ -9,13 +9,65 @@
       <div class="row">
         <div class="col-lg-12" >
           #if($project)
-          <h1 class="page-header">Dashboard:  $project.getName() </h1>
+          <h1 class="page-header">$msg.get("DASHBOARD")  $project.getName() </h1>
           #else
-          <h1 class="page-header">Dashboard </h1>
+          <h1 class="page-header">$msg.get("DASHBOARD") </h1>
           #end
         </div>
         <!-- /.col-lg-12 -->
       </div>
+      #if($data)
+      <div class="row">
+          <div class="col-lg-3 col-md-6">
+              <div class="panel panel-primary">
+                  <div class="panel-heading">
+                      <div class="row">
+                          <div class="col-xs-3">
+                              <i class="fa fa-users fa-5x"></i>
+                          </div>
+                          <div class="col-xs-9 text-right">
+                              <div class="huge">$data.getNbUser()</div>
+                              <div>Number of User</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+              <div class="panel panel-green">
+                  <div class="panel-heading">
+                      <div class="row">
+                          <div class="col-xs-3">
+                              <i class="fa fa-folder-open fa-5x"></i>
+                          </div>
+                          <div class="col-xs-9 text-right">
+                              <div class="huge">$data.getNbProject()</div>
+                              <div>Number of Project</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+              <div class="panel panel-yellow">
+                  <div class="panel-heading">
+                      <div class="row">
+                          <div class="col-xs-3">
+                              <i class="fa fa-files-o fa-5x"></i>
+                          </div>
+                          <div class="col-xs-9 text-right">
+                              <div class="huge">$data.getNbVersion()</div>
+                              <div>Number of Version</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+    #end
+
+
 
       <div class="row">
         <div class="col-lg-8">
@@ -26,12 +78,12 @@
             #end
             <div class="panel panel-default">
               <div class="panel-heading">
-                <i class="fa fa-info-o fa-fw"></i> Help
+                <i class="fa fa-info-o fa-fw"></i> $msg.get("INDEX_HELP")
               </div>
               <div class="panel-body" style="overflow:auto;width: 100%;height:100%;">
                 $msg.get("INDEX_NOT_LOGIN")
                 #if($project)
-                <br> You need two versions analyzed for than the project display graph on them.
+                  $msg.get("INDEX_NEED2")
                 #end
               </div>
             </div>
@@ -41,25 +93,8 @@
           #set($flagAreaStack=true)
           <div class="panel panel-default">
             <div class="panel-heading">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Area of number of code smells
+              <i class="fa fa-bar-chart-o fa-fw"></i>$msg.get("INDEX_AREA")
               <div class="pull-right">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                    Actions
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu pull-right" role="menu">
-                    <li><a href="#">Action</a>
-                    </li>
-                    <li><a href="#">Another action</a>
-                    </li>
-                    <li><a href="#">Something else here</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
             <!-- /.panel-heading -->
@@ -73,25 +108,8 @@
           </div>
           <div class="panel panel-default">
             <div class="panel-heading">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Radar of three last versions.
+              <i class="fa fa-bar-chart-o fa-fw"></i> $msg.get("INDEX_RADAR")
               <div class="pull-right">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                    Actions
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu pull-right" role="menu">
-                    <li><a href="#">Action</a>
-                    </li>
-                    <li><a href="#">Another action</a>
-                    </li>
-                    <li><a href="#">Something else here</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
             <!-- /.panel-heading -->
@@ -146,8 +164,8 @@
             <div class="panel-footer">
               <a href="#" id="a_text">
                 <span class="pull-left">
-                  <form id="formuploadVersiongithub" method="post" action="/index/">
-                    <input type="text" name="github" id="github" placeholder="Or:gitHub link"required></input>
+                  <form id="formuploadVersiongithub" method="post" action="/paprika/index/">
+                    <input type="text" name="github" id="github" placeholder="GitHub link"required></input>
                     <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitgithubversion">
                     </button>
                   </form>
@@ -164,7 +182,7 @@
               return false;
             }
             </script>
-            <form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="visibility: hidden; width: 1px; height: 1px" method="post" enctype="multipart/form-data" action="/index/">
+            <form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="visibility: hidden; width: 1px; height: 1px" method="post" enctype="multipart/form-data" action="/paprika/index/">
               <input style="visibility: hidden; width: 1px; height: 1px" type="file" accept=".apk" name="appAndroid" id="appAndroid" required/>
               <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitversion">
               </button>
@@ -209,7 +227,7 @@
         </div>
 
         #end
-      
+
       </div>
 
       <!-- /.row -->
@@ -221,7 +239,7 @@
   <!-- /#wrapper -->
   #parse("/velocity/pages/script.vm")
 
-  <form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="display: none" method="post" enctype="multipart/form-data" action="/index/">
+  <form id="formuploadVersion" onsubmit="formsubmitWait();return false;" style="display: none" method="post" enctype="multipart/form-data" action="/paprika/index/">
     <input style="visibility: hidden; width: 1px; height: 1px" type="file" accept=".apk" name="appAndroid" id="appAndroid" required/>
     <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitversion">
     </button>

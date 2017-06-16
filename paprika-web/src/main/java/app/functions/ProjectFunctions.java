@@ -53,7 +53,7 @@ public class ProjectFunctions extends Functions {
 	 * @param tx
 	 * @return
 	 */
-	private String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
+	public String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
 
 		long size = value;
 		size += 1;

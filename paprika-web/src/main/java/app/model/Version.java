@@ -29,7 +29,9 @@ public class Version extends Entity {
 	 * analyzed is a int flag, used for know if the version is not analyzed,
 	 * loading, processing or analyzed.
 	 */
-	private int analyzed;
+	protected int analyzed;
+	
+
 
 	/**
 	 * @param name
@@ -49,6 +51,7 @@ public class Version extends Entity {
 	 * @return a number of code smells
 	 */
 	public long getNumberCodeSmells() {
+		
 		VersionFunctions verfct = new VersionFunctions();
 		long number = verfct.getNumberOfSmells(this.getID());
 

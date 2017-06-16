@@ -15,11 +15,10 @@ import spark.template.velocity.*;
  */
 public class ViewUtil {
 
+	private ViewUtil() {
+		throw new IllegalAccessError("Render class");
+	}
 
-	  private ViewUtil() {
-		    throw new IllegalAccessError("Render class");
-		  }
-	
 	/**
 	 * model.put here, for webpath, already used on the template. For User, not
 	 * for the moment. msg is not utilized.
@@ -36,12 +35,20 @@ public class ViewUtil {
 		model.put("user", RequestUtil.getSessionUser(request));
 		model.put("WebPath", PathIn.Web.class);
 
-		if (!model.containsKey(PaprikaKeyWords.PROJECT)) {
 		
-			Project project= RequestUtil.getSessionProject(request);
-			model.put(PaprikaKeyWords.PROJECT, project);
+		if (!model.containsKey(PaprikaKeyWords.PROJECT)) {
+			Project project = RequestUtil.getSessionProject(request);
+			if(project!=null && (PathIn.Template.INDEX.equals(templatePath)||PathIn.Template.VERSION.equals(templatePath) )) model.put(PaprikaKeyWords.PROJECT, project);
 
+			/*
+			if (!templatePath.equals(PathIn.Template.FORM_DELETE)) {
+
+				Project project = RequestUtil.getSessionProject(request);
+				model.put(PaprikaKeyWords.PROJECT, project);
+			}*/
 		}
+		if(model.get(PaprikaKeyWords.PROJECT)==null)model.put("data", new DataSave());
+	//	model.put("data", new DataSave());
 
 		if (!model.containsKey(PaprikaKeyWords.VERSION)) {
 			model.put(PaprikaKeyWords.VERSION, RequestUtil.getSessionVersion(request));

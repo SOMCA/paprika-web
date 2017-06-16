@@ -22,13 +22,3 @@ services:
       - neoj
     depends_on:
       - neoj
-  test:
-    command: sh -c while(0) sleep 1; done
-    image: paprika-analyze:latest
-    container_name: analyze-paprika
-    volumes:
-       - /tmp/toto:/application
-    links:
-      - neoj
-    depends_on:
-      - neoj

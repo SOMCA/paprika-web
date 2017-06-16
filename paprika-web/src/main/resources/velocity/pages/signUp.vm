@@ -9,19 +9,20 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>$msg.get("INDEX_TITLE")</title>
+    <title>$msg.get("SIGNUP_TITLE")</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- MetisMenu CSS -->
-    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+      <!-- Bootstrap Core CSS -->
+      <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+      <!-- MetisMenu CSS -->
+      <link href="../../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+      <!-- Custom CSS -->
+      <link href="../../dist/css/sb-admin-2.css" rel="stylesheet">
+
+      <!-- Custom Fonts -->
+      <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,7 +43,7 @@
                         <h3 class="panel-title">$msg.get("SIGNUP_INSTRUCTIONS")</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form"  id="signUpForm" method="post" action="/signUp/">
+                        <form role="form"  id="signUpForm" method="post" action="/paprika/signUp/">
                             <fieldset>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="$msg.get("SIGNUP_LABEL_EMAIL")" name="email" type="email" name="email" autofocus required>
@@ -68,28 +69,28 @@
                         #end
                       </div>
                       <div class="panel-heading">
-                          <h6 class="panel-title">  <a href="/index/" >$msg.get("SIGNUP_BUTTON_INDEX")</a></h6>
+                          <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("SIGNUP_BUTTON_INDEX")</a></h6>
                       </div>
                       <div class="panel-heading">
-                          <h6 class="panel-title"> <a href="/login/" >$msg.get("SIGNUP_BUTTON_LOGIN")</a></h6>
+                          <h6 class="panel-title"> <a href="/paprika/login/" >$msg.get("SIGNUP_BUTTON_LOGIN")</a></h6>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+
     <!-- jQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/jquery/jquery.min.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
-    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="../../vendor/metisMenu/metisMenu.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="../dist/js/sb-admin-2.js"></script>
-
+    <script src="../../dist/js/sb-admin-2.js"></script>
 </body>
 
 </html>

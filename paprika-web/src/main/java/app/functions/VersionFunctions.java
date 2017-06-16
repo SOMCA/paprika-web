@@ -31,9 +31,9 @@ public class VersionFunctions extends Functions {
 	 * @param attribute
 	 * @param value
 	 * @param tx
-	 * @return
+	 * @return the size on String form
 	 */
-	private String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
+	public String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
 
 		long size = value;
 		size += 1;

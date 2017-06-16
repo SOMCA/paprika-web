@@ -20,6 +20,8 @@ hs_err_pid*
 **/target/
 **/*.DS_Store
 Paprika-analyze/lib/
+Tandoori/
+Paprika/
 
 
 Other files:

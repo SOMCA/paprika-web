@@ -31,6 +31,8 @@ import app.functions.ProjectFunctions;
 import app.functions.UserFunctions;
 import app.functions.VersionFunctions;
 import app.model.*;
+import app.model.example.ProjectExample;
+import app.model.example.VersionExample;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.Graph;
 import app.utils.neo4j.LowNode;
@@ -110,6 +112,11 @@ public final class PaprikaFacade {
 	 */
 	public Project project(long project) {
 		ProjectFunctions appFct = new ProjectFunctions();
+		
+		if(this.getParameter(project, PaprikaKeyWords.EXAMPLE)!=null){
+			return new ProjectExample(appFct.receiveOf(project), project);
+		}
+		
 
 		return new Project(appFct.receiveOf(project), project);
 	}
@@ -123,8 +130,13 @@ public final class PaprikaFacade {
 	 */
 	public Version version(long version) {
 		VersionFunctions verFct = new VersionFunctions();
-
-		return new Version(verFct.receiveOf(version), version);
+		String name=verFct.receiveOf(version);
+		if(this.getParameter(version, PaprikaKeyWords.EXAMPLE)!=null){
+			return new VersionExample(name, version,(name.endsWith("0")));
+		}
+		
+		
+		return new Version(name, version);
 	}
 
 	/**
@@ -178,14 +190,18 @@ public final class PaprikaFacade {
 	 * @return return true if success, else false;
 	 * 
 	 */
-	public boolean addVersion(long idproject, String version) {
+	public long addVersion(long idproject, String version) {
+		
+		// If the example Project is a real example, so user cannot add version.
+		if(this.getParameter(idproject, PaprikaKeyWords.EXAMPLE)!=null) return -1;
+		
 		VersionFunctions verFct = new VersionFunctions();
 		if (version != null && verFct.receiveIDOfVersion(idproject, version) == -1) {
-			verFct.writeVersion(idproject, version);
-			return true;
+			LowNode node=verFct.writeVersion(idproject, version);
+			return node.getID();
 		}
 
-		return false;
+		return -1;
 	}
 
 	/**
@@ -398,8 +414,8 @@ public final class PaprikaFacade {
 			String github = this.getParameter(idNode, "GitHub");
 			boolean isGitHub = github != null;
 			if (isGitHub) {
-				// length 5
-				command = "java -jar Paprika-Tandoori.jar " + github + " " + Long.toString(idNode);
+				// length 6
+				command = "java -jar Paprika-Tandoori.jar " + fname + " " + Long.toString(idNode) + " " + github;
 			} else {
 				// length 7
 				command = "java -jar Paprika-analyze.jar " + fname + " " + user.getName() + " " + project + " "
@@ -616,12 +632,12 @@ public final class PaprikaFacade {
 	 * @param linkGithub
 	 *            link of the github for the download the source code
 	 */
-	public void addGithub(Project project,String linkGithub) {
+	public void addGithub(Project project, String linkGithub) {
 
 		String numberV = project.getNumberOfVersion();
 		long idProject = project.getID();
 		String nameV = project.getName() + "_" + numberV;
-		boolean successAdd = this.addVersion(idProject, nameV);
+		boolean successAdd = (this.addVersion(idProject, nameV)!=-1);
 		if (successAdd) {
 			VersionFunctions verFct = new VersionFunctions();
 			long idV = verFct.receiveIDOfVersion(idProject, nameV);

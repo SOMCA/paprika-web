@@ -12,7 +12,6 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaFacade;
-import app.application.PaprikaWebMain;
 import app.utils.PaprikaKeyWords;
 import app.utils.neo4j.LowNode;
 
@@ -29,13 +28,13 @@ public class Project extends Entity {
 	 * l'projects. Si la page Version est chargé, il charge aussi
 	 * l'project, mais sans créer la liste de versions
 	 */
-	private List<Version> listofVersion;
+	protected List<Version> listofVersion;
 	/*
 	 * reload est remis à false quand celui ci à besoin de mettre à jour la
 	 * liste, donc à chaque recharge de la page d'index, permet d'avoir à
 	 * charger qu'une liste pour l'ensemble des méthodes de l'appli.
 	 */
-	private boolean reload;
+	protected boolean reload;
 
 	/**
 	 * 
@@ -236,6 +235,7 @@ public class Project extends Entity {
 
 		Iterator<Map<String, Long>> dataiter = datas.iterator();
 
+
 		if ("radar".equals(renderGraph)) {
 			return radarD3(dataiter, allkeyArray).toString();
 		} else if ("area".equals(renderGraph)) {
@@ -268,6 +268,7 @@ public class Project extends Entity {
 			array.append("],");
 			str.insert(0, array);
 		}
+		//System.out.println("Radar: "+str);
 		return str;
 	}
 
@@ -316,7 +317,7 @@ public class Project extends Entity {
 		labels.append(key);
 
 		str.append("],   ykeys:[" + xkeys + "],labels: [" + labels + "],");
-		PaprikaWebMain.LOGGER.trace(str);
+	//	System.out.println("Area: "+str);
 		return str;
 	}
 
