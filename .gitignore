@@ -21,7 +21,6 @@ hs_err_pid*
 **/*.DS_Store
 Paprika-analyze/lib/
 Tandoori/
-Paprika/
 
 
 Other files:
