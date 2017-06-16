@@ -22,12 +22,12 @@ public class PathIn {
 	@SuppressWarnings("javadoc")
     public static class Web {
   
-         public static final String INDEX = "/index/";
-         public static final String LOGIN = "/login/";
-         public static final String LOGOUT = "/logout/";
-         public static final String SIGNUP = "/signUp/";
-         public static final String FORMDEL = "/form_delete/";
-         public static final String VERSION = "/version/";
+         public static final String INDEX = "/paprika/index/";
+         public static final String LOGIN = "/paprika/login/";
+         public static final String LOGOUT = "/paprika/logout/";
+         public static final String SIGNUP = "/paprika/signUp/";
+         public static final String FORMDEL = "/paprika/form_delete/";
+         public static final String VERSION = "/paprika/version/";
 
   	private Web(){
     		

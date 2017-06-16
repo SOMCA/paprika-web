@@ -9,13 +9,13 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="/index/">$msg.get("LAYOUT_TITLE")</a>
+    <a class="navbar-brand" href="/paprika/index/">$msg.get("LAYOUT_TITLE")</a>
   </div>
   <div class="navbar-left">
     #if($user)
-    <a class="navbar-brand" href="/index/">$msg.get("LAYOUT_NAV_AUTH_SUCCEEDED", $user.getUsername())</a>
+    <a class="navbar-brand" href="/paprika/index/">$msg.get("LAYOUT_NAV_AUTH_SUCCEEDED", $user.getUsername())</a>
     #else
-    <a class="navbar-brand" href="/login/">$msg.get("LAYOUT_NAV_AUTHEN")</a>
+    <a class="navbar-brand" href="/paprika/login/">$msg.get("LAYOUT_NAV_AUTHEN")</a>
     #end
   </div>
   <!-- /.navbar-header -->
@@ -41,13 +41,13 @@
     <ul class="dropdown-menu dropdown-user">
       #if($currentUser)
       <li><a href="#"><i class="fa fa-user fa-fw"></i>$msg.get("LAYOUT_UL_PROFIL")</a></li>
-      <li><a href="/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_SETTINGS")</a></li>
+      <li><a href="/paprika/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_SETTINGS")</a></li>
       <li class="divider"></li>
-      <li><a href="/logout/" ><i class="fa fa-sign-out fa-fw"></i>$msg.get("LAYOUT_UL_LOGOUT")</a></li>
+      <li><a href="/paprika/logout/" ><i class="fa fa-sign-out fa-fw"></i>$msg.get("LAYOUT_UL_LOGOUT")</a></li>
       #else
-      <li><a href="/login/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("LAYOUT_UL_LOGIN")</a></li>
+      <li><a href="/paprika/login/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("LAYOUT_UL_LOGIN")</a></li>
       <li class="divider"></li>
-      <li><a href="/signUp/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("LAYOUT_UL_SIGNUP")</a></li>
+      <li><a href="/paprika/signUp/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("LAYOUT_UL_SIGNUP")</a></li>
       #end
     </ul>
     <!-- /.dropdown-user -->
@@ -62,7 +62,7 @@
     <ul class="nav" id="side-menu">
       #if($user)
       <li class="sidebar-search">
-        <form method="post" style="none" action="/index/">
+        <form method="post" style="none" action="/paprika/index/">
           <div class="input-group custom-search-form">
 
             <input type="text" maxlength="24" pattern=".{3,}" name="project" id="project" class="form-control" placeholder="$msg.get("LAYOUT_UL_NEWAPP")">
@@ -87,7 +87,7 @@
           <li>
             <a href="#" onclick="menuclick('02-$velocityMenu');return false;">  $msg.get("LAYOUT_UL_VIEW")</a>
           </li>
-          <form id="forTitle$velocityMenu" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/index/">
+          <form id="forTitle$velocityMenu" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/paprika/index/">
             <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="02-$velocityMenu" name="title" value="$title.getID()"></button>
           </form>
 
@@ -102,7 +102,7 @@
           <li>
             <a href="#" onclick="titleVerClick('03-$velocityMenu$velocityVer');return false;">$titleVername</a>
           </li>
-          <form style="visibility: hidden; width: 1px; height: 1px" method="post" action="/version/">
+          <form style="visibility: hidden; width: 1px; height: 1px" method="post" action="/paprika/version/">
               <input style="visibility: hidden; width: 1px; height: 1px" type="text" name="titleofVer" value="$title.getID()"></input>
             <button  style="visibility: hidden; width: 1px; height: 1px" type="submit" id="03-$velocityMenu$velocityVer" name="titleVer" value="$titleVer.getID()"></button>
           </form>

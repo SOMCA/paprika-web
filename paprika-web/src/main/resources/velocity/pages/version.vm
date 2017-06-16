@@ -142,7 +142,7 @@
               </div>
             </a>
 
-            <form id="analyseVersion" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/version/">
+            <form id="analyseVersion" style="visibility: hidden; width: 1px; height: 1px" method="post" action="/paprika/version/">
               <input style="visibility: hidden; width: 1px; height: 1px" type="text" name="analyse" id="analyse" value="True"/>
               <button style="visibility: hidden; width: 1px; height: 1px" type="submit" id="submitAnalyse">
               </button>

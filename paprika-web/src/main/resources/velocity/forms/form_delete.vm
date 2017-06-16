@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="row">
-        <form method="post" action="/form_delete/" >
+        <form method="post" action="/paprika/form_delete/" >
           <div class="col-lg-8 checkbox">
 
             #set ($velocityMenu=0)
