@@ -4,3 +4,7 @@
 [submodule "paprika"]
 	path = paprika
 	url = https://github.com/Snrasha/paprika.git
+[submodule "Tandoori"]
+	path = Tandoori
+	url = https://github.com/Snrasha/Tandoori.git
+
