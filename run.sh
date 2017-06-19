@@ -9,7 +9,6 @@ cp -R dockeranalyze/android-platforms dockerTandoori/android-platforms
 
 #copy the .jar on the dockercontainer because busy.
 cp paprika-web/target/Paprika-web.jar dockerweb/
-cp paprika-web/target/Paprika-web.jar dockerweb/
 
 
 #run this command if spirals-somca do not exist on docker-machine ls

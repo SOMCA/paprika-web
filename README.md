@@ -36,6 +36,39 @@ go on <address>:7474 for create a small account.  ( address is "localhost"  per 
 Where the username need to be neo4j(the default) and the password always: paprika
 
 
+### CSAnnotations, Paprika, Tandoori:
+On the folder of each.
+After the mvn clean package.
+
+Install the jar:
+```
+mvn install:install-file -Dfile=./target/CodeSmellsAnnotations.jar -DpomFile=./pom.xml
+
+```
+```
+mvn install:install-file -Dfile=./target/Paprika.jar -DpomFile=./pom.xml
+
+```
+```
+mvn install:install-file -Dfile=./target/CodeSmellsAnnotations.jar -DpomFile=./pom.xml
+
+```
+
+Then on your pom.xml, you can put the dependency:
+Maven:
+```
+<dependency>
+	<groupId>codesmells.annotations</groupId>
+	<artifactId>CSAnnotations</artifactId>
+	<version>1</version>
+</dependency>
+<dependency>
+	<groupId>paprika</groupId>
+	<artifactId>Paprika</artifactId>
+	<version>latest</version>
+</dependency>
+```
+
 
 ## Paprika-Web use:
 * Spark-core framework web.
