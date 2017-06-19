@@ -36,7 +36,7 @@ import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
-import neo4jBolt.Graph;
+import tandoori.neo4jBolt.Graph;
 import spoon.Launcher;
 import spoon.functions.VersionFunctions;
 import spoon.processing.ProcessInterruption;

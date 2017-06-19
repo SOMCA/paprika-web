@@ -36,10 +36,10 @@ import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
-import entities.PaprikaApp;
-import neo4jBolt.Graph;
-import neo4jBolt.LowNode;
-import neo4jBolt.ModelToGraphBolt;
+import tandoori.entities.PaprikaApp;
+import tandoori.neo4jBolt.Graph;
+import tandoori.neo4jBolt.LowNode;
+import tandoori.neo4jBolt.ModelToGraphBolt;
 import spoon.functions.VersionFunctions;
 import spoon.main.processor.AnnotateProcessor;
 

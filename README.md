@@ -50,7 +50,7 @@ mvn install:install-file -Dfile=./target/Paprika.jar -DpomFile=./pom.xml
 
 ```
 ```
-mvn install:install-file -Dfile=./target/CodeSmellsAnnotations.jar -DpomFile=./pom.xml
+mvn install:install-file -Dfile=./target/Tandoori.jar -DpomFile=./pom.xml
 
 ```
 
@@ -65,6 +65,11 @@ Maven:
 <dependency>
 	<groupId>paprika</groupId>
 	<artifactId>Paprika</artifactId>
+	<version>latest</version>
+</dependency>
+<dependency>
+	<groupId>tandoori</groupId>
+	<artifactId>Tandoori</artifactId>
 	<version>latest</version>
 </dependency>
 ```

@@ -2,8 +2,8 @@ package spoon.main;
 
 import java.io.IOException;
 
-import neo4jBolt.Graph;
-import neo4jBolt.LowNode;
+import tandoori.neo4jBolt.Graph;
+import tandoori.neo4jBolt.LowNode;
 import spoon.functions.VersionFunctions;
 
 /**

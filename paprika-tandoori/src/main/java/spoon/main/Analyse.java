@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import org.neo4j.cypher.CypherException;
 
-import analyzer.GraphCreator;
-import entities.PaprikaApp;
-import entities.PaprikaLibrary;
-import metrics.MetricsCalculator;
-import neo4jBolt.*;
+import tandoori.analyzer.GraphCreator;
+import tandoori.entities.PaprikaApp;
+import tandoori.entities.PaprikaLibrary;
+import tandoori.metrics.MetricsCalculator;
+import tandoori.neo4jBolt.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;

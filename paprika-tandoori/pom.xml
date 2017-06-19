@@ -129,6 +129,11 @@
 			<artifactId>neo4j-graphdb-api</artifactId>
 			<version>3.2.1</version>
 		</dependency>
+		<dependency>
+			<groupId>tandoori</groupId>
+			<artifactId>Tandoori</artifactId>
+			<version>latest</version>
+		</dependency>
 
 	</dependencies>
 	<pluginRepositories>

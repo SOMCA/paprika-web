@@ -1,8 +1,6 @@
 package spoon.main;
 
-import entities.PaprikaApp;
-import entities.PaprikaClass;
-import entities.PaprikaMethod;
+import tandoori.entities.PaprikaApp;
 import spoon.Launcher;
 
 import java.io.File;
@@ -10,9 +8,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import analyzer.ClassProcessor;
-import analyzer.InterfaceProcessor;
-import analyzer.MainProcessor;
+import tandoori.analyzer.ClassProcessor;
+import tandoori.analyzer.InterfaceProcessor;
+import tandoori.analyzer.MainProcessor;
 
 /**
  * MainProcessor modified for Paprika-web
@@ -21,29 +19,29 @@ public class MainProcessorBolt extends MainProcessor {
 
 
     private String input;
-    private String output;
-    
-    public MainProcessorBolt(){
-    	
-    }
-    
+   // private String output;
 
-    public MainProcessorBolt(String appName, String appVersion, String appKey, String input, String output, String sdkPath ) {
-        this.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, appKey);
-        this.currentClass = null;
-        this.currentMethod = null;
-        this.input = input;
-        this.output = output;
-        this.sdkPath = sdkPath;
+
+    public MainProcessorBolt(String appName, String appVersion, String appKey, String input, String output, String jarsPath ) {
+        super( appName,  appVersion,  appKey,  "",  "",  jarsPath);
+    	MainProcessorBolt.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, appKey);
+    	MainProcessorBolt.currentClass = null;
+    	MainProcessorBolt.currentMethod = null;
+        this.appPath = "";
+        this.jarsPath = jarsPath;
+    	this.input = input;
+      //  this.output = output;
+        this.sdkPath = "";
     }
     @Override
     public void process() {
         Launcher launcher = new Launcher();
         launcher.addInputResource(input);
         launcher.getEnvironment().setNoClasspath(true);
+        File folder = new File(jarsPath);
         try {
-            paths = new ArrayList<URL>();
-            paths.add(new File(sdkPath).toURI().toURL());
+        	MainProcessor.paths = this.listFilesForFolder(folder);
+            //paths.add(new File(sdkPath).toURI().toURL());
             String[] cl = new String[paths.size()];
             for (int i = 0; i < paths.size(); i++) {
                 URL url = paths.get(i);

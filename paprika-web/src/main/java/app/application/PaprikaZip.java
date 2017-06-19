@@ -11,7 +11,7 @@ import java.util.zip.ZipOutputStream;
 
 
 /**
- * To delete.
+ * To delete. Not used
  *
  */
 public class PaprikaZip {

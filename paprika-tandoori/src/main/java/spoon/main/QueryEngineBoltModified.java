@@ -23,9 +23,9 @@ import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.types.Node;
 
-import neo4jBolt.Graph;
-import neo4jBolt.LowNode;
-import neo4jBolt.QueryEngineBolt;
+import tandoori.neo4jBolt.Graph;
+import tandoori.neo4jBolt.LowNode;
+import tandoori.neo4jBolt.QueryEngineBolt;
 import spoon.main.processor.AnnotateProcessor;
 
 import java.io.IOException;
