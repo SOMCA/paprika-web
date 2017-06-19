@@ -2,6 +2,7 @@ package spoon.main;
 
 import java.io.IOException;
 
+import tandoori.neo4jBolt.DriverBolt;
 import tandoori.neo4jBolt.Graph;
 import tandoori.neo4jBolt.LowNode;
 import spoon.functions.VersionFunctions;
@@ -26,6 +27,8 @@ public class PaprikaTandooriMain {
 
 		if (args.length != 3)
 			return;
+		
+		DriverBolt.setHostName("spirals-somca");
 
 		String fName = args[0];
 		LowNode nodeVer = new LowNode(Graph.VERSIONLABEL);

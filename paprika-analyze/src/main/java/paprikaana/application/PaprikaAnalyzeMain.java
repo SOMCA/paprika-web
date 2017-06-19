@@ -10,6 +10,7 @@ import net.dongliu.apk.parser.ApkFile;
 import paprika.neo4jBolt.Graph;
 import paprika.neo4jBolt.LowNode;
 import paprikaana.functions.VersionFunctions;
+import paprika.neo4jBolt.DriverBolt;
 
 public class PaprikaAnalyzeMain {
 	public static final Logger LOGGER = LogManager.getLogger();
@@ -28,6 +29,7 @@ public class PaprikaAnalyzeMain {
 		if (leng != 4) {
 			return;
 		}
+		DriverBolt.setHostName("spirals-somca");
 		PaprikaAnalyzeMain.LOGGER.trace("Launch Analyse");
 		String fName = args[0];
 		String user = args[1];

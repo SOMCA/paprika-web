@@ -28,9 +28,7 @@ mkdir dockerTandoori/input
 mkdir dockerTandoori/output
 
 
-#Launch and create the container neo4j
-docker-compose build neoj
-docker-compose up -d neoj
+
 
 #Container for Paprika web
 docker build -t paprika-web dockerweb
@@ -40,11 +38,16 @@ docker build -t paprika-analyze dockeranalyze
 #Container for analyze with a Github link.
 docker build -t paprika-tandoori dockerTandoori
 
+
+#Apply many things on the docker-machine:
+
+#Launch and create the container neo4j
+docker-compose up -d neoj
+
+#
+sleep 5
 #Launch Paprika web
-docker-compose build web
-docker-compose up web
-
-
+docker-compose up -d web
 
 #Thing for me:
 

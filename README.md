@@ -16,7 +16,7 @@ The project use Docker and Maven, you need to have installed these functionality
 * paprika-tandoori: Part who run the analyze for GitHub.
 
 
-## Run: 
+## Run:
 
 For run Paprika-web, you need to compile paprika-analyze, paprika-web ad paprika-Tandoori,CodesmellsAnno per the command:
 >> mvn clean package
@@ -29,10 +29,25 @@ You need also have a info.json on the form of : { "token":"token_of_a_bot_accoun
 For have this token, you need to create a GitHub account, then create a token who have access to repo.
 
 When done, you need just to launch:
+```
 $./run.sh
+```
+
+Then you need to go on your docker-machine, for me, this is
+```
+docker-machine ssh spirals-somca.
+```
+Then install docker-compose if not installed, see
+https://docs.docker.com/compose/install/
+For finish, just launch:
+```
+sudo docker-compose up web
+```
+
+
 
 The first run launch always a error you need to:
-go on <address>:7474 for create a small account.  ( address is "localhost"  per default) 
+go on <address>:7474 for create a small account.  ( address is "localhost"  per default)
 Where the username need to be neo4j(the default) and the password always: paprika
 
 
@@ -97,10 +112,6 @@ On the menu->Project, new versions can be inverted with the old, only if 0 versi
 ** accept only File.apk.
 ** Can be very long.
 
-* Paprika-Tandoori 
-** require these Github Link "https://github.com/Snrasha/paprika-web.git" 
-** If you have  two files who have the same name and the same package, theses files will no be analyzed correctly. 
-
-
-
-
+* Paprika-Tandoori
+** require these Github Link "https://github.com/Snrasha/paprika-web.git"
+** If you have  two files who have the same name and the same package, theses files will no be analyzed correctly.
