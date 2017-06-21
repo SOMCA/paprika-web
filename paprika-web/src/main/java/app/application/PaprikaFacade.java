@@ -1,6 +1,8 @@
 package app.application;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -14,6 +16,9 @@ import java.util.Set;
 
 import javax.servlet.http.Part;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.mail.*;
+import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.StatementResult;
@@ -112,11 +117,10 @@ public final class PaprikaFacade {
 	 */
 	public Project project(long project) {
 		ProjectFunctions appFct = new ProjectFunctions();
-		
-		if(this.getParameter(project, PaprikaKeyWords.EXAMPLE)!=null){
+
+		if (this.getParameter(project, PaprikaKeyWords.EXAMPLE) != null) {
 			return new ProjectExample(appFct.receiveOf(project), project);
 		}
-		
 
 		return new Project(appFct.receiveOf(project), project);
 	}
@@ -130,12 +134,11 @@ public final class PaprikaFacade {
 	 */
 	public Version version(long version) {
 		VersionFunctions verFct = new VersionFunctions();
-		String name=verFct.receiveOf(version);
-		if(this.getParameter(version, PaprikaKeyWords.EXAMPLE)!=null){
-			return new VersionExample(name, version,(name.endsWith("0")));
+		String name = verFct.receiveOf(version);
+		if (this.getParameter(version, PaprikaKeyWords.EXAMPLE) != null) {
+			return new VersionExample(name, version, (name.endsWith("0")));
 		}
-		
-		
+
 		return new Version(name, version);
 	}
 
@@ -191,13 +194,14 @@ public final class PaprikaFacade {
 	 * 
 	 */
 	public long addVersion(long idproject, String version) {
-		
+
 		// If the example Project is a real example, so user cannot add version.
-		if(this.getParameter(idproject, PaprikaKeyWords.EXAMPLE)!=null) return -1;
-		
+		if (this.getParameter(idproject, PaprikaKeyWords.EXAMPLE) != null)
+			return -1;
+
 		VersionFunctions verFct = new VersionFunctions();
 		if (version != null && verFct.receiveIDOfVersion(idproject, version) == -1) {
-			LowNode node=verFct.writeVersion(idproject, version);
+			LowNode node = verFct.writeVersion(idproject, version);
 			return node.getID();
 		}
 
@@ -382,6 +386,7 @@ public final class PaprikaFacade {
 		if (salt == null) {
 			return false;
 		}
+		
 		String newHashedPassword = BCrypt.hashpw(password, salt);
 
 		usrFct.writeUser(email, newHashedPassword);
@@ -637,13 +642,69 @@ public final class PaprikaFacade {
 		String numberV = project.getNumberOfVersion();
 		long idProject = project.getID();
 		String nameV = project.getName() + "_" + numberV;
-		boolean successAdd = (this.addVersion(idProject, nameV)!=-1);
+		boolean successAdd = (this.addVersion(idProject, nameV) != -1);
 		if (successAdd) {
 			VersionFunctions verFct = new VersionFunctions();
 			long idV = verFct.receiveIDOfVersion(idProject, nameV);
 			this.setParameterOnNode(idV, "GitHub", linkGithub);
 			this.needReloadApp(project);
 		}
+	}
+
+	/**
+	 * Send a bot email to a email.
+	 * 
+	 * @throws EmailException
+	 * @throws IOException
+	 */
+	public void sendEmail(String mail) throws EmailException, IOException {
+
+		InputStream is;
+		is = new FileInputStream("./info.json");
+		String jsonTxt;
+		jsonTxt = IOUtils.toString(is);
+		JSONObject json = new JSONObject(jsonTxt);
+
+		String token_pwd = json.getString("token_pwd");
+		
+	
+		
+		String token_username;
+		if(!json.isNull("token_username"))
+			token_username = json.getString("token_username");
+		else token_username= "snrashabot";
+	
+		
+		
+		String smtp;
+		if(!json.isNull("token_smtp"))
+			smtp = json.getString("token_smtp");
+		else smtp= "smtp.gmail.com";
+		
+		String from;
+		if(!json.isNull("token_email"))
+		   from = json.getString("token_email");
+		else from= "snrashabot@gmail.com";
+	
+		
+		String to = mail;
+		
+		
+		
+
+		Email email = new SimpleEmail();
+		email.setHostName(smtp);
+		email.setSmtpPort(465);
+		email.setAuthenticator(new DefaultAuthenticator(token_username, token_pwd));
+		email.setSSLOnConnect(true);
+		email.setFrom(from);
+		email.setSubject("TestMail");
+		email.setMsg("   Hi " + to.split("@")[0] + ", <br>" +
+        "Thanks for registering at Paprika-Web.  To activate your email address click the link below! <br><br>"
+        + "Link for enable account: http://spirals-somca/paprika/enableAccount/ <br><br> Activation code: "+"test");
+		email.addTo(to);
+		email.send();
+
 	}
 
 }

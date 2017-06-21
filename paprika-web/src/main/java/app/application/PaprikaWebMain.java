@@ -11,6 +11,7 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
+import app.controller.EnableAccountController;
 import app.controller.FormController;
 import app.controller.IndexController;
 import app.controller.LoginController;
@@ -147,6 +148,8 @@ public class PaprikaWebMain {
 
 		// Mis sur indexController car il est basé sur l'index
 		get(PathIn.Web.VERSION, VersionController.serveVersionPage);
+		
+		get(PathIn.Web.ENACC,EnableAccountController.servePage);
 
 		// get(PathIn.Web.ZIP, (request, response) -> getFile(request,
 		// response));
@@ -167,6 +170,8 @@ public class PaprikaWebMain {
 		post(PathIn.Web.SIGNUP, SignUpController.handleSignUpPost);
 
 		post(PathIn.Web.FORMDEL, FormController.handleFormDeletePost);
+
+		post(PathIn.Web.ENACC,EnableAccountController.handlePost);
 
 	}
 

@@ -100,10 +100,12 @@ public class LoginController {
 		if (user == null) {
 			return false;
 		}
+		
 		String salt = facade.salt();
 		if (salt == null) {
 			return false;
 		}
+		
 		String hashedPassword = BCrypt.hashpw(password, salt);
 		return hashedPassword.equals(facade.getUserHash(user));
 	}

@@ -1,5 +1,7 @@
 package app.functions;
 
+import java.util.Random;
+
 import org.neo4j.driver.v1.Record;
 
 import org.neo4j.driver.v1.StatementResult;
@@ -150,20 +152,17 @@ public class UserFunctions extends Functions {
 
 			tx.run(graph.relation(nodeUser, nodeApp, PaprikaKeyWords.REL_USER_PROJECT));
 
-
 			nodeApp = new LowNode(PaprikaKeyWords.LABELPROJECT);
 			nodeApp.setId(id);
 			// Incrémente le nombre de versions dans le project:
 			LowNode nodeVer;
 			for (int i = 0; i < 2; i++) {
 
-				
 				nodeVer = new LowNode(PaprikaKeyWords.VERSIONLABEL);
 				nodeVer.addParameter(PaprikaKeyWords.NAMEATTRIBUTE, nameProject + "_" + i);
 				nodeVer.addParameter(PaprikaKeyWords.ORDER,
-						verFct.increment(nodeApp, PaprikaKeyWords.ATTRIBUTE_NB_VERSION,
-								i, tx));
-				nodeVer.addParameter(PaprikaKeyWords.EXAMPLE,"true");
+						verFct.increment(nodeApp, PaprikaKeyWords.ATTRIBUTE_NB_VERSION, i, tx));
+				nodeVer.addParameter(PaprikaKeyWords.EXAMPLE, "true");
 
 				// Créer une version node:
 				result = tx.run(graph.create(nodeVer));
@@ -175,6 +174,28 @@ public class UserFunctions extends Functions {
 			tx.success();
 		}
 
+	}
+
+	public String generateRandomActivationCode(String email) {
+		Random rand = new Random();
+		int numRand;
+		char charac;
+		String activation = "";
+
+		while (activation.length() < 5) {
+			numRand = 48 + rand.nextInt(76);
+			if ((numRand > 47 && numRand < 58) || (numRand > 64 && numRand < 91) || (numRand > 96 && numRand < 123)) {
+				charac=(char)numRand;
+				activation+=charac;
+			}
+		}
+		try (Transaction tx = this.session.beginTransaction()) {
+			tx.run("MATCH(u:"+PaprikaKeyWords.LABELUSER+" {email:\""+email+"\"}) SET u.activation="+activation+", u.enabled=0");
+			tx.success();
+		}
+		
+
+		return activation;
 	}
 
 }

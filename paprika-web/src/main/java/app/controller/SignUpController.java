@@ -5,6 +5,7 @@ import java.util.*;
 import app.application.PaprikaFacade;
 import app.utils.*;
 
+
 /**
  * Controller for the signup page.
  * 
@@ -36,6 +37,7 @@ public class SignUpController {
 			return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
 		}
 		model.put("signUpSucceeded", true);
+		facade.sendEmail(RequestUtil.getQueryUsername(request));
 
 		request.session().attribute("currentUser", RequestUtil.getQueryUsername(request));
 		request.session().attribute("user", facade.user(RequestUtil.getQueryUsername(request)));
