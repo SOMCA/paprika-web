@@ -2,10 +2,12 @@ package app.functions;
 
 import java.util.Random;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.driver.v1.Record;
 
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
+import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.types.Node;
 
 import app.application.PaprikaWebMain;
@@ -22,6 +24,7 @@ import app.utils.neo4j.LowNode;
  */
 public class UserFunctions extends Functions {
 	private static final String ATTRIBUTE_KEY = "hashpwd";
+	private static final String ATTRIBUTE_ENABLED="enabled";
 
 	/**
 	 * Return the salt of the first node of label "key" If not found, return
@@ -79,8 +82,17 @@ public class UserFunctions extends Functions {
 			if (node.get(PaprikaKeyWords.ATTRIBUTE_EMAIL).asString().equals(email)) {
 
 				String hashpwd = node.get(ATTRIBUTE_KEY).asString();
+
 				long id = node.id();
-				return new User(email, id, hashpwd);
+				
+				
+			    Value value=node.get(ATTRIBUTE_ENABLED);
+			    
+			    boolean active=(!value.isNull() && "1".equals(value.asString()));
+			    
+				User user=new User(email, id, hashpwd,active);
+				
+				return user;
 			}
 		}
 
@@ -117,8 +129,6 @@ public class UserFunctions extends Functions {
 	 */
 	public void writeExample(String email) {
 		String nameProject = "Example";
-		String nameV1 = "Example_0";
-		String nameV2 = "Example_1";
 		long id = -1;
 
 		VersionFunctions verFct = new VersionFunctions();
@@ -176,13 +186,13 @@ public class UserFunctions extends Functions {
 
 	}
 
-	public String generateRandomActivationCode(String email) {
+	public String generateRandomActivationCode(String email,boolean reset) {
 		Random rand = new Random();
 		int numRand;
 		char charac;
 		String activation = "";
 
-		while (activation.length() < 5) {
+		while (activation.length() < 6) {
 			numRand = 48 + rand.nextInt(76);
 			if ((numRand > 47 && numRand < 58) || (numRand > 64 && numRand < 91) || (numRand > 96 && numRand < 123)) {
 				charac=(char)numRand;
@@ -190,12 +200,18 @@ public class UserFunctions extends Functions {
 			}
 		}
 		try (Transaction tx = this.session.beginTransaction()) {
-			tx.run("MATCH(u:"+PaprikaKeyWords.LABELUSER+" {email:\""+email+"\"}) SET u.activation="+activation+", u.enabled=0");
+			String command="MATCH(u:"+PaprikaKeyWords.LABELUSER+" {email:\""+email+"\"}) SET u.activation=\""+activation;
+
+			if(!reset){
+				command+="\", u."+ATTRIBUTE_ENABLED+"=\"0\"";
+			}
+			
+			
+			tx.run(command);
 			tx.success();
 		}
 		
 
 		return activation;
 	}
-
 }

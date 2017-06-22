@@ -97,9 +97,10 @@ public class LoginController {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 
 		User user = facade.user(email);
-		if (user == null) {
+		if (user == null || !user.getActive()) {
 			return false;
 		}
+		
 		
 		String salt = facade.salt();
 		if (salt == null) {

@@ -40,32 +40,24 @@
             <div class="col-md-4 col-md-offset-4">
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">$msg.get("ENACC_HEADING")</h3>
+                        <h3 class="panel-title">Reset password</h3>
                     </div>
+                    #if($send)
                     <div class="panel-body">
-
-                        #if($authENACC && $authENACC==2)
-                        <p  class="good notification">$msg.get("ENACC_AUTH_SUCCESS")</p>
-                        #else
-                        <form role="form"  id="enableACCForm" method="post" action="/paprika/enableAccount/">
+                        <form role="form"  id="resetForm" method="post" action="/paprika/reset/">
                             <fieldset>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="$msg.get("ENACC_LABEL_EMAIL")" name="email" type="email" name="email" autofocus required>
                                 </div>
-                                <div class="form-group">
-                                    <input class="form-control" pattern="^[a-zA-Z0-9-_\.]{6}$" placeholder="XXXXXX" name="activation" type="activation" required>
-                                </div>
                               <input type="submit"  class="btn btn-lg btn-success btn-block" value="$msg.get("ENACC_BUTTON_VALID")">
                             </fieldset>
                         </form>
-                        #if($authENACC && $authENACC==0)
-                            <p class="bad notification">$msg.get("ENACC_AUTH_FAILED")</p>
-                        #end
-                        #if($authENACC && $authENACC==1)
-                            <p class="bad notification">$msg.get("ENACC_AUTH_ALREADY")</p>
-                        #end
-                        #end
+                          <p class="bad notification">E-mail is not secured, so use fastly the reset code.</p>
                       </div>
+                      #end
+                      #if($change)
+                      à faire
+                      #end
                       <div class="panel-heading">
                           <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("BUTTON_INDEX")</a></h6>
                       </div>

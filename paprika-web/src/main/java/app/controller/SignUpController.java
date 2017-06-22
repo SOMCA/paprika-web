@@ -2,9 +2,9 @@ package app.controller;
 
 import spark.*;
 import java.util.*;
+
 import app.application.PaprikaFacade;
 import app.utils.*;
-
 
 /**
  * Controller for the signup page.
@@ -20,7 +20,7 @@ public class SignUpController {
 	public static final Route serveSignUpPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		model.put(PaprikaKeyWords.PROJECT, null);
-		
+
 		return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
 	};
 	/**
@@ -31,21 +31,30 @@ public class SignUpController {
 		Map<String, Object> model = new HashMap<>();
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		model.put(PaprikaKeyWords.PROJECT, null);
-		
+		String captcha = request.queryParams("g-recaptcha-response");
+		System.out.println("Captcha: '" + captcha+"'");
+
+		if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
+			model.put("signUpFailed", true);
+			return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
+		}
+
 		if (!facade.signUp(RequestUtil.getQueryUsername(request), RequestUtil.getQueryPassword(request))) {
 			model.put("signUpFailed", true);
 			return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
 		}
 		model.put("signUpSucceeded", true);
-		facade.sendEmail(RequestUtil.getQueryUsername(request));
+		facade.sendActiveCode(RequestUtil.getQueryUsername(request));
 
-		request.session().attribute("currentUser", RequestUtil.getQueryUsername(request));
-		request.session().attribute("user", facade.user(RequestUtil.getQueryUsername(request)));
-		if (RequestUtil.getQueryLoginRedirect(request) != null) {
-			response.redirect(RequestUtil.getQueryLoginRedirect(request));
-		}
-
-		return ViewUtil.render(request, model, PathIn.Template.INDEX);
+		/*
+		 * request.session().attribute("currentUser",
+		 * RequestUtil.getQueryUsername(request));
+		 * request.session().attribute("user",
+		 * facade.user(RequestUtil.getQueryUsername(request))); if
+		 * (RequestUtil.getQueryLoginRedirect(request) != null) {
+		 * response.redirect(RequestUtil.getQueryLoginRedirect(request)); }
+		 */
+		return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
 	};
 
 	private SignUpController() {

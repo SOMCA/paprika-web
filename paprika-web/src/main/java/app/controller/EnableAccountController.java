@@ -11,6 +11,7 @@ import app.application.PaprikaWebMain;
 import app.model.Project;
 import app.utils.PaprikaKeyWords;
 import app.utils.PathIn;
+import app.utils.RequestUtil;
 import app.utils.ViewUtil;
 import spark.Request;
 import spark.Response;
@@ -30,7 +31,7 @@ public class EnableAccountController {
 
 		Map<String, Object> model = new HashMap<>();
 		PaprikaWebMain.LOGGER.trace("-------EnableAcc:servePage--------");
-		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
+		return ViewUtil.render(request, model, PathIn.Template.ENACC);
 	};
 
 
@@ -38,14 +39,15 @@ public class EnableAccountController {
 		Map<String, Object> model = new HashMap<>();
 
 		PaprikaWebMain.LOGGER.trace("-------EnableAcc:handlePost--------");
-		String delete = request.queryParams("delete");
-		if (delete != null) {
-			
+		String activation = request.queryParams("activation");
+		if (activation != null) {
+			String email=RequestUtil.getQueryUsername(request);
+			PaprikaFacade facade= PaprikaFacade.getInstance();
+			int flag=facade.activeAccount(email, activation);
+			model.put("authENACC", flag);
 		}
 		model.put(PaprikaKeyWords.PROJECT, null);
-		
-		
-		return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
+		return ViewUtil.render(request, model, PathIn.Template.ENACC);
 	};
 
 	private EnableAccountController() {

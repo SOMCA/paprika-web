@@ -150,6 +150,10 @@ public class PaprikaWebMain {
 		get(PathIn.Web.VERSION, VersionController.serveVersionPage);
 		
 		get(PathIn.Web.ENACC,EnableAccountController.servePage);
+		
+		get(PathIn.Web.RESETSEND,FormController.serveFormResetSendPage);
+		get(PathIn.Web.RESETRECEIVE,FormController.serveFormResetReceivePage);
+
 
 		// get(PathIn.Web.ZIP, (request, response) -> getFile(request,
 		// response));
@@ -172,6 +176,8 @@ public class PaprikaWebMain {
 		post(PathIn.Web.FORMDEL, FormController.handleFormDeletePost);
 
 		post(PathIn.Web.ENACC,EnableAccountController.handlePost);
+		post(PathIn.Web.RESETSEND,FormController.handleFormResetPost);
+		post(PathIn.Web.RESETRECEIVE,FormController.handleFormResetPost);
 
 	}
 

@@ -650,6 +650,8 @@ public final class PaprikaFacade {
 			this.needReloadApp(project);
 		}
 	}
+	
+	
 
 	/**
 	 * Send a bot email to a email.
@@ -657,7 +659,7 @@ public final class PaprikaFacade {
 	 * @throws EmailException
 	 * @throws IOException
 	 */
-	public void sendEmail(String mail) throws EmailException, IOException {
+	private void sendEmail(String mail,String title,String message) throws EmailException, IOException {
 
 		InputStream is;
 		is = new FileInputStream("./info.json");
@@ -689,22 +691,87 @@ public final class PaprikaFacade {
 		
 		String to = mail;
 		
-		
-		
-
+	
 		Email email = new SimpleEmail();
 		email.setHostName(smtp);
 		email.setSmtpPort(465);
 		email.setAuthenticator(new DefaultAuthenticator(token_username, token_pwd));
 		email.setSSLOnConnect(true);
 		email.setFrom(from);
-		email.setSubject("TestMail");
-		email.setMsg("   Hi " + to.split("@")[0] + ", <br>" +
-        "Thanks for registering at Paprika-Web.  To activate your email address click the link below! <br><br>"
-        + "Link for enable account: http://spirals-somca/paprika/enableAccount/ <br><br> Activation code: "+"test");
+		email.setSubject(title);
+		email.setMsg(message);
 		email.addTo(to);
 		email.send();
 
+	}
+	/**
+	 * Send a active code for activate account.
+	 * @param email
+	 * @throws EmailException
+	 * @throws IOException
+	 */
+	public void sendActiveCode(String email) throws EmailException, IOException{
+		UserFunctions userfct= new UserFunctions();
+		String code=userfct.generateRandomActivationCode(email,false);
+
+		String title="Paprika: Active account.";
+		String message="   Hi " + email.split("@")[0] + ", \n" +
+		        "Thanks for registering at Paprika-Web.  To activate your email address click the link below! \n\n"
+		        + "\nLink for enable account: http://spirals-somca/paprika/enableAccount/ \n\n  And insert this Activation code: "+code;
+	
+		sendEmail(email,title,message);
+	}
+	
+	public int activeAccount(String email, String code){
+		User user=this.user(email);
+		if(user==null) return 0;
+		if(user.getActive()) 
+			return 1;
+		if(this.getParameter(user.getID(), "activation").equals(code)){
+			this.setParameterOnNode(user.getID(), "enabled", "1");
+			this.removeParameterOnNode(user.getID(), "activation");
+			return 2;
+			
+		}
+			
+		
+		return 0;
+	}
+	/**
+	 * Send a email for obtain a new password
+	 * @param email
+	 * @throws EmailException
+	 * @throws IOException
+	 */
+	public void sendnewPwd(String email) throws EmailException, IOException{
+		UserFunctions userfct= new UserFunctions();
+		String code=userfct.generateRandomActivationCode(email,true);
+		if(userfct.foundUser(email)==null) return;
+
+		String title="Paprika: Active account.";
+		String message="   Hi " + email.split("@")[0] + ", \n" +
+		        "Thanks for have use the service at Paprika-Web."
+		        + "\n  To reset your password click the link below!"
+		        + "\n\nLink for enable account: http://spirals-somca/paprika/enableAccount/ \n\n  And insert this reset code: "+code
+		        +"\n E-mail is not secured, so you need to fastly use the reset code.";
+	
+		sendEmail(email,title,message);
+	}
+	public boolean resetpwd(String email, String code,String pwd){
+		User user=this.user(email);
+		if(user==null) return false;
+		if(this.getParameter(user.getID(), "activation").equals(code)){
+			String salt=this.salt();
+			String newHashedPassword = BCrypt.hashpw(pwd, salt);
+			this.setParameterOnNode(user.getID(), "hashpwd", newHashedPassword);
+			this.setParameterOnNode(user.getID(), "enabled", "1");
+			this.removeParameterOnNode(user.getID(), "activation");
+			return true;
+			
+		}
+			
+		
+		return false;
 	}
 
 }

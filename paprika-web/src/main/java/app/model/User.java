@@ -21,6 +21,7 @@ import app.utils.neo4j.LowNode;
  */
 public class User extends Entity{
 	protected final String hashedPassword;
+	protected final boolean active;
 
 	/**
 	 * 
@@ -28,8 +29,9 @@ public class User extends Entity{
 	 * @param id id of the User
 	 * @param hashedPassword hidden password of the User
 	 */
-	public User(String email,long id, String hashedPassword) {
+	public User(String email,long id, String hashedPassword,boolean active) {
 		super(email,id);
+		this.active=active;
 		this.hashedPassword = hashedPassword;
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		LowNode lownode= new LowNode(PaprikaKeyWords.LABELUSER);
@@ -40,8 +42,6 @@ public class User extends Entity{
 			UserFunctions userFct= new UserFunctions();
 			//long idproject=facade.addProject(this, "Example");
 			userFct.writeExample(this.getName());
-
-
 		}
 	}
 
@@ -52,7 +52,13 @@ public class User extends Entity{
 	public String getHashedPassword() {
 		return this.hashedPassword;
 	}
-
+	/**
+	 * Return the current state of the user.
+	 * @return Return true if the account have be enabled.
+	 */
+	public boolean getActive() {
+		return this.active;
+	}
 
 	/**
 	 * Return the name of the email without string after '@'
