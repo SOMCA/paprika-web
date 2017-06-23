@@ -34,7 +34,7 @@ public class FormController {
 		Map<String, Object> model = new HashMap<>();
 		PaprikaWebMain.LOGGER.trace("-------serveFormResetPage--------");
 		model.put("change", true);
-	
+
 		return ViewUtil.render(request, model, PathIn.Template.RESET);
 	};
 
@@ -44,27 +44,34 @@ public class FormController {
 		PaprikaWebMain.LOGGER.trace("-------handleFormResetPost--------");
 		String email = RequestUtil.getQueryUsername(request);
 
+		String captcha = request.queryParams("g-recaptcha-response");
+		boolean stop = false;
+		if (!PaprikaWebMain.DISABLEALLSECURITY)
+			if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
+				model.put("resetFlagFail", true);
+				stop = true;
+			}
 		if (email != null) {
 			PaprikaFacade facade = PaprikaFacade.getInstance();
 			String pwd = RequestUtil.getQueryPassword(request);
-			
+
 			if (pwd != null) {
-				String captcha = request.queryParams("g-recaptcha-response");
+
 				model.put("change", true);
-				if(!PaprikaWebMain.DISABLEALLSECURITY)
-				if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
-					model.put("resetFlagFail", true);
+				if (stop)
 					return ViewUtil.render(request, model, PathIn.Template.RESET);
-				}
+
 				String activation = request.queryParams("activation");
-				boolean flag=facade.resetpwd(email, activation, pwd);
+				boolean flag = facade.resetpwd(email, activation, pwd);
 				model.put("resetFlag", flag);
-				
+
 			} else {
-			
+
+				model.put("send", true);
+				if (stop)
+					return ViewUtil.render(request, model, PathIn.Template.RESET);
 				facade.sendnewPwd(email);
 				model.put("emailSended", true);
-				model.put("send", true);
 			}
 		}
 		model.put(PaprikaKeyWords.PROJECT, null);

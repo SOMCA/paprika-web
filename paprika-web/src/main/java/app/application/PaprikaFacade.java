@@ -752,7 +752,7 @@ public final class PaprikaFacade {
 		String message="   Hi " + email.split("@")[0] + ", \n" +
 		        "Thanks for have use the service at Paprika-Web."
 		        + "\n  To reset your password click the link below!"
-		        + "\n\nLink for reset your password: http://spirals-somca/paprika/enableAccount/ \n\n  And insert this reset code: "+code
+		        + "\n\nLink for reset your password: http://spirals-somca/paprika/reset/change/ \n\n  And insert this reset code: "+code
 		        +"\n E-mail is not secured, so you need to fastly use the reset code.";
 	
 		sendEmail(email,title,message);
