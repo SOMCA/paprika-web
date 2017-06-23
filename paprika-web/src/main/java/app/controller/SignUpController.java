@@ -4,6 +4,7 @@ import spark.*;
 import java.util.*;
 
 import app.application.PaprikaFacade;
+import app.application.PaprikaWebMain;
 import app.utils.*;
 
 /**
@@ -32,10 +33,9 @@ public class SignUpController {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		model.put(PaprikaKeyWords.PROJECT, null);
 		String captcha = request.queryParams("g-recaptcha-response");
-		System.out.println("Captcha: '" + captcha+"'");
-
+		if(!PaprikaWebMain.DISABLEALLSECURITY)
 		if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
-			model.put("signUpFailed", true);
+			model.put("signUpCaptchaFail", true);
 			return ViewUtil.render(request, model, PathIn.Template.SIGNUP);
 		}
 

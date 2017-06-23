@@ -748,11 +748,11 @@ public final class PaprikaFacade {
 		String code=userfct.generateRandomActivationCode(email,true);
 		if(userfct.foundUser(email)==null) return;
 
-		String title="Paprika: Active account.";
+		String title="Paprika: Reset Password";
 		String message="   Hi " + email.split("@")[0] + ", \n" +
 		        "Thanks for have use the service at Paprika-Web."
 		        + "\n  To reset your password click the link below!"
-		        + "\n\nLink for enable account: http://spirals-somca/paprika/enableAccount/ \n\n  And insert this reset code: "+code
+		        + "\n\nLink for reset your password: http://spirals-somca/paprika/enableAccount/ \n\n  And insert this reset code: "+code
 		        +"\n E-mail is not secured, so you need to fastly use the reset code.";
 	
 		sendEmail(email,title,message);

@@ -34,6 +34,7 @@ public class FormController {
 		Map<String, Object> model = new HashMap<>();
 		PaprikaWebMain.LOGGER.trace("-------serveFormResetPage--------");
 		model.put("change", true);
+	
 		return ViewUtil.render(request, model, PathIn.Template.RESET);
 	};
 
@@ -46,11 +47,18 @@ public class FormController {
 		if (email != null) {
 			PaprikaFacade facade = PaprikaFacade.getInstance();
 			String pwd = RequestUtil.getQueryPassword(request);
+			
 			if (pwd != null) {
+				String captcha = request.queryParams("g-recaptcha-response");
+				model.put("change", true);
+				if(!PaprikaWebMain.DISABLEALLSECURITY)
+				if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
+					model.put("resetFlagFail", true);
+					return ViewUtil.render(request, model, PathIn.Template.RESET);
+				}
 				String activation = request.queryParams("activation");
 				boolean flag=facade.resetpwd(email, activation, pwd);
 				model.put("resetFlag", flag);
-				model.put("change", true);
 				
 			} else {
 			

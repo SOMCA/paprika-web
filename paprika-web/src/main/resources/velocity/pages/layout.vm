@@ -9,7 +9,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="/paprika/reset/">$msg.get("LAYOUT_TITLE")</a>
+    <a class="navbar-brand" href="/paprika/">$msg.get("LAYOUT_TITLE")</a>
   </div>
   <div class="navbar-left">
     #if($user)
@@ -41,7 +41,8 @@
     <ul class="dropdown-menu dropdown-user">
       #if($currentUser)
       <li><a href="#"><i class="fa fa-user fa-fw"></i>$msg.get("LAYOUT_UL_PROFIL")</a></li>
-      <li><a href="/paprika/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_SETTINGS")</a></li>
+      <li><a href="/paprika/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_DELETE")</a></li>
+      <li><a href="/paprika/reset/send/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_RESET")</a></li>
       <li class="divider"></li>
       <li><a href="/paprika/logout/" ><i class="fa fa-sign-out fa-fw"></i>$msg.get("LAYOUT_UL_LOGOUT")</a></li>
       #else

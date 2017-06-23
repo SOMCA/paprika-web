@@ -16,7 +16,9 @@ You need a info.json:
  { "token_pwd":"——-",
    "token_username":"=====",
    "token_email":"=====@gmail.com",
-   "token_smtp":"smtp.gmail.com"
+   "token_smtp":"smtp.gmail.com",
+   "token_private_key_captcha":"--------------------------------",
+   "token_key_https":"——-"
  }
 
 '''

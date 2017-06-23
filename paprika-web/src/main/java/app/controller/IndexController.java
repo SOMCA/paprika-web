@@ -34,9 +34,9 @@ public class IndexController {
 		return ViewUtil.render(request, model, PathIn.Template.INDEX);
 	};
 	/**
-	 * Index where you go per default.
+	 * reset the project
 	 */
-	public static final Route resetIndexPage = (Request request, Response response) -> {
+	public static final Route resetProjectIndexPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		model.put(PaprikaKeyWords.PROJECT, null);
 

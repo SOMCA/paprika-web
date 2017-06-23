@@ -200,10 +200,10 @@ public class UserFunctions extends Functions {
 			}
 		}
 		try (Transaction tx = this.session.beginTransaction()) {
-			String command="MATCH(u:"+PaprikaKeyWords.LABELUSER+" {email:\""+email+"\"}) SET u.activation=\""+activation;
+			String command="MATCH(u:"+PaprikaKeyWords.LABELUSER+" {email:\""+email+"\"}) SET u.activation=\""+activation+"\"";
 
 			if(!reset){
-				command+="\", u."+ATTRIBUTE_ENABLED+"=\"0\"";
+				command+=", u."+ATTRIBUTE_ENABLED+"=\"0\"";
 			}
 			
 			

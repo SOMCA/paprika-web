@@ -29,6 +29,7 @@ android-platforms/
 .metadata/
 .recommenders/
 
+dockerweb/clientkeystore
 **/*.json
 
 **/.settings/

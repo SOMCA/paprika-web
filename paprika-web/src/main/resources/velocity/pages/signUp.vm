@@ -55,7 +55,7 @@
                                     <input class="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Password Ex: )Aa:a51A" name="password" type="password" value="" required>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Confirm Password" name="confirm_password" type="confirm_password" value="" required>
+                                    <input class="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Confirm Password" name="confirm_password" type="password" value="" required>
                                 </div>
                                 <div>
                                   $msg.get("SIGNUP_PWD_INSTRUCTIONS")
@@ -70,6 +70,7 @@
                                     </label>
                                 </div>
                               -->
+                                </fieldset>
                             <fieldset>
                               <div class="g-recaptcha" data-sitekey="6LeReyYUAAAAAKcEex84ajPorGxbPH8SktMvzisU"></div>
                             </fieldset>
@@ -80,6 +81,9 @@
                         </form>
                         #if($signUpFailed)
                             <p class="bad notification">$msg.get("SIGNUP_AUTH_FAILED")</p>
+                        #end
+                        #if($signUpCaptchaFail)
+                            <p class="bad notification">$msg.get("SIGNUP_CAPTCHA_FAILED")</p>
                         #end
                         #end
                       </div>

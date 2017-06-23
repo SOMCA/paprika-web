@@ -3,84 +3,103 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <title>$msg.get("ENACC_TITLE")</title>
+  <title>Reset Page</title>
 
 
-      <!-- Bootstrap Core CSS -->
-      <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-      <!-- MetisMenu CSS -->
-      <link href="../../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
-
-      <!-- Custom CSS -->
-      <link href="../../dist/css/sb-admin-2.css" rel="stylesheet">
-
-      <!-- Custom Fonts -->
-      <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+  <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+  <link href="../../../dist/css/sb-admin-2.css" rel="stylesheet">
+  <link href="../../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 
 <body>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-                <div class="login-panel panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Reset password</h3>
-                    </div>
-                    #if($send)
-                    <div class="panel-body">
-                        <form role="form"  id="resetForm" method="post" action="/paprika/reset/">
-                            <fieldset>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="$msg.get("ENACC_LABEL_EMAIL")" name="email" type="email" name="email" autofocus required>
-                                </div>
-                              <input type="submit"  class="btn btn-lg btn-success btn-block" value="$msg.get("ENACC_BUTTON_VALID")">
-                            </fieldset>
-                        </form>
-                          <p class="bad notification">E-mail is not secured, so use fastly the reset code.</p>
-                      </div>
-                      #end
-                      #if($change)
-                      à faire
-                      #end
-                      <div class="panel-heading">
-                          <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("BUTTON_INDEX")</a></h6>
-                      </div>
-                      <div class="panel-heading">
-                          <h6 class="panel-title"> <a href="/paprika/login/" >$msg.get("BUTTON_LOGIN")</a></h6>
-                    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <div class="login-panel panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Reset password</h3>
+          </div>
+
+          <div class="panel-body">
+            #if($send)
+            #if($emailSended)
+            <p class="good notification">Sended, if you have not received the E-mail, wait somes minutes or retry.</p>
+            #else
+            <form role="form"  id="resetForm" method="post" action="/paprika/reset/send/">
+              <fieldset>
+                <div class="form-group">
+                  <input class="form-control" placeholder="$msg.get("ENACC_LABEL_EMAIL")" name="email" type="email" name="email" autofocus required>
                 </div>
+                <input type="submit"  class="btn btn-lg btn-success btn-block" value="$msg.get("ENACC_BUTTON_VALID")">
+              </fieldset>
+            </form>
+            #end
+            <p class="bad notification">E-mail is not secured, so use fastly the reset code.</p>
+            #end
+
+
+            #if($change)
+            #if($resetFlag)
+            <p class="good notification">You can now Login with your new password.</p>
+            #else
+            <form role="form"  id="signUpForm" method="post" action="/paprika/reset/change/">
+              <fieldset>
+                <div class="form-group">
+                  <input class="form-control" placeholder="$msg.get("SIGNUP_LABEL_EMAIL")" name="email" type="email" name="email" autofocus required>
+                </div>
+                <div class="form-group">
+                  <input class="form-control" pattern="^[a-zA-Z0-9-_\.]{6}$" placeholder="XXXXXX" name="activation" type="activation" required>
+                </div>
+                <div class="form-group">
+                  <input class="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Password Ex: )Aa:a51A" name="password" type="password" value="" required>
+                </div>
+                <div class="form-group">
+                  <input class="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Confirm Password" name="confirm_password" type="password" value="" required>
+                </div>
+                <div>
+                  $msg.get("SIGNUP_PWD_INSTRUCTIONS")
+                </div>
+              </fieldset>
+                <fieldset>
+                  <div class="g-recaptcha" data-sitekey="6LeReyYUAAAAAKcEex84ajPorGxbPH8SktMvzisU"></div>
+                </fieldset>
+                <fieldset>
+                  <input type="submit"  class="btn btn-lg btn-success btn-block" value="Submit">
+                </fieldset>
+
+              </form>
+              #if($resetFlagFail)
+              <p class="bad notification">Captcha is not valid.</p>
+
+              #end
+              #end
+              #end
             </div>
+            <div class="panel-heading">
+              <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("BUTTON_INDEX")</a></h6>
+            </div>
+            #if(!$currentUser)
+            <div class="panel-heading">
+              <h6 class="panel-title"> <a href="/paprika/login/" >$msg.get("BUTTON_LOGIN")</a></h6>
+            </div>
+            #end
+          </div>
         </div>
+      </div>
     </div>
+    <script src="../../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../../vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="../../../dist/js/sb-admin-2.js"></script>
+  </body>
 
-
-    <!-- jQuery -->
-    <script src="../../vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="../../vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="../../dist/js/sb-admin-2.js"></script>
-</body>
-
-</html>
+  </html>
