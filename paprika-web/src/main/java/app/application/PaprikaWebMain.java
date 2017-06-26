@@ -36,6 +36,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * http://sparkjava.com/documentation#cookies
  * https://docs.oracle.com/cd/E19509-01/820-3503/ggfen/index.html
  * https://docs.oracle.com/cd/E19509-01/820-3503/ggfen/
+ * Keystore.jks : keytool -genkeypair -keystore keystore2.jks -alias toto -keyalg RSA -keysize 2048 -dname "CN=toto"
+ * 
+ * 
+ * For contact me: snrasha@gmail.com
  * 
  * @author guillaume
  * 
@@ -46,7 +50,7 @@ public class PaprikaWebMain {
 	 */
 	public static final Logger LOGGER = LogManager.getLogger();
 
-	public static final boolean DISABLEALLSECURITY=true;
+	public static final boolean DISABLEALLSECURITY = false;
 	private static int versionOnAnalyze = 0;
 	private static LinkedBlockingQueue<String[]> containerQueue;
 	private static Timer timer;
@@ -134,29 +138,32 @@ public class PaprikaWebMain {
 		new DescriptionFunctions().addAllClassicDescription();
 		loadSave();
 
-		port(80);
+		if (PaprikaWebMain.DISABLEALLSECURITY)
+			port(80);
+		else
+			port(443);
 		enableDebugScreen();
 		Spark.staticFileLocation("/public");
-		if(!PaprikaWebMain.DISABLEALLSECURITY)
-		try {
-			InputStream is;
-			is = new FileInputStream("./info.json");
+		if (!PaprikaWebMain.DISABLEALLSECURITY)
+			try {
+				InputStream is;
+				is = new FileInputStream("./info.json");
 
-			String jsonTxt;
-			jsonTxt = IOUtils.toString(is);
-			JSONObject json = new JSONObject(jsonTxt);
-			
-			String keyStorePassword = json.getString("token_key_https");
+				String jsonTxt;
+				jsonTxt = IOUtils.toString(is);
+				JSONObject json = new JSONObject(jsonTxt);
 
-			if (keyStorePassword != null) {
-				String keyStoreLocation = "./clientkeystore.jks";
-				secure(keyStoreLocation, keyStorePassword, null, null);
-				
+				String keyStorePassword = json.getString("token_key_https");
+
+				if (keyStorePassword != null) {
+					String keyStoreLocation = "./clientkeystore.jks";
+					secure(keyStoreLocation, keyStorePassword, null, null);
+
+				}
+			} catch (IOException e) {
+				System.out.println("Not success");
 			}
-		} catch (IOException e) {
-		 System.out.println("Not success");
-		}
-
+	
 		// La page d'index.
 		get("/paprika", IndexController.resetProjectIndexPage);
 		get("/paprika/", IndexController.resetProjectIndexPage);
