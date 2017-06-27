@@ -7,3 +7,14 @@ Then:
 *If yes, go on the main directory:(default:paprika-web/dockeranalyze) of this folder where you found the run.sh.
 
 >> ./run.sh
+
+
+
+
+You need a info.json:
+'''
+ { "token":"—————",
+   "neo4j_pwd":"———————"
+ }
+
+'''

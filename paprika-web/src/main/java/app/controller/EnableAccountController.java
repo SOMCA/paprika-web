@@ -42,11 +42,12 @@ public class EnableAccountController {
 
 		PaprikaWebMain.LOGGER.trace("-------EnableAcc:handlePost--------");
 		String activation = request.queryParams("activation");
-		if (activation != null) {
-			String email=RequestUtil.getQueryUsername(request);
+		String email=RequestUtil.getQueryUsername(request);
+		if (activation != null && !activation.isEmpty() && email!=null && !email.isEmpty()){
 			PaprikaFacade facade= PaprikaFacade.getInstance();
 			int flag=facade.activeAccount(email, activation);
 			model.put("authENACC", flag);
+			
 		}
 		model.put(PaprikaKeyWords.PROJECT, null);
 		return ViewUtil.render(request, model, PathIn.Template.ENACC);

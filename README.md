@@ -27,8 +27,8 @@ Then move new jar of target/file.jar on dockerweb,dockeranalyze or dockerTandoor
 CodesmellsAnno.jar go only on dockerTandoori.
 
 If you want use with GitHub:
-You need also have a info.json on the form of : { "token":"token_of_a_bot_account"}
-For have this token, you need to create a GitHub account, then create a token who have access to repo.
+You need also to read also readme of dockerweb,analyze,tandoori
+For have "token", you need to create a GitHub account, then create a token who have access to repo.
 
 When done, you need just to launch:
 ```
@@ -50,7 +50,7 @@ sudo docker-compose up web
 
 The first run launch always a error you need to:
 go on <address>:7474 for create a small account.  ( address is "localhost"  per default)
-Where the username need to be neo4j(the default) and the password always: paprika
+Where the username need to be neo4j(the default) and you need to put the same password than the "neo4j_pwd" put on your json.
 
 
 ### CSAnnotations, Paprika, Tandoori:
@@ -105,9 +105,6 @@ Maven:
 
 ## Bug:
 -On the menu->Project, new versions can be inverted with the old, only if 0 versions have be analyzed on the project.
--Important problem: They cannot analyze two same name GitHub project.
-
-
 
 
 ## Requirement of the site:

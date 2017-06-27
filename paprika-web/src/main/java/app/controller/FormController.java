@@ -115,7 +115,15 @@ public class FormController {
 		// Project project = RequestUtil.getSessionProject(request);
 		PaprikaWebMain.LOGGER.trace("-------handleFormDeletePost--------");
 		String delete = request.queryParams("delete");
-		if (delete != null) {
+		
+		String captcha = request.queryParams("g-recaptcha-response");
+		if (PaprikaWebMain.ENABLEALLSECURITY)
+			if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
+				model.put("resetFlagFail", true);
+				return ViewUtil.render(request, model, PathIn.Template.FORM_DELETE);
+			}
+		
+		if (delete != null  && !delete.isEmpty()) {
 			PaprikaWebMain.LOGGER.trace("etape delete: " + delete);
 			deleteNotNull(request, null);// project);
 			// model.put(PaprikaKeyWords.PROJECT, project);
@@ -134,10 +142,13 @@ public class FormController {
 		Set<String> setOfIdToDelete = new HashSet<>();
 		for (String params : setQueryParams) {
 			String idtoDelete = request.queryParams(params);
-			if (idtoDelete == null || "00-".equals(idtoDelete)) {
+			if (idtoDelete == null || "00-".equals(idtoDelete) || idtoDelete.isEmpty() ) {
 				continue;
 			}
-			setOfIdToDelete.add(idtoDelete);
+			if(idtoDelete.startsWith("00-")){
+				
+			setOfIdToDelete.add(idtoDelete.substring(3));
+			}
 		}
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		facade.deleteOnDataBase(setOfIdToDelete);

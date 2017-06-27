@@ -1,6 +1,11 @@
 package spoon.main;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 
 import tandoori.neo4jBolt.DriverBolt;
 import tandoori.neo4jBolt.Graph;
@@ -35,7 +40,17 @@ public class PaprikaTandooriMain {
 			return;
 		
 		DriverBolt.setHostName("spirals-somca");
-
+		try {
+			InputStream is;
+			is = new FileInputStream("./info.json");
+			String jsonTxt;
+			jsonTxt = IOUtils.toString(is);
+			JSONObject json = new JSONObject(jsonTxt);
+			DriverBolt.setValue(null, null, json.getString("neo4j_pwd"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 		String fName = args[0];
 		LowNode nodeVer = new LowNode(Graph.VERSIONLABEL);
 		nodeVer.setId(Long.parseLong(args[1]));

@@ -23,7 +23,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <label>
-                  <input type="checkbox" name="00-$velocityMenu" value="$titleD.getID()"/><i class="fa fa-bar-table-o fa-fw"></i>$titleDname
+                  <input type="checkbox" name="$velocityMenu" value="00-$titleD.getID()"/><i class="fa fa-bar-table-o fa-fw"></i>$titleDname
                 </label>
 
               </div>
@@ -37,7 +37,7 @@
                   #set($titleVernameD=$titleVerD.getName())
 
                   <label>
-                    <input type="checkbox" name="00-$velocityVer$velocityMenu" value="$titleVerD.getID()"/>$titleVernameD
+                    <input type="checkbox" name="$velocityVer$velocityMenu" value="00-$titleVerD.getID()"/>$titleVernameD
                   </label><br/>
                   #set ($velocityVer=$velocityVer+1)
                   #end
@@ -50,11 +50,16 @@
           <div class="col-lg-4">
             <div class="panel panel-default">
               <div class="panel-heading">
-                  <label><input type="checkbox" required/>$msg.get("FORMDEL_DELV")</label>
+                <div class="g-recaptcha" data-sitekey="6LeReyYUAAAAAKcEex84ajPorGxbPH8SktMvzisU"></div>
+                  <!--<label><input type="checkbox" required/>$msg.get("FORMDEL_DELV")</label>-->
               </div>
               <div class="panel-footer">
                   <button class="list-group-item" style="width:auto" type="submit" id="submitDelete" name="delete" value="00-">$msg.get("FORMDEL_DEL")</button>
               </div>
+              #if($resetFlagFail)
+              <p class="bad notification">Captcha is not valid.</p>
+
+              #end
             </div>
           </div>
         </form>

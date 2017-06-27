@@ -63,7 +63,7 @@ public class PaprikaWebMain {
 	 * utilisateur: neo4j pass: paprika
 	 */
 	private static Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
-			AuthTokens.basic("neo4j", "paprika"));
+			AuthTokens.basic("neo4j", getKeyNeo4j()));
 
 	private PaprikaWebMain() {
 
@@ -86,6 +86,31 @@ public class PaprikaWebMain {
 	}
 
 	/**
+	 * Return the neo4j key
+	 * 
+	 * @return
+	 */
+	private static String getKeyNeo4j() {
+
+		try {
+		InputStream is;
+		is = new FileInputStream("./info.json");
+
+		String jsonTxt;
+		
+				jsonTxt = IOUtils.toString(is);
+	
+		
+		JSONObject json = new JSONObject(jsonTxt);
+
+		return json.getString("neo4j_pwd");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
+
+	}
+	/**
 	 * Create a new session, if the driver is closed, he re-open the driver.
 	 * 
 	 * @return a new Session.
@@ -99,8 +124,10 @@ public class PaprikaWebMain {
 		} catch (ServiceUnavailableException e) {
 			LOGGER.error("Driver problem, we re-open a driver.", e);
 			driver.close();
-			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687", AuthTokens.basic("neo4j", "paprika"));
+
+			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687", AuthTokens.basic("neo4j", getKeyNeo4j()));
 			session = driver.session();
+	
 		}
 		return session;
 	}
@@ -157,7 +184,7 @@ public class PaprikaWebMain {
 				JSONObject json = new JSONObject(jsonTxt);
 
 				String keyStorePassword = json.getString("token_key_https");
-
+			
 				if (keyStorePassword != null) {
 					String keyStoreLocation = "./clientkeystore.jks";
 					secure(keyStoreLocation, keyStorePassword, null, null);
@@ -165,6 +192,7 @@ public class PaprikaWebMain {
 				}
 			} catch (IOException e) {
 				System.out.println("Not success");
+				return;
 			}
 	
 		// La page d'index.

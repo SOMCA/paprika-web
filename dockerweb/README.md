@@ -18,7 +18,8 @@ You need a info.json:
    "token_email":"=====@gmail.com",
    "token_smtp":"smtp.gmail.com",
    "token_private_key_captcha":"--------------------------------",
-   "token_key_https":"——-"
+   "token_key_https":"——-",
+   "neo4j_pwd":"———————"
  }
 
 '''

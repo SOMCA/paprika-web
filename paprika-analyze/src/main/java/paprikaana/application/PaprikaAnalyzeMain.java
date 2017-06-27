@@ -1,10 +1,14 @@
 package paprikaana.application;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 import net.dongliu.apk.parser.ApkFile;
 import paprika.neo4jBolt.Graph;
@@ -22,11 +26,8 @@ public class PaprikaAnalyzeMain {
 	 */
 	public static final Logger LOGGER = LogManager.getLogger();
 
-
 	private PaprikaAnalyzeMain() {
 	}
-
-
 
 	/**
 	 * @param args
@@ -40,6 +41,18 @@ public class PaprikaAnalyzeMain {
 			return;
 		}
 		DriverBolt.setHostName("spirals-somca");
+
+		try {
+			InputStream is;
+			is = new FileInputStream("./info.json");
+			String jsonTxt;
+			jsonTxt = IOUtils.toString(is);
+			JSONObject json = new JSONObject(jsonTxt);
+			DriverBolt.setValue(null, null, json.getString("neo4j_pwd"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 		PaprikaAnalyzeMain.LOGGER.trace("Launch Analyse");
 		String fName = args[0];
 		String user = args[1];

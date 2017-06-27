@@ -24,10 +24,10 @@ fcl is different of the docker-analyze
 
 
 
-
-
-
 You need a info.json:
 '''
-{ "token":"—————"}
+ { "token":"—————",
+   "neo4j_pwd":"———————"
+ }
+
 '''

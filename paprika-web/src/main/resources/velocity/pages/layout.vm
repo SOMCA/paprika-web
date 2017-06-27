@@ -21,18 +21,6 @@
   <!-- /.navbar-header -->
 
   <ul class="nav navbar-top-links navbar-right">
-    <li class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-plus fa-fw"></i> <i class="fa fa-caret-down"></i>
-      </a>
-      <ul class="dropdown-menu dropdown-messages">
-        <li>
-          <li><a onclick="infoClick()" href="#" ><i class="fa fa-info fa-fw"></i>$msg.get("LAYOUT_UL_INFO")</a></li>
-        </li>
-      </ul>
-      <!-- /.dropdown-messages -->
-    </li>
-  </li>
 
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -41,7 +29,8 @@
     <ul class="dropdown-menu dropdown-user">
       #if($currentUser)
       <li><a href="#"><i class="fa fa-user fa-fw"></i>$msg.get("LAYOUT_UL_PROFIL")</a></li>
-      <li><a href="/paprika/form_delete/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_DELETE")</a></li>
+      <li class="divider"></li>
+      <li><a href="/paprika/form_delete/"><i class="fa fa-trash fa-fw"></i>$msg.get("LAYOUT_UL_DELETE")</a></li>
       <li><a href="/paprika/reset/send/"><i class="fa fa-gear fa-fw"></i>$msg.get("LAYOUT_UL_RESET")</a></li>
       <li class="divider"></li>
       <li><a href="/paprika/logout/" ><i class="fa fa-sign-out fa-fw"></i>$msg.get("LAYOUT_UL_LOGOUT")</a></li>
@@ -50,6 +39,8 @@
       <li class="divider"></li>
       <li><a href="/paprika/signUp/" ><i class="fa fa-sign-in fa-fw"></i>$msg.get("LAYOUT_UL_SIGNUP")</a></li>
       #end
+      <li class="divider"></li>
+      <li><a onclick="infoClick()" href="#" ><i class="fa fa-info fa-fw"></i>$msg.get("LAYOUT_UL_INFO")</a></li>
     </ul>
     <!-- /.dropdown-user -->
   </li>
@@ -66,7 +57,7 @@
         <form method="post" style="none" action="/paprika/index/">
           <div class="input-group custom-search-form">
 
-            <input type="text" maxlength="24" pattern=".{3,}" name="project" id="project" class="form-control" placeholder="$msg.get("LAYOUT_UL_NEWAPP")">
+            <input type="text" pattern=".{3,}" maxlength="24" name="project" id="project" class="form-control" placeholder="$msg.get("LAYOUT_UL_NEWAPP")">
             <span class="input-group-btn">
               <button class="btn btn-default" type="submit" id="project" name="for" value="project"><i class="fa fa-plus"></i></button>
             </span>
