@@ -12,7 +12,14 @@ import paprika.neo4jBolt.LowNode;
 import paprikaana.functions.VersionFunctions;
 import paprika.neo4jBolt.DriverBolt;
 
+/**
+ * @author guillaume
+ *
+ */
 public class PaprikaAnalyzeMain {
+	/**
+	 * 
+	 */
 	public static final Logger LOGGER = LogManager.getLogger();
 
 
@@ -21,6 +28,9 @@ public class PaprikaAnalyzeMain {
 
 
 
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		int leng = args.length;
 		for (int i = 0; i < leng; i++) {
