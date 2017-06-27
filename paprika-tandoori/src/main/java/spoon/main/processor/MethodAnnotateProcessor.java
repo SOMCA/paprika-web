@@ -6,12 +6,11 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.factory.AnnotationFactory;
 
 /**
- * All commentary are on the ClassAnnotateProcessor
+ * Add annotations for method
  * 
  * @author guillaume
  *
  */
-
 // We use many rawtypes.
 @SuppressWarnings("rawtypes")
 public class MethodAnnotateProcessor {
@@ -20,6 +19,10 @@ public class MethodAnnotateProcessor {
 	private String qualifiedName;
 	private AnnotationFactory factory;
 
+	/**
+	 * @param element
+	 * @param currentClass
+	 */
 	public void process(CtMethod element, String currentClass) {
 		String qualifiedName = element.getSimpleName() + "#" + currentClass;
 

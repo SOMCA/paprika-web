@@ -43,6 +43,19 @@ import tandoori.neo4jBolt.ModelToGraphBolt;
 import spoon.functions.VersionFunctions;
 import spoon.main.processor.AnnotateProcessor;
 
+/**
+ * AnalyzeProcess use multiple library like Git or Github.
+ * 
+ * Egit for fork.
+ * HttpsRequest for delete and pull.
+ * JGit for clone and push
+ * 
+ * 
+ * AnalyzeProcess is a blob, so hard to explain.
+ * 
+ * @author guillaume
+ *
+ */
 public class AnalyzeProcess {
 
 	private String fName;
@@ -56,6 +69,16 @@ public class AnalyzeProcess {
 	private String nameUser;
 	private String branch;
 
+	/**
+	 * -Take a password on a json.
+	 * -Do not check the github link, because checked on the paprika-web.
+	 * -fill many parameters.
+	 * @param fName 
+	 * @param nodeVer 
+	 * @param github 
+	 * @throws IOException 
+	 * 
+	 */
 	public AnalyzeProcess(String fName, LowNode nodeVer, String github) throws IOException {
 
 		this.fName = fName;
@@ -78,7 +101,11 @@ public class AnalyzeProcess {
 		this.token = json.getString("token");
 
 	}
-
+	/**
+	 * 
+	 * Launch  the runAna then the Query
+	 * 
+	 */
 	public void run() {
 		Analyse ana = new Analyse();
 		this.runPartAnalyse(ana);

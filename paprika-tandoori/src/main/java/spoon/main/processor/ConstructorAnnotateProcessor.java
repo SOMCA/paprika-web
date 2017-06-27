@@ -6,7 +6,7 @@ import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.factory.AnnotationFactory;
 
 /**
- * All commentary are on the ClassAnnotateProcessor
+ * Add annotations for constructor
  * 
  * @author guillaume
  *
@@ -18,6 +18,10 @@ public class ConstructorAnnotateProcessor {
 	private String qualifiedName;
 	private AnnotationFactory factory;
 
+	/**
+	 * @param element
+	 * @param currentClass
+	 */
 	public void process(CtConstructor element, String currentClass) {
 		String qualifiedName = element.getSimpleName() + "#" + currentClass;
 
