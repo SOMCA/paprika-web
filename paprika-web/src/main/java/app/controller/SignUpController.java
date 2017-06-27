@@ -33,7 +33,7 @@ public class SignUpController {
 		PaprikaFacade facade = PaprikaFacade.getInstance();
 		model.put(PaprikaKeyWords.PROJECT, null);
 		String captcha = request.queryParams("g-recaptcha-response");
-		if(!PaprikaWebMain.DISABLEALLSECURITY)
+		if(PaprikaWebMain.ENABLEALLSECURITY)
 		if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
 			model.put("signUpCaptchaFail", true);
 			return ViewUtil.render(request, model, PathIn.Template.SIGNUP);

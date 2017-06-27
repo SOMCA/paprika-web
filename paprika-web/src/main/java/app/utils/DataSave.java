@@ -19,22 +19,22 @@ public class DataSave {
 	}
 	
 	public long getNbUser(){
-		return this.nbUser;
+		return DataSave.nbUser;
 	}
 	public long getNbProject(){
-		return this.nbProject;
+		return DataSave.nbProject;
 	}	
 	public long getNbVersion(){
-		return this.nbVersion;
+		return DataSave.nbVersion;
 	}
 	public void setNbUser(long nb){
-		 this.nbUser=nb;
+		DataSave.nbUser=nb;
 	}
 	public void setNbProject(long nb){
-		 this.nbProject=nb;
+		DataSave.nbProject=nb;
 	}	
 	public void setNbVersion(long nb){
-		 this.nbVersion=nb;
+		DataSave.nbVersion=nb;
 	}
 	
 

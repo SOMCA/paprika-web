@@ -128,9 +128,8 @@ public class AnalyzeProcess {
 	private void runPartQuery(Analyse ana) {
 		VersionFunctions verFct = new VersionFunctions();
 
-		long keyApp = nodeVer.getID();
-		String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
-		verFct.writeQueryOnVersion(nodeVer, keyApp);
+		String[] args = { "query", "-k", Long.toString(nodeVer.getID()), "-r", "ALLAP" };
+		verFct.writeQueryOnVersion(nodeVer);
 		ana.runQueryMode(args);
 		verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "done");
 		verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");

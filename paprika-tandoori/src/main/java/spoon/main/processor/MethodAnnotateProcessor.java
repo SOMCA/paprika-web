@@ -1,6 +1,5 @@
 package spoon.main.processor;
 
-import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import spoon.reflect.declaration.CtMethod;

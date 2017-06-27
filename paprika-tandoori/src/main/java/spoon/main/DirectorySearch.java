@@ -7,36 +7,19 @@ import java.util.Map;
  * 
  * https://www.mkyong.com/java/search-directories-recursively-for-file-in-java/
  *
+ *
+ * DirectorySearch search all and save all name of files who finish per .java
+ *
  */
+@SuppressWarnings("javadoc")
 public class DirectorySearch {
 
 	private String fileName;
-	//private Map<String,String> result = new HashMap<String,String>();
-
+	
 	public DirectorySearch(String fileFilter) {
 		this.fileName = fileFilter;
 	}
 
-/*
-	public static void main(String[] args) {
-
-		
-		
-		DirectorySearch fileSearch = new DirectorySearch();
-
-		// try different directory and filename :)
-		fileSearch.searchDirectory(new File("../"), ".java");
-
-		int count = fileSearch.getResult().size();
-		if (count == 0) {
-			System.out.println("\nNo result found!");
-		} else {
-			System.out.println("\nFound " + count + " result!\n");
-			for (String matched : fileSearch.getResult()) {
-				System.out.println("Found : " + matched);
-			}
-		}
-	}*/
 
 	public Map<String,String> run(String path) {
 		Map<String,String> result = new HashMap<String,String>();
@@ -58,14 +41,9 @@ public class DirectorySearch {
 		if (file.isDirectory()) {
 			System.out.println("Searching directory ... " + file.getAbsoluteFile());
 
-			// do you have permission to read this directory?
 			if (file.canRead()) {
 				for (File temp : file.listFiles()) {
 					if (temp.isDirectory()) {
-						// if
-						// (this.fileName.equals(temp.getName().toLowerCase())
-						// &&
-						// temp.getParentFile().getPath().endsWith("src/main")){
 						search(temp,result);
 					} else if(temp.getName().endsWith(this.fileName)){
 						if(temp.getName()==null) continue;

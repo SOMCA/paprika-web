@@ -2,7 +2,6 @@ package app.functions;
 
 import java.util.Random;
 
-import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.driver.v1.Record;
 
 import org.neo4j.driver.v1.StatementResult;
@@ -24,7 +23,7 @@ import app.utils.neo4j.LowNode;
  */
 public class UserFunctions extends Functions {
 	private static final String ATTRIBUTE_KEY = "hashpwd";
-	private static final String ATTRIBUTE_ENABLED="enabled";
+	private static final String ATTRIBUTE_ENABLED = "enabled";
 
 	/**
 	 * Return the salt of the first node of label "key" If not found, return
@@ -84,14 +83,13 @@ public class UserFunctions extends Functions {
 				String hashpwd = node.get(ATTRIBUTE_KEY).asString();
 
 				long id = node.id();
-				
-				
-			    Value value=node.get(ATTRIBUTE_ENABLED);
-			    
-			    boolean active=(!value.isNull() && "1".equals(value.asString()));
-			    
-				User user=new User(email, id, hashpwd,active);
-				
+
+				Value value = node.get(ATTRIBUTE_ENABLED);
+
+				boolean active = (!value.isNull() && "1".equals(value.asString()));
+
+				User user = new User(email, id, hashpwd, active);
+
 				return user;
 			}
 		}
@@ -121,11 +119,10 @@ public class UserFunctions extends Functions {
 	}
 
 	/**
-	 * Create example of version when you create a new User
+	 * Create a example of version when you create a new User
 	 * 
-	 * @param idproject
-	 * @param version
-	 * @param number
+	 * @param email 
+	 * 
 	 */
 	public void writeExample(String email) {
 		String nameProject = "Example";
@@ -186,7 +183,15 @@ public class UserFunctions extends Functions {
 
 	}
 
-	public String generateRandomActivationCode(String email,boolean reset) {
+	/**
+	 * Generate a random activation code and insert the code on the node of
+	 * user, if the reset is false, he add also the boolean enabled to 0
+	 * 
+	 * @param email the email of the user
+	 * @param reset if true, he do not add a attribut to the user node.
+	 * @return the activation code for be sended.
+	 */
+	public String generateRandomActivationCode(String email, boolean reset) {
 		Random rand = new Random();
 		int numRand;
 		char charac;
@@ -195,22 +200,21 @@ public class UserFunctions extends Functions {
 		while (activation.length() < 6) {
 			numRand = 48 + rand.nextInt(76);
 			if ((numRand > 47 && numRand < 58) || (numRand > 64 && numRand < 91) || (numRand > 96 && numRand < 123)) {
-				charac=(char)numRand;
-				activation+=charac;
+				charac = (char) numRand;
+				activation += charac;
 			}
 		}
 		try (Transaction tx = this.session.beginTransaction()) {
-			String command="MATCH(u:"+PaprikaKeyWords.LABELUSER+" {email:\""+email+"\"}) SET u.activation=\""+activation+"\"";
+			String command = "MATCH(u:" + PaprikaKeyWords.LABELUSER + " {email:\"" + email + "\"}) SET u.activation=\""
+					+ activation + "\"";
 
-			if(!reset){
-				command+=", u."+ATTRIBUTE_ENABLED+"=\"0\"";
+			if (!reset) {
+				command += ", u." + ATTRIBUTE_ENABLED + "=\"0\"";
 			}
-			
-			
+
 			tx.run(command);
 			tx.success();
 		}
-		
 
 		return activation;
 	}

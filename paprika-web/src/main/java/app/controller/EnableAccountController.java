@@ -1,14 +1,10 @@
 package app.controller;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import app.application.PaprikaFacade;
 import app.application.PaprikaWebMain;
-import app.model.Project;
 import app.utils.PaprikaKeyWords;
 import app.utils.PathIn;
 import app.utils.RequestUtil;
@@ -26,6 +22,9 @@ import spark.Route;
 public class EnableAccountController {
 
 
+	/**
+	 * GET page of EnableAccount.
+	 */
 	public static final Route servePage = (Request request, Response response) -> {
 
 
@@ -35,6 +34,9 @@ public class EnableAccountController {
 	};
 
 
+	/**
+	 * POST page of EnableAccount
+	 */
 	public static final Route handlePost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 

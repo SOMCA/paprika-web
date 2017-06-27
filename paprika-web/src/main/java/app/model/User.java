@@ -28,6 +28,7 @@ public class User extends Entity{
 	 * @param email name of the User
 	 * @param id id of the User
 	 * @param hashedPassword hidden password of the User
+	 * @param active if true, so the user can be connected, else, cannot. Used for the login.
 	 */
 	public User(String email,long id, String hashedPassword,boolean active) {
 		super(email,id);

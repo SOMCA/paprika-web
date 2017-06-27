@@ -48,6 +48,9 @@ import spoon.processing.ProcessInterruption;
  * HttpsRequest for delete and pull.
  * JGit for clone and push
  * 
+ * 
+ * Paprika_analyze is a blob, so hard to explain.
+ * 
  * @author guillaume
  *
  */
@@ -64,6 +67,15 @@ public class Paprika_analyze {
 	private long idNode;
 	private VersionFunctions verFct;
 
+	/**
+	 * -Take a password on a json.
+	 * -Do not check the github link, because checked on the paprika-web.
+	 * -fill many parameters.
+	 * 
+	 * @param github
+	 * @param idnode
+	 * @throws IOException
+	 */
 	public Paprika_analyze(String github, long idnode) throws IOException {
 
 		InputStream is;
@@ -123,12 +135,14 @@ public class Paprika_analyze {
 	}
 
 	/**
-	 * Than process fail or success, this is not important, we finish the
-	 * analyse.
+	 * Do not delete the repo on the begin?
+	 * 
+	 * Launch the process and delete the repo after.
+	 * @return return true if the process is a full success.
+	 * 
 	 */
 	public boolean run() {
-		// deleteRepo();
-
+		
 		boolean flag = this.process();
 		verFct.setParameterOnNode(this.idNode, Graph.CODEA, "done");
 		verFct.setParameterOnNode(this.idNode, "analyseInLoading", "100");
@@ -138,10 +152,23 @@ public class Paprika_analyze {
 
 	}
 
+	/**
+	 * Remove the directory.
+	 * @param path
+	 * @throws IOException
+	 */
 	private void remove(String path) throws IOException {
 		FileUtils.deleteDirectory(new File(path));
 	}
 
+
+	/**
+	 * Clone the repositery of the paremeter "url".
+	 * @return
+	 * @throws InvalidRemoteException
+	 * @throws TransportException
+	 * @throws GitAPIException
+	 */
 	private Git cloneRepo() throws InvalidRemoteException, TransportException, GitAPIException {
 		Set<String> set = new HashSet<>();
 		set.add("refs/heads/" + this.branch);

@@ -1,5 +1,7 @@
 # paprika-Project
 
+You can access to the site on the: https://spirals-somca.inria.lille.fr/paprika/index/
+
 
 ## Description:
 
@@ -102,7 +104,8 @@ Maven:
 
 
 ## Bug:
-On the menu->Project, new versions can be inverted with the old, only if 0 versions have be analyzed on the project.
+-On the menu->Project, new versions can be inverted with the old, only if 0 versions have be analyzed on the project.
+-Important problem: They cannot analyze two same name GitHub project.
 
 
 

@@ -50,7 +50,10 @@ public class PaprikaWebMain {
 	 */
 	public static final Logger LOGGER = LogManager.getLogger();
 
-	public static final boolean DISABLEALLSECURITY = false;
+	/**
+	 * If True, enable all captcha and the https.
+	 */
+	public static final boolean ENABLEALLSECURITY = true;
 	private static int versionOnAnalyze = 0;
 	private static LinkedBlockingQueue<String[]> containerQueue;
 	private static Timer timer;
@@ -138,13 +141,13 @@ public class PaprikaWebMain {
 		new DescriptionFunctions().addAllClassicDescription();
 		loadSave();
 
-		if (PaprikaWebMain.DISABLEALLSECURITY)
+		if (!PaprikaWebMain.ENABLEALLSECURITY)
 			port(80);
 		else
 			port(443);
 		enableDebugScreen();
 		Spark.staticFileLocation("/public");
-		if (!PaprikaWebMain.DISABLEALLSECURITY)
+		if (PaprikaWebMain.ENABLEALLSECURITY)
 			try {
 				InputStream is;
 				is = new FileInputStream("./info.json");
@@ -221,8 +224,9 @@ public class PaprikaWebMain {
 	}
 
 	/**
+	 * Return the number of version who is on analyze currently.
 	 * 
-	 * @return
+	 * @return a number of active analyze
 	 */
 	public synchronized static int getVersionOnAnalyze() {
 		return versionOnAnalyze;

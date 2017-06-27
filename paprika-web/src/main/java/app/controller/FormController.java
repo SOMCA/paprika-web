@@ -21,6 +21,9 @@ import app.utils.ViewUtil;
  */
 public class FormController {
 
+	/**
+	 * Standard Page for reset password, configure for send.
+	 */
 	public static final Route serveFormResetSendPage = (Request request, Response response) -> {
 
 		Map<String, Object> model = new HashMap<>();
@@ -29,6 +32,9 @@ public class FormController {
 		model.put("send", true);
 		return ViewUtil.render(request, model, PathIn.Template.RESET);
 	};
+	/**
+	 * Standard Page for reset password, configure for change.
+	 */
 	public static final Route serveFormResetReceivePage = (Request request, Response response) -> {
 
 		Map<String, Object> model = new HashMap<>();
@@ -38,6 +44,11 @@ public class FormController {
 		return ViewUtil.render(request, model, PathIn.Template.RESET);
 	};
 
+	/**
+	 * POST page for resetpassword. If do  not contains pwd on the request, so this is a post from of a SEND page, else CHANGE page.
+	 * 
+	 * Merged for obscur reason.
+	 */
 	public static final Route handleFormResetPost = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 
@@ -46,7 +57,7 @@ public class FormController {
 
 		String captcha = request.queryParams("g-recaptcha-response");
 		boolean stop = false;
-		if (!PaprikaWebMain.DISABLEALLSECURITY)
+		if (PaprikaWebMain.ENABLEALLSECURITY)
 			if (captcha == null || captcha.isEmpty() || "false".equals(captcha)) {
 				model.put("resetFlagFail", true);
 				stop = true;

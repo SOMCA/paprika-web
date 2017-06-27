@@ -19,10 +19,10 @@ public class MainProcessorBolt extends MainProcessor {
 
 
     private String input;
-   // private String output;
 
 
-    public MainProcessorBolt(String appName, String appVersion, String appKey, String input, String output, String jarsPath ) {
+    @SuppressWarnings("javadoc")
+	public MainProcessorBolt(String appName, String appVersion, String appKey, String input, String output, String jarsPath ) {
         super( appName,  appVersion,  appKey,  "",  "",  jarsPath);
     	MainProcessorBolt.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, appKey);
     	MainProcessorBolt.currentClass = null;
@@ -30,7 +30,6 @@ public class MainProcessorBolt extends MainProcessor {
         this.appPath = "";
         this.jarsPath = jarsPath;
     	this.input = input;
-      //  this.output = output;
         this.sdkPath = "";
     }
     @Override

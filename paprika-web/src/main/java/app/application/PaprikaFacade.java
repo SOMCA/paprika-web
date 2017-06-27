@@ -2,7 +2,6 @@ package app.application;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -717,11 +716,17 @@ public final class PaprikaFacade {
 		String title="Paprika: Active account.";
 		String message="   Hi " + email.split("@")[0] + ", \n" +
 		        "Thanks for registering at Paprika-Web.  To activate your email address click the link below! \n\n"
-		        + "\nLink for enable account: http://spirals-somca/paprika/enableAccount/ \n\n  And insert this Activation code: "+code;
+		        + "\nLink for enable account: https://spirals-somca.lille.inria.fr/paprika/enableAccount/ \n\n  And insert this Activation code: "+code;
 	
 		sendEmail(email,title,message);
 	}
 	
+	/**
+	 * Active the account of the user if the code is good.
+	 * @param email email of the user(unique)
+	 * @param code a random code generated before.
+	 * @return 0 if the user of the email do not exist or not good code, 1 is already active, 2 is have be enabled.
+	 */
 	public int activeAccount(String email, String code){
 		User user=this.user(email);
 		if(user==null) return 0;
@@ -752,11 +757,18 @@ public final class PaprikaFacade {
 		String message="   Hi " + email.split("@")[0] + ", \n" +
 		        "Thanks for have use the service at Paprika-Web."
 		        + "\n  To reset your password click the link below!"
-		        + "\n\nLink for reset your password: http://spirals-somca/paprika/reset/change/ \n\n  And insert this reset code: "+code
+		        + "\n\nLink for reset your password: https://spirals-somca.lille.inria.fr/paprika/reset/change/ \n\n  And insert this reset code: "+code
 		        +"\n E-mail is not secured, so you need to fastly use the reset code.";
 	
 		sendEmail(email,title,message);
 	}
+	/**
+	 * Reset the password the user with the new pwd.
+	 * @param email the email of the user
+	 * @param code the code for active the reset
+	 * @param pwd the new password
+	 * @return true if success, false if do not found user or the code is not good.
+	 */
 	public boolean resetpwd(String email, String code,String pwd){
 		User user=this.user(email);
 		if(user==null) return false;
