@@ -9,6 +9,8 @@ cp -R dockeranalyze/android-platforms dockerTandoori/android-platforms
 
 #copy the .jar on the dockercontainer because busy.
 cp paprika-web/target/Paprika-web.jar dockerweb/
+cp paprika-analyze/target/Paprika-analyze.jar dockeranalyze/
+cp paprika-tandoori/target/Paprika-Tandoori.jar dockerTandoori/
 
 
 #copy the json on each container.

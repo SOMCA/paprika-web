@@ -60,7 +60,7 @@ public class AnalyzeProcess {
 
 	private String fName;
 	private LowNode nodeVer;
-	private final String nameBot = "SnrashaBot";
+	private final String nameBot;
 	private String token;
 	private String cloneUrl;
 	private String input;
@@ -99,6 +99,11 @@ public class AnalyzeProcess {
 		JSONObject json = new JSONObject(jsonTxt);
 
 		this.token = json.getString("token");
+		String botn = json.getString("token_botname");
+		
+		if(botn==null || botn.isEmpty())
+		 this.nameBot= "SnrashaBot";
+		else this.nameBot=botn;
 
 	}
 	/**

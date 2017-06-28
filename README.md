@@ -97,6 +97,7 @@ And fill these values:
 ```
 { 
    "token":"——-",
+   "token_botname":"—",
    "email_pwd":"——-",
    "email_username":"=====",
    "email_email":"=====@gmail.com",
@@ -110,6 +111,8 @@ And fill these values:
 ```
 { 
    "token" <— token key of a GitHub account than you have created.
+
+   "token_botname" <- the username of the GitHub account of the token.
 
    "email_pwd" <— password of the email of the bot account.
 

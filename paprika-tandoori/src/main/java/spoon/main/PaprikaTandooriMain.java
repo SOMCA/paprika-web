@@ -39,14 +39,22 @@ public class PaprikaTandooriMain {
 		if (args.length != 3)
 			return;
 		
-		DriverBolt.setHostName("spirals-somca");
+		
 		try {
 			InputStream is;
 			is = new FileInputStream("./info.json");
 			String jsonTxt;
 			jsonTxt = IOUtils.toString(is);
 			JSONObject json = new JSONObject(jsonTxt);
-			DriverBolt.setValue(null, null, json.getString("neo4j_pwd"));
+			DriverBolt.setValue("7687", "neo4j", json.getString("neo4j_pwd"));
+			if(DriverBolt.getSession()==null){
+				DriverBolt.setHostName("spirals-somca");
+				DriverBolt.updateDriver();
+				if(DriverBolt.getSession()==null){
+					return;
+				}
+				
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
