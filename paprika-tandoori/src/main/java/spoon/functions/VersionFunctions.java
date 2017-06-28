@@ -6,6 +6,12 @@ import tandoori.neo4jBolt.Graph;
 import tandoori.neo4jBolt.LowNode;
 
 
+/**
+ * Versions Functions for paprika-tandoori.
+ * 
+ * @author guillaume
+ *
+ */
 public class VersionFunctions extends Functions {
 
 
@@ -13,18 +19,15 @@ public class VersionFunctions extends Functions {
 	
 
 	/**
-	 * Créer le noeud Query, avec sa relation au noeud de la Version, pour cela,
-	 * il faut le noeud de la version et la clé de Query, pour pouvoir relier
-	 * ensuite, les données du Query à ce noeud Query
+	 * Create the Code smells node with a relation to the nodeVersion. 
 	 * 
-	 * @param nodeVer
-	 * @param keyQuery
+	 * @param nodeVer the lowNode of the nodeVer.
 	 */
-	public void writeQueryOnVersion(LowNode nodeVer, long keyQuery) {
+	public void writeQueryOnVersion(LowNode nodeVer) {
 
 		LowNode nodeResult = new LowNode(Graph.LABELQUERY);
 		// J'utilise nameattribute car le query a pour nom sa clé, pour moi.
-		nodeResult.addParameter(Graph.APPKEY, keyQuery);
+		nodeResult.addParameter(Graph.APPKEY, nodeVer.getID());
 		try (Transaction tx = this.session.beginTransaction()) {
 
 			tx.run(this.graph.create(nodeResult));
@@ -35,10 +38,10 @@ public class VersionFunctions extends Functions {
 	}
 
 	/**
-	 * Ecrit la relation de l'analyse de paprika de la version. En y insérant
-	 * aussi la clé au passage. (Pour supprimer, dans le futur)
+	 * Write a relation between the Version node and the Application node.
 	 * 
 	 * @param nodeVer
+	 * @param idApp 
 	 */
 	public void writeAnalyzeOnVersion(LowNode nodeVer, long idApp) {
 
@@ -53,12 +56,11 @@ public class VersionFunctions extends Functions {
 	
 	
 	/**
-	 * Applique ou créer une nouvelle valeur dans le node en question. Le node
-	 * doit contenir une Id pour fonctionner.
+	 * Apply or create a new value on the node of the idnode.
+	 * @param idnode 
+	 * @param parameter 
+	 * @param attribute 
 	 * 
-	 * @param nodeVer
-	 * @param parameter
-	 * @param key
 	 */
 	public void setParameterOnNode(long idnode, String parameter, String attribute) {
 		if (idnode == -1) {

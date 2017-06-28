@@ -34,9 +34,13 @@ import java.util.*;
 /**
  * Modified for capture all code smells.
  * 
+ * Add on these two methods overrideds, a hashset who take all code smells
+ * founded on put them on a Map of Set of the annotateProcess
+ * 
  * @author guillaume
  *
  */
+@SuppressWarnings("javadoc")
 public class QueryEngineBoltModified extends QueryEngineBolt {
 
 	public QueryEngineBoltModified(long keyApp) {
@@ -184,7 +188,7 @@ public class QueryEngineBoltModified extends QueryEngineBolt {
 			System.out.println(nameQuery);
 			System.out.println(hashset.toString());
 			System.out.println("***");
-			
+
 			nodeQueryData.addParameter("number", number);
 			tx.run(this.graph.set(nodeFastRel, nodeQueryData));
 

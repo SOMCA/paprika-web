@@ -8,6 +8,7 @@ import app.model.CodeSmells;
  * @author guillaume
  *
  */
+@SuppressWarnings("javadoc")
 public class CodeSmellsExample extends CodeSmells {
 
 	private String lineList;

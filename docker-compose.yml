@@ -12,12 +12,13 @@ services:
   web:
     ports:
       - "80:80"
+      - "443:443"
     image: paprika-web:latest
     container_name: web-paprika
     command: java -jar Paprika-web.jar -d
     volumes:
        - /tmp/application:/dock/application
-       - /var/run/docker.sock:/var/run/docker.sock
+       - /var/run/docker.sock:/var/run/docker.sock:ro
     links:
       - neoj
     depends_on:

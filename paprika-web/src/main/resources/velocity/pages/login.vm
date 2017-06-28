@@ -53,6 +53,9 @@
                 #if($loginRedirect)
                 <input type="hidden" name="loginRedirect" value="$loginRedirect">
                 #end
+                <a href="/paprika/reset/send/" id="a_text">
+                  $msg.get("LOGIN_RESET_PWD")
+                </a>
                 <!-- Non utilisé, cela doit utiliser les cookies et aucune idée comment.
                 <div class="checkbox">
                 <label>
@@ -72,10 +75,10 @@
       #end
     </div>
     <div class="panel-heading">
-      <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("LOGIN_BUTTON_INDEX")</a></h6>
+      <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("BUTTON_INDEX")</a></h6>
     </div>
     <div class="panel-heading">
-      <h6 class="panel-title"> <a href="/paprika/signUp/" >$msg.get("LOGIN_BUTTON_SIGNUP")</a></h6>
+      <h6 class="panel-title"> <a href="/paprika/signUp/" >$msg.get("BUTTON_SIGNUP")</a></h6>
     </div>
   </div>
 </div>

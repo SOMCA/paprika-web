@@ -8,10 +8,18 @@ import java.util.Set;
 
 import spoon.Launcher;
 
+/**
+ * Class who launch all annotate Processors
+ * 
+ * @author guillaume
+ *
+ */
+@SuppressWarnings("javadoc")
 public class AnnotateProcessor {
 
 	private String input;
 	private String output;
+
 	public static final Map<String,Set<String>> codesmells= new HashMap<>();
 
 

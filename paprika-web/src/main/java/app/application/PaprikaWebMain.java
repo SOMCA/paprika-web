@@ -3,14 +3,17 @@ package app.application;
 import static spark.Spark.*;
 import static spark.debug.DebugScreen.*;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
+import app.controller.EnableAccountController;
 import app.controller.FormController;
 import app.controller.IndexController;
 import app.controller.LoginController;
@@ -21,12 +24,22 @@ import app.functions.DataSaveFunctions;
 import app.utils.PathIn;
 import spark.Spark;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Timer;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * PaprikaWebMain is the main class of paprika-web
+ * http://sparkjava.com/documentation#cookies
+ * https://docs.oracle.com/cd/E19509-01/820-3503/ggfen/index.html
+ * https://docs.oracle.com/cd/E19509-01/820-3503/ggfen/
+ * Keystore.jks : keytool -genkeypair -keystore keystore2.jks -alias toto -keyalg RSA -keysize 2048 -dname "CN=toto"
+ * 
+ * 
+ * For contact me: snrasha@gmail.com
  * 
  * @author guillaume
  * 
@@ -37,6 +50,10 @@ public class PaprikaWebMain {
 	 */
 	public static final Logger LOGGER = LogManager.getLogger();
 
+	/**
+	 * If True, enable all captcha and the https.
+	 */
+	public static final boolean ENABLEALLSECURITY = true;
 	private static int versionOnAnalyze = 0;
 	private static LinkedBlockingQueue<String[]> containerQueue;
 	private static Timer timer;
@@ -46,7 +63,7 @@ public class PaprikaWebMain {
 	 * utilisateur: neo4j pass: paprika
 	 */
 	private static Driver driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687",
-			AuthTokens.basic("neo4j", "paprika"));
+			AuthTokens.basic("neo4j", getKeyNeo4j()));
 
 	private PaprikaWebMain() {
 
@@ -69,6 +86,31 @@ public class PaprikaWebMain {
 	}
 
 	/**
+	 * Return the neo4j key
+	 * 
+	 * @return
+	 */
+	private static String getKeyNeo4j() {
+
+		try {
+		InputStream is;
+		is = new FileInputStream("./info.json");
+
+		String jsonTxt;
+		
+				jsonTxt = IOUtils.toString(is);
+	
+		
+		JSONObject json = new JSONObject(jsonTxt);
+
+		return json.getString("neo4j_pwd");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
+
+	}
+	/**
 	 * Create a new session, if the driver is closed, he re-open the driver.
 	 * 
 	 * @return a new Session.
@@ -82,8 +124,10 @@ public class PaprikaWebMain {
 		} catch (ServiceUnavailableException e) {
 			LOGGER.error("Driver problem, we re-open a driver.", e);
 			driver.close();
-			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687", AuthTokens.basic("neo4j", "paprika"));
+
+			driver = GraphDatabase.driver("bolt://" + getHostName() + ":7687", AuthTokens.basic("neo4j", getKeyNeo4j()));
 			session = driver.session();
+	
 		}
 		return session;
 	}
@@ -102,7 +146,7 @@ public class PaprikaWebMain {
 				command.append("n.containerRun" + i + ",");
 			}
 
-			containerRun=new DataSaveFunctions().searchContainer(containerRun);
+			containerRun = new DataSaveFunctions().searchContainer(containerRun);
 			// The number of Analyze who can be put on the queue.
 			containerQueue = new LinkedBlockingQueue<>(3);
 			timer = new Timer();
@@ -121,20 +165,40 @@ public class PaprikaWebMain {
 	 */
 	public static void main(String[] args) {
 
-		System.out.println("load description");
 		new DescriptionFunctions().addAllClassicDescription();
-		System.out.println("load save");
 		loadSave();
 
-		port(80);
+		if (!PaprikaWebMain.ENABLEALLSECURITY)
+			port(80);
+		else
+			port(443);
 		enableDebugScreen();
 		Spark.staticFileLocation("/public");
-		System.out.println("active get");
+		if (PaprikaWebMain.ENABLEALLSECURITY)
+			try {
+				InputStream is;
+				is = new FileInputStream("./info.json");
+
+				String jsonTxt;
+				jsonTxt = IOUtils.toString(is);
+				JSONObject json = new JSONObject(jsonTxt);
+
+				String keyStorePassword = json.getString("keystore_key");
+			
+				if (keyStorePassword != null) {
+					String keyStoreLocation = "./clientkeystore.jks";
+					secure(keyStoreLocation, keyStorePassword, null, null);
+
+				}
+			} catch (IOException e) {
+				System.out.println("Not success");
+				return;
+			}
+	
 		// La page d'index.
-		get("/paprika", IndexController.serveIndexPage);
-		get("/paprika/", IndexController.serveIndexPage);
-		get("/paprika/index", IndexController.serveIndexPage);
-		get("/paprika/reset/", IndexController.resetIndexPage);
+		get("/paprika", IndexController.resetProjectIndexPage);
+		get("/paprika/", IndexController.resetProjectIndexPage);
+		get("/paprika/index", IndexController.resetProjectIndexPage);
 		get(PathIn.Web.INDEX, IndexController.serveIndexPage);
 		// La page de login, quand tu veux te connecter.
 		get(PathIn.Web.LOGIN, LoginController.serveLoginPage);
@@ -148,6 +212,11 @@ public class PaprikaWebMain {
 		// Mis sur indexController car il est basé sur l'index
 		get(PathIn.Web.VERSION, VersionController.serveVersionPage);
 
+		get(PathIn.Web.ENACC, EnableAccountController.servePage);
+		get("/paprika/reset/", FormController.serveFormResetSendPage);
+		get(PathIn.Web.RESETSEND, FormController.serveFormResetSendPage);
+		get(PathIn.Web.RESETRECEIVE, FormController.serveFormResetReceivePage);
+
 		// get(PathIn.Web.ZIP, (request, response) -> getFile(request,
 		// response));
 
@@ -157,7 +226,6 @@ public class PaprikaWebMain {
 		 * handleloginpost attrape alors la requête en passant.
 		 * 
 		 */
-		System.out.println("active post");
 		post(PathIn.Web.INDEX, IndexController.handleIndexaddApp);
 		post(PathIn.Web.VERSION, VersionController.handleVersionPost);
 
@@ -167,6 +235,10 @@ public class PaprikaWebMain {
 		post(PathIn.Web.SIGNUP, SignUpController.handleSignUpPost);
 
 		post(PathIn.Web.FORMDEL, FormController.handleFormDeletePost);
+
+		post(PathIn.Web.ENACC, EnableAccountController.handlePost);
+		post(PathIn.Web.RESETSEND, FormController.handleFormResetPost);
+		post(PathIn.Web.RESETRECEIVE, FormController.handleFormResetPost);
 
 	}
 
@@ -180,8 +252,9 @@ public class PaprikaWebMain {
 	}
 
 	/**
+	 * Return the number of version who is on analyze currently.
 	 * 
-	 * @return
+	 * @return a number of active analyze
 	 */
 	public synchronized static int getVersionOnAnalyze() {
 		return versionOnAnalyze;

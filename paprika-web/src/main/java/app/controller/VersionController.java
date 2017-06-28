@@ -70,7 +70,7 @@ public class VersionController {
 		PaprikaWebMain.LOGGER.trace("-------handleVersionPost--------");
 
 		String menu = RequestUtil.getQueryVersion(request);
-		if (menu != null) {
+		if (menu != null && !menu.isEmpty()) {
 			PaprikaWebMain.LOGGER.trace("etape menu: " + menu);
 			request.session().attribute(PaprikaKeyWords.PROJECT, facade.project(Long.parseLong(menu)));
 		}
@@ -78,7 +78,7 @@ public class VersionController {
 
 		// Formulaire quand on choisit la version dans la page layout.
 		String menuVer = RequestUtil.getParamMenuVersion(request);
-		if (menuVer != null) {
+		if (menuVer != null && !menuVer.isEmpty()) {
 			PaprikaWebMain.LOGGER.trace("etape menuVer: " + menuVer);
 			request.session().attribute(PaprikaKeyWords.VERSION, facade.version(Long.parseLong(menuVer)));
 		}
@@ -86,7 +86,7 @@ public class VersionController {
 		// Formulaire quand on choisit d'ANALYSEr dans la page version.
 
 		String analys = request.queryParams("analyse");
-		if (analys != null) {
+		if (analys != null &&!analys.isEmpty()) {
 			PaprikaWebMain.LOGGER.trace("etape ANALYSE");
 			String fname = facade.getEntityName(version) + ".apk";
 			String pathstr = PaprikaKeyWords.REPERTORY + RequestUtil.getSessionCurrentUser(request) + "/"

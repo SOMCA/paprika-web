@@ -28,6 +28,9 @@ public class PathIn {
          public static final String SIGNUP = "/paprika/signUp/";
          public static final String FORMDEL = "/paprika/form_delete/";
          public static final String VERSION = "/paprika/version/";
+         public static final String ENACC="/paprika/enableAccount/";
+         public static final String RESETSEND="/paprika/reset/send/";
+         public static final String RESETRECEIVE="/paprika/reset/change/";
 
   	private Web(){
     		
@@ -49,7 +52,8 @@ public class PathIn {
         public static final String LOGIN = "/velocity/pages/login.vm";
         public static final String SIGNUP = "/velocity/pages/signUp.vm";
         public static final String VERSION = "/velocity/pages/version.vm";
-        
+        public static final String ENACC="/velocity/pages/enableAccount.vm";
+        public static final String RESET="/velocity/pages/reset.vm";
  	private Template(){
     		
     	}

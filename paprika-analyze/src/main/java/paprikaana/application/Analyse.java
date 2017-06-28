@@ -19,6 +19,12 @@ import paprika.analyzer.SootAnalyzer;
 import paprika.entities.PaprikaApp;
 import paprika.neo4jBolt.*;
 
+/**
+ * Like the Main of Paprika, but modified.
+ * @author guillaume
+ *
+ */
+@SuppressWarnings("javadoc")
 public class Analyse {
 
 	public PaprikaApp runAnalysis(String[] args) {

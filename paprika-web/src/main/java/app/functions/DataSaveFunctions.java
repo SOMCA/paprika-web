@@ -62,6 +62,12 @@ public class DataSaveFunctions extends Functions {
 
 	}
 
+	/**
+	 * Take a String[] empty but with a size, then he fill the array with the node DataSave with container who have not be launched.
+	 * 
+	 * @param containerRun
+	 * @return return the array given on the param filled.
+	 */
 	public String[] searchContainer(String[] containerRun) {
 
 		try (Transaction tx = this.session.beginTransaction()) {
@@ -88,6 +94,10 @@ public class DataSaveFunctions extends Functions {
 		return containerRun;
 	}
 
+	/**
+	 * Just run a command.
+	 * @param command
+	 */
 	public void runCommand(String command) {
 
 		try (Transaction tx = this.session.beginTransaction()) {

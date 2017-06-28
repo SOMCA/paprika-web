@@ -1,6 +1,7 @@
 package app.application;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -14,6 +15,9 @@ import java.util.Set;
 
 import javax.servlet.http.Part;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.mail.*;
+import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.StatementResult;
@@ -112,11 +116,10 @@ public final class PaprikaFacade {
 	 */
 	public Project project(long project) {
 		ProjectFunctions appFct = new ProjectFunctions();
-		
-		if(this.getParameter(project, PaprikaKeyWords.EXAMPLE)!=null){
+
+		if (this.getParameter(project, PaprikaKeyWords.EXAMPLE) != null) {
 			return new ProjectExample(appFct.receiveOf(project), project);
 		}
-		
 
 		return new Project(appFct.receiveOf(project), project);
 	}
@@ -130,12 +133,11 @@ public final class PaprikaFacade {
 	 */
 	public Version version(long version) {
 		VersionFunctions verFct = new VersionFunctions();
-		String name=verFct.receiveOf(version);
-		if(this.getParameter(version, PaprikaKeyWords.EXAMPLE)!=null){
-			return new VersionExample(name, version,(name.endsWith("0")));
+		String name = verFct.receiveOf(version);
+		if (this.getParameter(version, PaprikaKeyWords.EXAMPLE) != null) {
+			return new VersionExample(name, version, (name.endsWith("0")));
 		}
-		
-		
+
 		return new Version(name, version);
 	}
 
@@ -191,13 +193,14 @@ public final class PaprikaFacade {
 	 * 
 	 */
 	public long addVersion(long idproject, String version) {
-		
+
 		// If the example Project is a real example, so user cannot add version.
-		if(this.getParameter(idproject, PaprikaKeyWords.EXAMPLE)!=null) return -1;
-		
+		if (this.getParameter(idproject, PaprikaKeyWords.EXAMPLE) != null)
+			return -1;
+
 		VersionFunctions verFct = new VersionFunctions();
 		if (version != null && verFct.receiveIDOfVersion(idproject, version) == -1) {
-			LowNode node=verFct.writeVersion(idproject, version);
+			LowNode node = verFct.writeVersion(idproject, version);
 			return node.getID();
 		}
 
@@ -382,6 +385,7 @@ public final class PaprikaFacade {
 		if (salt == null) {
 			return false;
 		}
+		
 		String newHashedPassword = BCrypt.hashpw(password, salt);
 
 		usrFct.writeUser(email, newHashedPassword);
@@ -637,13 +641,149 @@ public final class PaprikaFacade {
 		String numberV = project.getNumberOfVersion();
 		long idProject = project.getID();
 		String nameV = project.getName() + "_" + numberV;
-		boolean successAdd = (this.addVersion(idProject, nameV)!=-1);
+		boolean successAdd = (this.addVersion(idProject, nameV) != -1);
 		if (successAdd) {
 			VersionFunctions verFct = new VersionFunctions();
 			long idV = verFct.receiveIDOfVersion(idProject, nameV);
 			this.setParameterOnNode(idV, "GitHub", linkGithub);
 			this.needReloadApp(project);
 		}
+	}
+	
+	
+
+	/**
+	 * Send a bot email to a email.
+	 * 
+	 * @throws EmailException
+	 * @throws IOException
+	 */
+	private void sendEmail(String mail,String title,String message) throws EmailException, IOException {
+
+		InputStream is;
+		is = new FileInputStream("./info.json");
+		String jsonTxt;
+		jsonTxt = IOUtils.toString(is);
+		JSONObject json = new JSONObject(jsonTxt);
+
+		String token_pwd = json.getString("email_pwd");
+		
+	
+		
+		String token_username;
+		if(!json.isNull("email_username"))
+			token_username = json.getString("email_username");
+		else token_username= "snrashabot";
+	
+		
+		
+		String smtp;
+		if(!json.isNull("email_smtp"))
+			smtp = json.getString("email_smtp");
+		else smtp= "smtp.gmail.com";
+		
+		String from;
+		if(!json.isNull("email_email"))
+		   from = json.getString("email_email");
+		else from= "snrashabot@gmail.com";
+	
+		
+		String to = mail;
+		
+	
+		Email email = new SimpleEmail();
+		email.setHostName(smtp);
+		email.setSmtpPort(465);
+		email.setAuthenticator(new DefaultAuthenticator(token_username, token_pwd));
+		email.setSSLOnConnect(true);
+		email.setFrom(from);
+		email.setSubject(title);
+		email.setMsg(message);
+		email.addTo(to);
+		email.send();
+
+	}
+	/**
+	 * Send a active code for activate account.
+	 * @param email
+	 * @throws EmailException
+	 * @throws IOException
+	 */
+	public void sendActiveCode(String email) throws EmailException, IOException{
+		UserFunctions userfct= new UserFunctions();
+		String code=userfct.generateRandomActivationCode(email,false);
+
+		String title="Paprika: Active account.";
+		String message="   Hi " + email.split("@")[0] + ", \n" +
+		        "Thanks for registering at Paprika-Web.  To activate your email address click the link below! \n\n"
+		        + "\nLink for enable account: https://spirals-somca.lille.inria.fr/paprika/enableAccount/ \n\n  And insert this Activation code: "+code;
+	
+		sendEmail(email,title,message);
+	}
+	
+	/**
+	 * Active the account of the user if the code is good.
+	 * @param email email of the user(unique)
+	 * @param code a random code generated before.
+	 * @return 0 if the user of the email do not exist or not good code, 1 is already active, 2 is have be enabled.
+	 */
+	public int activeAccount(String email, String code){
+		User user=this.user(email);
+		if(user==null) return 0;
+		if(user.getActive()) 
+			return 1;
+		if(this.getParameter(user.getID(), "activation").equals(code)){
+			this.setParameterOnNode(user.getID(), "enabled", "1");
+			this.removeParameterOnNode(user.getID(), "activation");
+			return 2;
+			
+		}
+			
+		
+		return 0;
+	}
+	/**
+	 * Send a email for obtain a new password
+	 * @param email
+	 * @throws EmailException
+	 * @throws IOException
+	 */
+	public void sendnewPwd(String email) throws EmailException, IOException{
+		UserFunctions userfct= new UserFunctions();
+		String code=userfct.generateRandomActivationCode(email,true);
+		if(userfct.foundUser(email)==null) return;
+
+		String title="Paprika: Reset Password";
+		String message="   Hi " + email.split("@")[0] + ", \n" +
+		        "Thanks for have use the service at Paprika-Web."
+		        + "\n  To reset your password click the link below!"
+		        + "\n\nLink for reset your password: https://spirals-somca.lille.inria.fr/paprika/reset/change/ \n\n  And insert this reset code: "+code
+		        +"\n E-mail is not secured, so you need to fastly use the reset code.";
+	
+		sendEmail(email,title,message);
+	}
+	/**
+	 * Reset the password the user with the new pwd.
+	 * @param email the email of the user
+	 * @param code the code for active the reset
+	 * @param pwd the new password
+	 * @return true if success, false if do not found user or the code is not good.
+	 */
+	public boolean resetpwd(String email, String code,String pwd){
+		User user=this.user(email);
+		if(user==null) return false;
+		if(this.getParameter(user.getID(), "activation").equals(code)){
+			String salt=this.salt();
+			String newHashedPassword = BCrypt.hashpw(pwd, salt);
+			this.setParameterOnNode(user.getID(), "hashpwd", newHashedPassword);
+			this.setParameterOnNode(user.getID(), "enabled", "1");
+			this.removeParameterOnNode(user.getID(), "activation");
+			return true;
+			
+		}
+			
+		
+		return false;
 	}
 
 }

@@ -1,5 +1,7 @@
 # paprika-Project
 
+You can access to the site on the: https://spirals-somca.inria.lille.fr/paprika/index/
+
 
 ## Description:
 
@@ -16,7 +18,7 @@ The project use Docker and Maven, you need to have installed these functionality
 * paprika-tandoori: Part who run the analyze for GitHub.
 
 
-## Run: 
+## Run:
 
 For run Paprika-web, you need to compile paprika-analyze, paprika-web ad paprika-Tandoori,CodesmellsAnno per the command:
 >> mvn clean package
@@ -25,15 +27,30 @@ Then move new jar of target/file.jar on dockerweb,dockeranalyze or dockerTandoor
 CodesmellsAnno.jar go only on dockerTandoori.
 
 If you want use with GitHub:
-You need also have a info.json on the form of : { "token":"token_of_a_bot_account"}
-For have this token, you need to create a GitHub account, then create a token who have access to repo.
+You need also to read also readme of dockerweb,analyze,tandoori
+For have "token", you need to create a GitHub account, then create a token who have access to repo.
 
 When done, you need just to launch:
+```
 $./run.sh
+```
+
+Then you need to go on your docker-machine, for me, this is
+```
+docker-machine ssh spirals-somca.
+```
+Then install docker-compose if not installed, see
+https://docs.docker.com/compose/install/
+For finish, just launch:
+```
+sudo docker-compose up web
+```
+
+
 
 The first run launch always a error you need to:
-go on <address>:7474 for create a small account.  ( address is "localhost"  per default) 
-Where the username need to be neo4j(the default) and the password always: paprika
+go on <address>:7474 for create a small account.  ( address is "localhost"  per default)
+Where the username need to be neo4j(the default) and you need to put the same password than the "neo4j_pwd" put on your json.
 
 
 ### CSAnnotations, Paprika, Tandoori:
@@ -74,6 +91,52 @@ Maven:
 </dependency>
 ```
 
+You need made also a info.json:
+$ touch info.json
+And fill these values:
+```
+{ 
+   "token":"——-",
+   "token_botname":"—",
+   "email_pwd":"——-",
+   "email_username":"=====",
+   "email_email":"=====@gmail.com",
+   "email_smtp":"smtp.gmail.com",
+   "token_private_key_captcha":"--------------------------------",
+   "keystore_key":"——-",
+   "neo4j_pwd":"———————"
+ }
+
+```
+```
+{ 
+   "token" <— token key of a GitHub account than you have created.
+
+   "token_botname" <- the username of the GitHub account of the token.
+
+   "email_pwd" <— password of the email of the bot account.
+
+   "email_username" <- username of the email of the bot account.
+
+   "email_email" <- E-mail of the bot account.
+
+   "email_smtp" <- Service of the e-mail for stmp.
+
+   "token_private_key_captcha" <- Not used, this is the private key of the Recaptcha than you have when you create a service between you and Google.
+ https://www.google.com/recaptcha/
+
+   "keystore_key" <— The key than you have put for your keystore created per:
+keytool -genkeypair -keystore keystore2.jks -alias toto -keyalg RSA -keysize 2048 -dname "CN=toto"
+
+   "neo4j_pwd" <- The password of your neo4j database.
+ }
+
+```
+
+
+
+
+
 
 ## Paprika-Web use:
 * Spark-core framework web.
@@ -87,9 +150,7 @@ Maven:
 
 
 ## Bug:
-On the menu->Project, new versions can be inverted with the old, only if 0 versions have be analyzed on the project.
-
-
+-On the menu->Project, new versions can be inverted with the old, only if 0 versions have be analyzed on the project.
 
 
 ## Requirement of the site:
@@ -97,10 +158,6 @@ On the menu->Project, new versions can be inverted with the old, only if 0 versi
 ** accept only File.apk.
 ** Can be very long.
 
-* Paprika-Tandoori 
-** require these Github Link "https://github.com/Snrasha/paprika-web.git" 
-** If you have  two files who have the same name and the same package, theses files will no be analyzed correctly. 
-
-
-
-
+* Paprika-Tandoori
+** require these Github Link "https://github.com/Snrasha/paprika-web.git"
+** If you have  two files who have the same name and the same package, theses files will no be analyzed correctly.

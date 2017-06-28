@@ -47,11 +47,11 @@ public class ProjectFunctions extends Functions {
 
 	/**
 	 * Add 1 to a property on the User of the project
-	 * @param lowNode
-	 * @param attribute
-	 * @param value
-	 * @param tx
-	 * @return
+	 * @param lowNode 
+	 * @param attribute 
+	 * @param value 
+	 * @param tx 
+	 * @return increment the number of Project on the user.
 	 */
 	public String increment(LowNode lowNode, String attribute, long value, Transaction tx) {
 

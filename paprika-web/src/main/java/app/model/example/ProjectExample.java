@@ -20,6 +20,7 @@ import app.utils.neo4j.LowNode;
  * @author guillaume
  *
  */
+@SuppressWarnings("javadoc")
 public class ProjectExample extends Project {
 	public ProjectExample(String name, long id) {
 		super(name, id);

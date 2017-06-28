@@ -13,6 +13,7 @@ import app.model.Version;
  * @author guillaume
  *
  */
+@SuppressWarnings("javadoc")
 public class VersionExample extends Version {
 
 	private boolean isFirst;

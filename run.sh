@@ -9,7 +9,14 @@ cp -R dockeranalyze/android-platforms dockerTandoori/android-platforms
 
 #copy the .jar on the dockercontainer because busy.
 cp paprika-web/target/Paprika-web.jar dockerweb/
+cp paprika-analyze/target/Paprika-analyze.jar dockeranalyze/
+cp paprika-tandoori/target/Paprika-Tandoori.jar dockerTandoori/
 
+
+#copy the json on each container.
+cp info.json dockerweb/
+cp info.json dockerTandoori/
+cp info.json dockeranalyze/
 
 #run this command if spirals-somca do not exist on docker-machine ls
 ##docker-machine create --driver generic --generic-ip-address=spirals-somca --generic-ssh-key ~/.ssh/id_rsa --generic-ssh-user=gwillefe spirals-somca
@@ -28,9 +35,7 @@ mkdir dockerTandoori/input
 mkdir dockerTandoori/output
 
 
-#Launch and create the container neo4j
-docker-compose build neoj
-docker-compose up -d neoj
+
 
 #Container for Paprika web
 docker build -t paprika-web dockerweb
@@ -40,11 +45,16 @@ docker build -t paprika-analyze dockeranalyze
 #Container for analyze with a Github link.
 docker build -t paprika-tandoori dockerTandoori
 
+
+#Apply many things on the docker-machine:
+
+#Launch and create the container neo4j
+docker-compose up -d neoj
+
+#
+sleep 5
 #Launch Paprika web
-docker-compose build web
-docker-compose up web
-
-
+docker-compose up -d web
 
 #Thing for me:
 

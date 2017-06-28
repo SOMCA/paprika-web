@@ -8,6 +8,12 @@ import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.factory.AnnotationFactory;
 
+/**
+ * Add annotation to class and launch method and constructor processor
+ * 
+ * @author guillaume
+ *
+ */
 // We use many rawtypes.
 @SuppressWarnings("rawtypes")
 public class ClassAnnotateProcessor extends AbstractProcessor<CtClass> {

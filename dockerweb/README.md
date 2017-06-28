@@ -7,3 +7,6 @@ Then:
 *If yes, go on the main directory:(default:paprika-web/dockerweb) of this folder where you found the run.sh.
 
 >> ./run.sh
+
+
+

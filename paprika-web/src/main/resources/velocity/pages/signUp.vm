@@ -30,7 +30,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 
 <body>
@@ -43,13 +43,22 @@
                         <h3 class="panel-title">$msg.get("SIGNUP_INSTRUCTIONS")</h3>
                     </div>
                     <div class="panel-body">
+                        #if($signUpSucceeded)
+                          <p class="good notification">$msg.get("SIGNUP_NEED_VALID")</p>
+                        #else
                         <form role="form"  id="signUpForm" method="post" action="/paprika/signUp/">
                             <fieldset>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="$msg.get("SIGNUP_LABEL_EMAIL")" name="email" type="email" name="email" autofocus required>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="$msg.get("SIGNUP_LABEL_PASSWORD")" name="password" type="password" value="" required>
+                                    <input class="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Password Ex: )Aa:a51A" name="password" type="password" value="" required>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" placeholder="Confirm Password" name="confirm_password" type="password" value="" required>
+                                </div>
+                                <div>
+                                  $msg.get("SIGNUP_PWD_INSTRUCTIONS")
                                 </div>
                                 #if($loginRedirect)
                                     <input type="hidden" name="signUpRedirect" value="$signUpRedirect">
@@ -61,18 +70,28 @@
                                     </label>
                                 </div>
                               -->
-                              <input type="submit"  class="btn btn-lg btn-success btn-block" value="$msg.get("SIGNUP_BUTTON_SIGNUP")">
+                                </fieldset>
+                            <fieldset>
+                              <div class="g-recaptcha" data-sitekey="6LeReyYUAAAAAKcEex84ajPorGxbPH8SktMvzisU"></div>
                             </fieldset>
+                            <fieldset>
+                              <input type="submit"  class="btn btn-lg btn-success btn-block" value="$msg.get("BUTTON_SIGNUP")">
+                            </fieldset>
+
                         </form>
                         #if($signUpFailed)
                             <p class="bad notification">$msg.get("SIGNUP_AUTH_FAILED")</p>
                         #end
+                        #if($signUpCaptchaFail)
+                            <p class="bad notification">$msg.get("SIGNUP_CAPTCHA_FAILED")</p>
+                        #end
+                        #end
                       </div>
                       <div class="panel-heading">
-                          <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("SIGNUP_BUTTON_INDEX")</a></h6>
+                          <h6 class="panel-title">  <a href="/paprika/index/" >$msg.get("BUTTON_INDEX")</a></h6>
                       </div>
                       <div class="panel-heading">
-                          <h6 class="panel-title"> <a href="/paprika/login/" >$msg.get("SIGNUP_BUTTON_LOGIN")</a></h6>
+                          <h6 class="panel-title"> <a href="/paprika/login/" >$msg.get("BUTTON_LOGIN")</a></h6>
                     </div>
                 </div>
             </div>
@@ -91,6 +110,21 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="../../dist/js/sb-admin-2.js"></script>
+
+    <script>
+    var password = document.getElementById("password");
+    var confirm_password = document.getElementById("confirm_password");
+function validatePassword(){
+  if(password.value != confirm_password.value) {
+    confirm_password.setCustomValidity("Passwords Don't Match");
+  } else {
+    confirm_password.setCustomValidity('');
+  }
+}
+
+password.onchange = validatePassword;
+confirm_password.onkeyup = validatePassword;
+    </script>
 </body>
 
 </html>

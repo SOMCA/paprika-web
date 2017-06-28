@@ -9,7 +9,8 @@ import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.factory.AnnotationFactory;
 
 /**
- * All commentary are on the ClassAnnotateProcessor
+ * Add annotations for interface
+ * 
  * @author guillaume
  *
  */

@@ -43,11 +43,24 @@ import tandoori.neo4jBolt.ModelToGraphBolt;
 import spoon.functions.VersionFunctions;
 import spoon.main.processor.AnnotateProcessor;
 
+/**
+ * AnalyzeProcess use multiple library like Git or Github.
+ * 
+ * Egit for fork.
+ * HttpsRequest for delete and pull.
+ * JGit for clone and push
+ * 
+ * 
+ * AnalyzeProcess is a blob, so hard to explain.
+ * 
+ * @author guillaume
+ *
+ */
 public class AnalyzeProcess {
 
 	private String fName;
 	private LowNode nodeVer;
-	private final String nameBot = "SnrashaBot";
+	private final String nameBot;
 	private String token;
 	private String cloneUrl;
 	private String input;
@@ -56,6 +69,16 @@ public class AnalyzeProcess {
 	private String nameUser;
 	private String branch;
 
+	/**
+	 * -Take a password on a json.
+	 * -Do not check the github link, because checked on the paprika-web.
+	 * -fill many parameters.
+	 * @param fName 
+	 * @param nodeVer 
+	 * @param github 
+	 * @throws IOException 
+	 * 
+	 */
 	public AnalyzeProcess(String fName, LowNode nodeVer, String github) throws IOException {
 
 		this.fName = fName;
@@ -76,9 +99,18 @@ public class AnalyzeProcess {
 		JSONObject json = new JSONObject(jsonTxt);
 
 		this.token = json.getString("token");
+		String botn = json.getString("token_botname");
+		
+		if(botn==null || botn.isEmpty())
+		 this.nameBot= "SnrashaBot";
+		else this.nameBot=botn;
 
 	}
-
+	/**
+	 * 
+	 * Launch  the runAna then the Query
+	 * 
+	 */
 	public void run() {
 		Analyse ana = new Analyse();
 		this.runPartAnalyse(ana);
@@ -128,9 +160,8 @@ public class AnalyzeProcess {
 	private void runPartQuery(Analyse ana) {
 		VersionFunctions verFct = new VersionFunctions();
 
-		long keyApp = nodeVer.getID();
-		String[] args = { "query", "-k", Long.toString(keyApp), "-r", "ALLAP" };
-		verFct.writeQueryOnVersion(nodeVer, keyApp);
+		String[] args = { "query", "-k", Long.toString(nodeVer.getID()), "-r", "ALLAP" };
+		verFct.writeQueryOnVersion(nodeVer);
 		ana.runQueryMode(args);
 		verFct.setParameterOnNode(nodeVer.getID(), Graph.CODEA, "done");
 		verFct.setParameterOnNode(nodeVer.getID(), "analyseInLoading", "100");

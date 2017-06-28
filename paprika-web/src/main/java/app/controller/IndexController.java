@@ -34,9 +34,9 @@ public class IndexController {
 		return ViewUtil.render(request, model, PathIn.Template.INDEX);
 	};
 	/**
-	 * Index where you go per default.
+	 * reset the project
 	 */
-	public static final Route resetIndexPage = (Request request, Response response) -> {
+	public static final Route resetProjectIndexPage = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
 		model.put(PaprikaKeyWords.PROJECT, null);
 
@@ -54,13 +54,13 @@ public class IndexController {
 		// Formulaire quand on ajoute un project.
 		String project = request.queryParams("project");
 		String menu = RequestUtil.getParamMenu(request);
-		if (project != null) {
+		if (project != null && !project.isEmpty() && !project.startsWith(" ")) {
 			long idProject = facade.addProject(RequestUtil.getSessionUser(request), project);
 			if (idProject != -1)
 				request.session().attribute(PaprikaKeyWords.PROJECT, facade.project(idProject));
 		}
 		// Formulaire quand on choisit le menu.
-		else if (menu != null) {
+		else if (menu != null&& !menu.isEmpty()) {
 			request.session().attribute(PaprikaKeyWords.PROJECT, facade.project(Long.parseLong(menu)));
 		}
 		// Formulaire quand on upload un fichier.
@@ -93,7 +93,7 @@ public class IndexController {
 		String location = "/application";
 
 		String github = request.queryParams("github");
-		if (github != null) {
+		if (github != null && !github.isEmpty()) {
 			// https://github.com/Snrasha/Tandoori     Format< Ignore the user, probably.
 			String[] cutGithub= github.split("/");
 			boolean badLink= (cutGithub.length != 5)||(!github.startsWith("https://github.com/"))||(!cutGithub[4].endsWith(".git") || cutGithub[4].length()<=4);

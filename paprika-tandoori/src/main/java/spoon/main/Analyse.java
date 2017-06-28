@@ -17,8 +17,21 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 
 
+/**
+ * 
+ *
+ * 
+ * @author guillaume
+ *
+ */
 public class Analyse {
 
+	/**
+	 * Copy of the runAnalysis of Tandoori, but modified.
+	 * 
+	 * @param args
+	 * @return the PaprikaApp needed for the runQuery.
+	 */
 	public PaprikaApp runAnalysis(String[] args) {
 	        System.out.println("Collecting metrics");
 	        String input = args[0];
@@ -41,6 +54,11 @@ public class Analyse {
 	    }
 
 
+	/**
+	 * runQueryMode modified of the Tandoori.
+	 * 
+	 * @param args
+	 */
 	public  void runQueryMode(String[] args)  {
 		ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
 		Subparsers subparsers = parser.addSubparsers().dest("sub_command");
@@ -63,9 +81,15 @@ public class Analyse {
 	}
 
 
+    /**
+     * Tandoori copy.
+     * @param paprikaApp
+     * @param libraryString
+     */
     public static void addLibrary(PaprikaApp paprikaApp, String libraryString){
         PaprikaLibrary.createPaprikaLibrary(libraryString,paprikaApp);
     }
+
 	private void launchStats(QueryEngineBolt queryEngine) throws IOException{
 		QuartileCalculator quartileCalculator = new QuartileCalculator(queryEngine);
 		quartileCalculator.calculateClassComplexityQuartile();
@@ -77,6 +101,7 @@ public class Analyse {
 		quartileCalculator.calculateCyclomaticComplexityQuartile();
 		quartileCalculator.calculateNumberOfMethodsForInterfacesQuartile();
 	}
+
 	private void launchALLINFO(QueryEngineBolt queryEngine)throws IOException{
 		queryEngine.getAllLCOM();
 		queryEngine.getAllCyclomaticComplexity();
@@ -120,6 +145,11 @@ public class Analyse {
 		HeavyAsyncTaskStepsQuery.createHeavyAsyncTaskStepsQuery(queryEngine).execute(details);
 	}
 	
+	/**
+	 * Only the ALLAP is used.
+	 * @param arg
+	 * @throws IOException
+	 */
 	public void queryMode(Namespace arg) throws IOException {
 		QueryEngineBoltModified queryEngine = new QueryEngineBoltModified(Long.parseLong(arg.getString("key")));
 		String request = arg.get("request");
