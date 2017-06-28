@@ -183,7 +183,7 @@ public class PaprikaWebMain {
 				jsonTxt = IOUtils.toString(is);
 				JSONObject json = new JSONObject(jsonTxt);
 
-				String keyStorePassword = json.getString("token_key_https");
+				String keyStorePassword = json.getString("keystore_key");
 			
 				if (keyStorePassword != null) {
 					String keyStoreLocation = "./clientkeystore.jks";

@@ -8,13 +8,3 @@ Then:
 
 >> ./run.sh
 
-
-
-
-You need a info.json:
-'''
- { "token":"—————",
-   "neo4j_pwd":"———————"
- }
-
-'''

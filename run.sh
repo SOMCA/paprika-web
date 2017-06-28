@@ -11,6 +11,11 @@ cp -R dockeranalyze/android-platforms dockerTandoori/android-platforms
 cp paprika-web/target/Paprika-web.jar dockerweb/
 
 
+#copy the json on each container.
+cp info.json dockerweb/
+cp info.json dockerTandoori/
+cp info.json dockeranalyze/
+
 #run this command if spirals-somca do not exist on docker-machine ls
 ##docker-machine create --driver generic --generic-ip-address=spirals-somca --generic-ssh-key ~/.ssh/id_rsa --generic-ssh-user=gwillefe spirals-somca
 

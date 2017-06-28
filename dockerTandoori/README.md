@@ -20,14 +20,3 @@ You need to be sure than the https://github.com/Sable/android-platforms is avail
 
 
 fcl is different of the docker-analyze
-
-
-
-
-You need a info.json:
-'''
- { "token":"—————",
-   "neo4j_pwd":"———————"
- }
-
-'''

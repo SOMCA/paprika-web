@@ -666,25 +666,25 @@ public final class PaprikaFacade {
 		jsonTxt = IOUtils.toString(is);
 		JSONObject json = new JSONObject(jsonTxt);
 
-		String token_pwd = json.getString("token_pwd");
+		String token_pwd = json.getString("email_pwd");
 		
 	
 		
 		String token_username;
-		if(!json.isNull("token_username"))
-			token_username = json.getString("token_username");
+		if(!json.isNull("email_username"))
+			token_username = json.getString("email_username");
 		else token_username= "snrashabot";
 	
 		
 		
 		String smtp;
-		if(!json.isNull("token_smtp"))
-			smtp = json.getString("token_smtp");
+		if(!json.isNull("email_smtp"))
+			smtp = json.getString("email_smtp");
 		else smtp= "smtp.gmail.com";
 		
 		String from;
-		if(!json.isNull("token_email"))
-		   from = json.getString("token_email");
+		if(!json.isNull("email_email"))
+		   from = json.getString("email_email");
 		else from= "snrashabot@gmail.com";
 	
 		

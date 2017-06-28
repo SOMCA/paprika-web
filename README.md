@@ -91,6 +91,49 @@ Maven:
 </dependency>
 ```
 
+You need made also a info.json:
+$ touch info.json
+And fill these values:
+```
+{ 
+   "token":"——-",
+   "email_pwd":"——-",
+   "email_username":"=====",
+   "email_email":"=====@gmail.com",
+   "email_smtp":"smtp.gmail.com",
+   "token_private_key_captcha":"--------------------------------",
+   "keystore_key":"——-",
+   "neo4j_pwd":"———————"
+ }
+
+```
+```
+{ 
+   "token" <— token key of a GitHub account than you have created.
+
+   "email_pwd" <— password of the email of the bot account.
+
+   "email_username" <- username of the email of the bot account.
+
+   "email_email" <- E-mail of the bot account.
+
+   "email_smtp" <- Service of the e-mail for stmp.
+
+   "token_private_key_captcha" <- Not used, this is the private key of the Recaptcha than you have when you create a service between you and Google.
+ https://www.google.com/recaptcha/
+
+   "keystore_key" <— The key than you have put for your keystore created per:
+keytool -genkeypair -keystore keystore2.jks -alias toto -keyalg RSA -keysize 2048 -dname "CN=toto"
+
+   "neo4j_pwd" <- The password of your neo4j database.
+ }
+
+```
+
+
+
+
+
 
 ## Paprika-Web use:
 * Spark-core framework web.
