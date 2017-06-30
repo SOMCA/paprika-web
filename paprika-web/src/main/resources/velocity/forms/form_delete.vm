@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+#parse("/velocity/pages/head.vm")
+<body>
+  <div id="wrapper">
+    #parse("/velocity/pages/layout.vm")
+    <div id="page-wrapper">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="page-header">$msg.get("DASHBOARD") $msg.get("FORMDEL_HEADING") </h1>
+        </div>
+      </div>
+      <div class="row">
+        <form method="post" action="/paprika/form_delete/" >
+          <div class="col-lg-8 checkbox">
+
+            #set ($velocityMenu=0)
+            #foreach($titleD in $user.getDataProjects())
+            #set($titleDname=$titleD.getName())
+            #if($titleDname.length()>15)
+            #set($titleDname="$titleDname.substring(0,16)"+"..")
+            #end
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <label>
+                  <input type="checkbox" name="$velocityMenu" value="00-$titleD.getID()"/><i class="fa fa-bar-table-o fa-fw"></i>$titleDname
+                </label>
+
+              </div>
+              <div class="panel-footer">
+                <a href="#" onclick="return textswitch('01-$velocityMenu');">$msg.get("FORMDEL_VER")</a>
+              </div>
+              <div class="panel-body" style="display:none;overflow:scroll;overflow:auto;" id="01-$velocityMenu">
+                <div style="margin-left: 25px;">
+                  #set ($velocityVer=0)
+                  #foreach($titleVerD in $titleD.getVersions())
+                  #set($titleVernameD=$titleVerD.getName())
+
+                  <label>
+                    <input type="checkbox" name="$velocityVer$velocityMenu" value="00-$titleVerD.getID()"/>$titleVernameD
+                  </label><br/>
+                  #set ($velocityVer=$velocityVer+1)
+                  #end
+                </div>
+              </div>
+            </div>
+            #set ($velocityMenu=$velocityMenu+1)
+            #end
+          </div>
+          <div class="col-lg-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="g-recaptcha" data-sitekey="6LeReyYUAAAAAKcEex84ajPorGxbPH8SktMvzisU"></div>
+                  <!--<label><input type="checkbox" required/>$msg.get("FORMDEL_DELV")</label>-->
+              </div>
+              <div class="panel-footer">
+                  <button class="list-group-item" style="width:auto" type="submit" id="submitDelete" name="delete" value="00-">$msg.get("FORMDEL_DEL")</button>
+              </div>
+              #if($resetFlagFail)
+              <p class="bad notification">Captcha is not valid.</p>
+
+              #end
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+</body>
+#parse("/velocity/pages/script.vm")
+<script>
+function textswitch(divid) {
+
+  if(document.getElementById(divid).style.display=="none"){
+    document.getElementById(divid).style.display = "inline";
+
+  }
+  else{
+    document.getElementById(divid).style.display = "none";
+  }
+  return false;
+}
+</script>
+</html>
